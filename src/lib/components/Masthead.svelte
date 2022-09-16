@@ -1,6 +1,7 @@
 <script lang="ts">
   import now from "../stores/now";
   import Button from "./Button.svelte";
+  import Heading from "./Heading.svelte";
   import { add } from "../stores/timers";
 </script>
 
@@ -13,9 +14,9 @@
       })}
     </small>
 
-    <h3 class="text-4xl leading-relaxed">
+    <Heading>
       {$now.toLocaleString("en", { weekday: "long", day: "numeric" })}
-    </h3>
+    </Heading>
   </div>
   <Button on:click={() => add()}>New Timer</Button>
 </header>

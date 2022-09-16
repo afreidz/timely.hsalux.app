@@ -1,17 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import cl from "./lib/helpers/classlist";
+  import subview from "./lib/stores/subview";
   import Nav from "./lib/components/Nav.svelte";
+  import Subview from "./lib/components/Subview.svelte";
   import Masthead from "./lib/components/Masthead.svelte";
   import Timeline from "./lib/components/Timeline.svelte";
-  import {
-    Dialog,
-    Transition,
-    DialogOverlay,
-    TransitionChild,
-  } from "@rgossiaux/svelte-headlessui";
-
-  let subview = null;
 
   const classes = {
     layout: cl`
@@ -49,12 +43,11 @@
   };
 
   onMount(() => {
-    if (window.location.hash) subview = window.location.hash;
+    if (window.location.hash) navigate();
   });
 
   function navigate() {
-    console.log(window.location.hash);
-    subview = window.location.hash;
+    $subview = window.location.hash;
   }
 </script>
 
@@ -68,31 +61,4 @@
   </aside>
 </main>
 
-<Transition show={!!subview}>
-  <Dialog open>
-    <TransitionChild
-      leaveTo="opacity-0"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leaveFrom="opacity-100"
-      leave="ease-in transition-opacity duration-300"
-      enter="ease-out transition-opacity duration-300"
-    >
-      <DialogOverlay
-        class="z-50 fixed top-0 bottom-0 left-0 right-0 bg-black/30"
-      />
-    </TransitionChild>
-    <TransitionChild
-      enterTo="translate-x-0"
-      leaveFrom="translate-x-0"
-      leaveTo="translate-x-full"
-      enterFrom="translate-x-full"
-      leave="delay-300 ease-in transition transition-transform duration-300"
-      enter="delay-300 ease-out transition transition-transform duration-300"
-    >
-      <main class={classes.subview}>
-        {subview}
-      </main>
-    </TransitionChild>
-  </Dialog>
-</Transition>
+<Subview />

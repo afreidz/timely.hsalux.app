@@ -60,4 +60,18 @@ projects.subscribe((projects) => {
   persistence.setItem("projects", serialized);
 });
 
-export default projects;
+function add(name: string, color: string, imgurl: string) {
+  const project: IProject = {
+    name,
+    color,
+    imgurl,
+    id: `project_${+new Date}`,
+  };
+
+  const projectClass = new Project(project);
+
+  projects.update((projects) => [...projects, projectClass]);
+}
+
+
+export { add, projects };

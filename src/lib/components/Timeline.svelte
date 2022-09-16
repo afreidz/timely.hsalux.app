@@ -51,7 +51,7 @@
       flex-1
       gap-y-3
       gap-x-px
-      w-[calc(1440*0.25rem)]
+      w-[calc(7200px)]
       grid-cols-[repeat(1440,0.25rem)]
 `,
     item: cl`
@@ -103,7 +103,7 @@
 
   function setview() {
     if (!nowtime) return;
-    nowtime.scrollIntoView({ behavior: "auto", inline: "center" });
+    nowtime.scrollIntoView({ behavior: "smooth", inline: "center" });
   }
 </script>
 

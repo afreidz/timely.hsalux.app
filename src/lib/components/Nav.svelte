@@ -3,6 +3,7 @@
   import cl from "../helpers/classlist";
   import Logo from "../icons/Logo.svelte";
   import DarkToggle from "./DarkToggle.svelte";
+  import { projects } from "../stores/projects";
   import Project from "../icons/Project.svelte";
 
   const navclass = cl`
@@ -13,8 +14,6 @@
     items-center
     grid-rows-[7rem_auto_5rem]
 `;
-
-  const listclass = cl`flex items-center`;
 </script>
 
 <nav class={navclass}>
@@ -23,16 +22,27 @@
     <span class="sr-only">Time.me</span>
   </h1>
   <ul class="self-start">
-    <li class={listclass}>
-      <Project class="flex-none p-2 w-10 h-10" />
-      <span class="flex-1 ml-2">Projects</span>
-      <a href="#new-project" title="Add a new project">
-        <Add class="flex-none w-6 h-6"/>
-      </a>
+    <li>
+      <div class="flex items-center">
+        <Project class="flex-none p-2 w-10 h-10" />
+        <span class="flex-1 ml-2">Projects</span>
+        <a href="#new-project" class="flex-none" title="Add a new project">
+          <Add class="w-6 h-6" />
+        </a>
+      </div>
+      <ul>
+        {#each $projects as project}
+          <li class="py-2 pl-10 flex items-center">
+            <span class="flex-1 ml-2">{project.name}</span>
+            <button class="flex-none">
+              <Add class="w-6 h-6" />
+            </button>
+          </li>
+        {/each}
+      </ul>
     </li>
   </ul>
   <footer class="flex justify-center">
     <DarkToggle />
   </footer>
 </nav>
-
