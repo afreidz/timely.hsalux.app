@@ -1,6 +1,7 @@
 <script>
   import Add from "../icons/Add.svelte";
   import cl from "../helpers/classlist";
+  import { add } from "../stores/timers";
   import Logo from "../icons/Logo.svelte";
   import DarkToggle from "./DarkToggle.svelte";
   import { projects } from "../stores/projects";
@@ -34,7 +35,7 @@
         {#each $projects as project}
           <li class="py-2 pl-10 flex items-center">
             <span class="flex-1 ml-2">{project.name}</span>
-            <button class="flex-none">
+            <button class="flex-none" on:click={() => add(project.id)}>
               <Add class="w-6 h-6" />
             </button>
           </li>

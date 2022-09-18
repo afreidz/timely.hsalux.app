@@ -1,5 +1,6 @@
 import now from "./now";
 import lf from "localforage";
+import { projects } from "./projects";
 import { writable, get } from "svelte/store";
 import type { Writable } from "svelte/store";
 
@@ -46,7 +47,7 @@ export class Timer {
   }
 
   get end() {
-    return this.instance.end || new Date;
+    return this.instance.end || new Date();
   }
 
   get duration() {
@@ -60,6 +61,10 @@ export class Timer {
   get endCol() {
     const endCol = this.end.getHours() * 60 + this.end.getMinutes();
     return endCol - this.startCol > 15 ? endCol : this.startCol + 15;
+  }
+
+  get project() {
+    return get(projects).find((p) => p.id === this.instance.projectId);
   }
 
   stop() {

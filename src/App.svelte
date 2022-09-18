@@ -15,8 +15,8 @@
       border
       rounded-md
       shadow-2xl
-      border-white/60
       overflow-hidden
+      border-white/60
       grid-rows-[auto_minmax(0,_1fr)]
       grid-cols-[16rem_minmax(0,_1fr)]
 `,

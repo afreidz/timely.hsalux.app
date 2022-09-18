@@ -21,7 +21,7 @@
       bottom-0
       opacity-0
       invisible 
-      bg-black/60
+      bg-black/20
       ease-in-out
       duration-300
       transition-opacity
@@ -38,9 +38,11 @@
       right-0
       flex-col
       bottom-0
-      bg-white
+      bg-white/70
       ease-in-out
       duration-300
+      min-w-[600px]
+      backdrop-blur-xl
       translate-x-full
       transition-transform
       group-target:translate-x-0

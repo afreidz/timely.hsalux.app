@@ -62,7 +62,6 @@
       rounded-full
       justify-center
       overflow-hidden
-      bg-indigo-400
 `,
     hour: cl`
       border-l
@@ -128,7 +127,7 @@
     {/each}
     {#each $timers as item, index}
       <div
-        class={classes.item}
+        class={`${classes.item} ${item.project.bgColor}`}
         style={`grid-row-start: ${index + 3}; grid-column-start: ${
           item.startCol
         }; grid-column-end: ${item.endCol};`}
@@ -136,7 +135,7 @@
           alert(
             `${item.start.toLocaleTimeString("en")} - ${
               item.end?.toLocaleTimeString("en") ?? "running"
-            }: ~${item.duration / 1000 / 60}min`
+            }: ~${item.duration / 1000 / 60}min, - ${item.project.name} ${item.project.bgColor}`
           )}
       >
         {item.task}
