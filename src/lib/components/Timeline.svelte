@@ -57,10 +57,12 @@
     item: cl`
       z-20
       h-14
+      px-4
       flex
+      flex-wrap
       items-center
       rounded-full
-      justify-center
+      justify-start
       overflow-hidden
 `,
     hour: cl`
@@ -96,6 +98,15 @@
       whitespace-nowrap
       ml-[calc(100%_+_2px)]
 `,
+    chip: cl`
+      h-6
+      w-6
+      flex
+      bg-white
+      rounded-full
+      items-center
+      justify-center
+`,
   };
 
   onMount(setview);
@@ -126,20 +137,23 @@
       </div>
     {/each}
     {#each $timers as item, index}
-      <div
+      <a
+        href={`#edit-timer/${item.id}`}
         class={`${classes.item} ${item.project.bgColor}`}
         style={`grid-row-start: ${index + 3}; grid-column-start: ${
           item.startCol
         }; grid-column-end: ${item.endCol};`}
-        on:click={() =>
-          alert(
-            `${item.start.toLocaleTimeString("en")} - ${
-              item.end?.toLocaleTimeString("en") ?? "running"
-            }: ~${item.duration / 1000 / 60}min, - ${item.project.name} ${item.project.bgColor}`
-          )}
       >
-        {item.task}
-      </div>
+        <figure
+          title={item.project.name}
+          class={`h-14 flex flex-col justify-center ${item.project.textColor}`}
+        >
+          <span class={classes.chip}>{item.project.name.charAt(0)}</span>
+        </figure>
+        <strong class="font-normal text-xs ml-2 text-white leading-[3.5rem]"
+          >{item.task}</strong
+        >
+      </a>
     {/each}
     <div
       class={classes.now}

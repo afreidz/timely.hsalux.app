@@ -38,8 +38,12 @@ export class Timer {
     return this.instance.task;
   }
 
+  set task(task) {
+    this.instance.task = task;
+  }
+
   get running() {
-    return !!this.instance.end;
+    return !this.instance.end;
   }
 
   get start() {
@@ -69,23 +73,29 @@ export class Timer {
 
   stop() {
     this.instance.end = new Date();
-    refresh();
+    this.project.refresh();
+    this.refresh();
   }
 
   serialize() {
     return this.instance;
   }
+
+  refresh() {
+    timers.update((t) => [...t]);
+  }
 }
 
 if (existing?.length) {
   existing.forEach((t) => {
-    cache.set(t.id, t);
+    cache.set(t.id, new Timer(t));
   });
   timers.set(existing.map((t) => new Timer(t)));
 }
 
 timers.subscribe((timers) => {
   const serialized = timers.map((t) => t.serialize());
+  timers.forEach((t) => t.project?.refresh());
   persistence.setItem(
     `timers_${get(viewDate).toLocaleDateString("en")}`,
     serialized
@@ -105,13 +115,6 @@ function add(projectId?: string, task = "Timer") {
   const timerClass = new Timer(timer);
 
   timers.update((timers) => [...timers, timerClass]);
-}
-
-function refresh() {
-  persistence.setItem(
-    `timers_${get(viewDate).toLocaleDateString("en")}`,
-    [...cache.values()].map((v) => v.serialize())
-  );
 }
 
 export { add, timers };

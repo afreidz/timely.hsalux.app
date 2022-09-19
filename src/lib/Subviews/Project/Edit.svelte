@@ -1,19 +1,21 @@
 <script lang="ts">
-  import { add } from "../../stores/projects";
   import colorKeys from "../../helpers/colors";
-  import Field from "../..//components/Field.svelte";
+  import Field from "../../components/Field.svelte";
   import Button from "../../components/Button.svelte";
   import Heading from "../../components/Heading.svelte";
   import Checkbox from "../..//components/Checkbox.svelte";
   import { RadioGroup } from "@rgossiaux/svelte-headlessui";
+  import { projects, type Project } from "../../stores/projects";
 
-  let newProjectName: string = "";
-  let newProjectImgurl: string = "";
-  let newProjectColor: string = "blue-500";
+  export let id: string;
 
-  function create() {
-    add(newProjectName, newProjectColor, newProjectImgurl);
-    window.location.hash = "";
+  let project: Project;
+  let newProjectColor: string;
+
+  $: project = $projects.find(p => p.id === id);
+
+  function update() {
+    console.log({...project, color: newProjectColor });
   }
 </script>
 
@@ -21,24 +23,24 @@
   <Heading as="h4" variant="section">Add A New Project</Heading>
   <form
     class="mt-6 flex flex-col flex-1"
-    on:submit|preventDefault={() => create()}
+    on:submit|preventDefault={() => update()}
   >
     <div class="flex-1">
       <Field
         required
+        name="projectName"
         label="Project Name"
-        name="newProjectName"
-        bind:val={newProjectName}
+        bind:val={project.name}
       />
       <Field
         label="Image URL"
         name="newProjectImgurl"
-        bind:val={newProjectImgurl}
+        bind:val={project.image}
       />
       <Field name="newProjectColor" label="Color">
         <RadioGroup
           class="flex flex-wrap"
-          value={newProjectColor}
+          value={project.color}
           on:change={(e) => (newProjectColor = e.detail)}
         >
           {#each colorKeys as color}

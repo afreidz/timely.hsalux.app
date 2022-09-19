@@ -1,5 +1,6 @@
 import lf from "localforage";
-import { writable, type Writable } from "svelte/store";
+import { timers } from "./timers";
+import { writable, type Writable, get } from "svelte/store";
 
 export interface IProject {
   id: string;
@@ -16,7 +17,7 @@ const persistence = lf.createInstance({
 const projects: Writable<Project[]> = writable([]);
 const existing: IProject[] = await persistence.getItem("projects");
 
-class Project {
+export class Project {
   private instance: IProject;
 
   get id() {
@@ -31,6 +32,10 @@ class Project {
     return this.instance.imgurl;
   }
 
+  get color() {
+    return this.instance.color;
+  }
+
   get bgColor() {
     return `bg-${this.instance.color}`;
   }
@@ -39,12 +44,25 @@ class Project {
     return `text-${this.instance.color}`;
   }
 
+  get timers() {
+    return get(timers).filter(t => t.project === this);
+  }
+
+  get hasRunningTimer() {
+    const projectTimers = this.timers;
+    return projectTimers.some(t => t.running);
+  }
+
   constructor(instance: IProject) {
     this.instance = instance;
   }
 
   serialize() {
     return this.instance;
+  }
+
+  refresh() {
+    projects.update(p => ([...p]));
   }
 }
 
