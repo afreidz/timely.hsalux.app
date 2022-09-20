@@ -4,31 +4,30 @@
   import subview from "./lib/stores/subview";
   import Nav from "./lib/components/Nav.svelte";
   import Subview from "./lib/components/Subview.svelte";
+  import Titlebar from "./lib/components/Titlebar.svelte";
   import Masthead from "./lib/components/Masthead.svelte";
   import Timeline from "./lib/components/Timeline.svelte";
 
   const classes = {
     layout: cl`
-      m-12
       grid
       flex-1
-      border
       rounded-md
       shadow-2xl
       overflow-hidden
-      border-white/60
       grid-rows-[auto_minmax(0,_1fr)]
       grid-cols-[16rem_minmax(0,_1fr)]
 `,
     sidenav: cl`
       z-20
       flex
+      border-r
       flex-col
       order-first
-      bg-white/40
       shadow-inner
+      border-white
       row-span-full
-      backdrop-blur-xl
+      dark:border-black
 `,
     subview: cl`
       z-50
@@ -52,6 +51,8 @@
 </script>
 
 <svelte:window on:hashchange={navigate} />
+
+<Titlebar />
 
 <main class={classes.layout}>
   <Masthead />

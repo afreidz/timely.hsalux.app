@@ -25,10 +25,10 @@
       bottom-0
       opacity-0
       invisible 
-      bg-black/20
       ease-in-out
       duration-300
       transition-opacity
+      backdrop-blur-sm
 
       target:visible
       target:opacity-100
@@ -42,14 +42,18 @@
       right-0
       flex-col
       bottom-0
-      bg-white/70
+      border-l
+      bg-white
       ease-in-out
       duration-300
       min-w-[600px]
-      backdrop-blur-xl
       translate-x-full
+      border-neutral-200
       transition-transform
       group-target:translate-x-0
+
+      dark:border-black
+      dark:bg-neutral-800
 `,
   };
 
@@ -61,7 +65,6 @@
         component = NewProject;
         break;
       case id?.startsWith("edit-timer"):
-        console.log(id?.split("/")[1]);
         componentProps.id = id?.split("/")[1];
         component = TimerDetail;
         break;

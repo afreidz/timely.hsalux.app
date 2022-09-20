@@ -1,19 +1,13 @@
 <script lang="ts">
-  import Add from "../icons/Add.svelte";
+  import Icon from "@iconify/svelte";
   import cl from "../helpers/classlist";
   import { add } from "../stores/timers";
-  import Play from "../icons/Play.svelte";
-  import Logo from "../icons/Logo.svelte";
-  import Stop from "../icons/Stop.svelte";
-  import DarkToggle from "./DarkToggle.svelte";
   import { projects } from "../stores/projects";
-  import Project from "../icons/Project.svelte";
 
   const navclass = cl`
     px-4
     grid
     flex-1
-    text-white
     items-center
     grid-rows-[7rem_auto_5rem]
 `;
@@ -29,17 +23,20 @@
 </script>
 
 <nav class={navclass}>
-  <h1 class="text-3xl font-thin flex justify-center">
-    <Logo class="p-2 w-12 h-12 rounded-full bg-blue-500" />
+  <h1 class="text-3xl font-thin flex justify-center text-white">
+    <Icon
+      icon="bi:lightning-charge"
+      class="p-2 w-12 h-12 rounded-full bg-blue-500"
+    />
     <span class="sr-only">Time.me</span>
   </h1>
   <ul class="self-start">
     <li>
       <div class="flex items-center">
-        <Project class="flex-none p-2 w-10 h-10" />
+        <Icon icon="heroicons:briefcase" class="flex-none p-2 w-10 h-10" />
         <span class="flex-1 ml-2">Projects</span>
         <a href="#new-project" class="flex-none" title="Add a new project">
-          <Add class="w-6 h-6" />
+          <Icon icon="heroicons:plus-circle" class="h-6 w-6" />
         </a>
       </div>
       <ul>
@@ -51,9 +48,9 @@
               on:click={() => handleProjectClick(project.id)}
             >
               {#if project.hasRunningTimer}
-                <Stop class="w-6 h-6" />
+                <Icon icon="heroicons:stop-circle" class="h-6 w-6" />
               {:else}
-                <Play class="w-6 h-6" />
+                <Icon icon="heroicons:play-circle" class="h-6 w-6" />
               {/if}
             </button>
           </li>
@@ -61,7 +58,5 @@
       </ul>
     </li>
   </ul>
-  <footer class="flex justify-center">
-    <DarkToggle />
-  </footer>
+  <footer class="flex justify-center" />
 </nav>

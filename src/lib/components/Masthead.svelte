@@ -3,7 +3,9 @@
   import Heading from "./Heading.svelte";
 </script>
 
-<header class="p-5 flex justify-between bg-white">
+<header
+  class="p-5 flex justify-between bg-white dark:bg-neutral-900 border-b border-white dark:border-black"
+>
   <div>
     <small class="text-neutral-400">
       {$now.toLocaleDateString("en", {

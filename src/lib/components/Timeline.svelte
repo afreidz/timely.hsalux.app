@@ -35,8 +35,6 @@
     "11PM",
   ];
 
-  /*   const colors = [cl`bg-indigo-400`, cl`bg-emerald-400`]; */
-
   const classes = {
     section: cl`
       py-2
@@ -45,19 +43,20 @@
       flex-col
       bg-gray-100
       overflow-auto
+      dark:bg-neutral-800
 `,
     grid: cl`
       grid
       flex-1
       gap-y-3
       gap-x-px
-      w-[calc(7200px)]
-      grid-cols-[repeat(1440,0.25rem)]
+      w-[4880px]
+      grid-cols-[repeat(1440,0.15rem)]
 `,
     item: cl`
       z-20
-      h-14
-      px-4
+      h-12
+      px-3
       flex
       flex-wrap
       items-center
@@ -71,6 +70,9 @@
       row-span-full
       text-neutral-400
       border-l-neutral-200
+
+      dark:text-neutral-700
+      dark:border-l-neutral-700
 `,
     now: cl`
       border-l
@@ -79,6 +81,7 @@
       pt-[0.4rem]
       row-span-full
       border-red-300
+      dark:border-red-500
 
       after:w-2
       after:h-2
@@ -117,13 +120,13 @@
   }
 </script>
 
-<section class={classes.section}>
+<section class={`timeline ${classes.section}`}>
   <div
     class={classes.grid}
     style={`grid-template-rows: 2.1rem 1.5rem repeat(${Math.max(
       $timers.length,
       1
-    )}, 3.5rem) auto`}
+    )}, 3rem) auto`}
   >
     {#each hours as hour, index}
       <div
@@ -133,7 +136,10 @@
           1
         )}; grid-column-end:${Math.max(index * 60 + 1, 2)};`}
       >
-        <span class="ml-3 inline-block bg-gray-100 relative z-10">{hour}</span>
+        <span
+          class="ml-3 inline-block bg-gray-100 dark:bg-neutral-800 relative z-10"
+          >{hour}</span
+        >
       </div>
     {/each}
     {#each $timers as item, index}
@@ -146,11 +152,11 @@
       >
         <figure
           title={item.project.name}
-          class={`h-14 flex flex-col justify-center ${item.project.textColor}`}
+          class={`h-12 flex flex-shrink-0 flex-col justify-center ${item.project.textColor}`}
         >
           <span class={classes.chip}>{item.project.name.charAt(0)}</span>
         </figure>
-        <strong class="font-normal text-xs ml-2 text-white leading-[3.5rem]"
+        <strong class="font-normal text-xs ml-2 text-white leading-[3rem]"
           >{item.task}</strong
         >
       </a>
@@ -165,3 +171,12 @@
     </div>
   </div>
 </section>
+
+<style lang="postcss">
+  .timeline::-webkit-scrollbar {
+    display: none;
+  }
+  .timeline {
+    scrollbar-width: none;
+  }
+</style>

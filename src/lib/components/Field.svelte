@@ -17,6 +17,10 @@
       outline-none
       border-gray-300
 
+      dark:bg-neutral-700
+      dark:border-black
+      dark:focus:ring-offset-neutral-800
+
       focus:ring
       focus:ring-offset-2
       focus:ring-blue-500
@@ -34,7 +38,9 @@
   export { label, name, val };
 </script>
 
-<fieldset class="py-3 px-4 mb-2 rounded-lg flex items-center bg-gray-100">
+<fieldset
+  class="py-3 px-4 mb-2 rounded-lg flex items-center bg-gray-100 dark:bg-neutral-800"
+>
   <label class="flex-none w-52" for={name}>{label}</label>
   {#if Object.keys($$slots).length === 0}
     <input
