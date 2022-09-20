@@ -58,11 +58,9 @@
       h-12
       px-3
       flex
-      flex-wrap
       items-center
       rounded-full
       justify-start
-      overflow-hidden
 `,
     hour: cl`
       border-l
@@ -149,6 +147,7 @@
         style={`grid-row-start: ${index + 3}; grid-column-start: ${
           item.startCol
         }; grid-column-end: ${item.endCol};`}
+        title={`${item.project.name} - ${item.task}`}
       >
         <figure
           title={item.project.name}
@@ -156,7 +155,7 @@
         >
           <span class={classes.chip}>{item.project.name.charAt(0)}</span>
         </figure>
-        <strong class="font-normal text-xs ml-2 text-white leading-[3rem]"
+        <strong class="font-normal text-xs ml-2 text-white line-clamp-1"
           >{item.task}</strong
         >
       </a>
