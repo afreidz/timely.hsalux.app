@@ -15,6 +15,6 @@
 `;
 </script>
 
-<button {...$$props} on:click class={classlist}>
+<button {...$$props} on:click class={`${classlist} ${$$props.class}`}>
   <slot />
 </button>
