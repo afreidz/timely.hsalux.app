@@ -42,8 +42,9 @@
       </div>
       <ul>
         {#each $projects as project}
-          <li class="py-2 pl-10 flex items-center">
-            <span class="flex-1 ml-2">{project.name}</span>
+          <li class="pl-12 py-2 flex items-center">
+            <div class={`mr-1 rounded-sm ${project.bgColor} w-4 h-4`} />
+            <span class="flex-1 ml-2 line-clamp-1">{project.name}</span>
             <button
               class="flex-none"
               on:click={() => handleProjectClick(project.id)}

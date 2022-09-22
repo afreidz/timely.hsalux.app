@@ -16,7 +16,7 @@
       shadow-2xl
       overflow-hidden
       grid-rows-[auto_minmax(0,_1fr)]
-      grid-cols-[16rem_minmax(0,_1fr)]
+      grid-cols-[20rem_minmax(0,_1fr)]
 `,
     sidenav: cl`
       z-20

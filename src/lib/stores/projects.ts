@@ -99,7 +99,7 @@ function add(name: string, color: string, imgurl: string) {
 }
 
 let existing: Project[] = [];
-await persistence.iterate(async (v: IProject) => {
+await persistence.iterate((v: IProject) => {
   existing.push(new Project(v));
 });
 
