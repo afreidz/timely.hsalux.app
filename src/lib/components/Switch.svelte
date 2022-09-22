@@ -31,7 +31,7 @@
       align-middle
       rounded-full
       duration-200
-      bg-neutral-700
+      bg-neutral-800
       cursor-pointer
       transition-colors
       border-transparent
@@ -68,7 +68,7 @@
   export { enabled, label, name };
 </script>
 
-<label class={classes.container}>
+<label class={classes.container + ` ${$$props.class}`}>
   <span class={classes.label}>{label}</span>
   <input
     {name}

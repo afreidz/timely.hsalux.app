@@ -51,10 +51,16 @@
           color={timer.project.color}
           project={timer.project.name}
         >
-          <div class="flex-1 grid grid-cols-[2rem_auto_2rem]">
+          <div class="flex-1 grid grid-cols-[2rem_2rem_auto_2rem_2rem]">
             <button on:click={() => timer.shiftStart()}>
               <Icon
                 icon="heroicons:chevron-double-left-20-solid"
+                class="h-8 w-8"
+              />
+            </button>
+            <button on:click={() => timer.unshiftStart()}>
+              <Icon
+                icon="heroicons:chevron-double-right-20-solid"
                 class="h-8 w-8"
               />
             </button>
@@ -62,6 +68,12 @@
               {timer.hours} hours {#if timer.running}(running){/if}
             </span>
             {#if !timer.running}
+              <button on:click={() => timer.unshiftEnd()}>
+                <Icon
+                  icon="heroicons:chevron-double-left-20-solid"
+                  class="h-8 w-8"
+                />
+              </button>
               <button on:click={() => timer.shiftEnd()}>
                 <Icon
                   icon="heroicons:chevron-double-right-20-solid"

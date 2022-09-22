@@ -50,20 +50,21 @@
     window: cl`
       z-50   
       flex
+      px-10
       fixed
       top-0
-      w-[40%]
+      w-[50%]
       right-0
       flex-col
       bottom-0
       border-l
-      bg-white
       ease-in-out
       duration-300
       min-w-[600px]
       translate-x-full
       border-neutral-200
       transition-transform
+      bg-white max-w-[1200px]
       group-target:translate-x-0
 
       dark:border-black

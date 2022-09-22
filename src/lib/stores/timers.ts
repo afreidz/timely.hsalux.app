@@ -1,5 +1,6 @@
 import now from "./now";
 import lf from "localforage";
+import { settings } from "./settings";
 import { projects } from "./projects";
 import type { Writable } from "svelte/store";
 import { isToday, isSameDay } from "../helpers/date";
@@ -83,15 +84,32 @@ export class Timer {
     return get(projects).find((p) => p.id === this.instance.projectId);
   }
 
-  shiftEnd() {
+  shiftEnd(min = 5) {
     if (this.running) return;
-    this.instance.end = new Date(+this.instance.end + 1000 * 60 * 15);
+    this.instance.end = new Date(+this.instance.end + 1000 * 60 * min);
     this.persist();
     Timer.refresh();
   }
 
-  shiftStart() {
-    this.instance.start = new Date(+this.instance.start - 1000 * 60 * 15);
+  unshiftEnd(min = 5) {
+    if (this.running) return;
+    const unshifted = new Date(+this.instance.end - 1000 * 60 * min);
+    if (+unshifted - +this.start <= 1000 * 60) return;
+    this.instance.end = unshifted;
+    this.persist();
+    Timer.refresh();
+  }
+
+  shiftStart(min = 5) {
+    this.instance.start = new Date(+this.instance.start - 1000 * 60 * min);
+    this.persist();
+    Timer.refresh();
+  }
+
+  unshiftStart(min = 5) {
+    const unshifted = new Date(+this.instance.start + 1000 * 60 * min);
+    if (+this.end - +unshifted <= 1000 * 60) return;
+    this.instance.start = unshifted;
     this.persist();
     Timer.refresh();
   }
@@ -149,7 +167,19 @@ viewDate.subscribe(async (d) => {
   timers.set(existing);
 
   if (isToday(d))
-    pollUnsubscribe = now.subscribe(() => timers.update((t) => t));
+    pollUnsubscribe = now.subscribe(async (n) => {
+      const check = new Date(n);
+      check.setHours(17);
+      check.setMinutes(0);
+      check.setSeconds(0);
+      (await Timer.getAll()).forEach((t) => {
+        if (t.running && +t.end >= +check && get(settings).autoStop) {
+          t.stop();
+        }
+      });
+
+      timers.update((t) => t);
+    });
 });
 
 function add(projectId?: string, task = "Timer") {

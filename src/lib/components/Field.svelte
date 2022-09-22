@@ -4,11 +4,11 @@
 
   let classes;
   let props: any;
-  let label: string;
   let val: string = "";
   let required: boolean;
   let bg: boolean = true;
   let name: string = null;
+  let label: string = null;
   let dispatch = createEventDispatcher();
 
   $: classes = {
@@ -76,6 +76,11 @@
       bg-transparent
       dark:text-white
     `,
+    switch: cl`
+      flex  
+      flex-1
+      items-stretch
+    `,
   };
 
   $: {
@@ -92,7 +97,11 @@
 <label class={classes.container}>
   <slot name="icon" />
   <div class="flex flex-1 relative self-stretch">
-    {#if $$slots.readonly}
+    {#if $$slots.switch}
+      <div class={classes.switch}>
+        <slot name="switch" />
+      </div>
+    {:else if $$slots.readonly}
       <div class={classes.readonly}>
         <slot name="readonly" />
       </div>
@@ -108,7 +117,7 @@
         on:change={(e) => dispatch("change", e.target.value)}
       />
     {/if}
-    <span class={classes.label}>{label}</span>
+    {#if label}<span class={classes.label}>{label}</span>{/if}
   </div>
 </label>
 
