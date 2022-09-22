@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import Timer from "../../components/Timer.svelte";
   import Field from "../../components/Field.svelte";
   import Button from "../../components/Button.svelte";
   import Heading from "../../components/Heading.svelte";
@@ -9,41 +10,96 @@
   let timer: Timer;
 
   $: timer = $timers.find((t) => t.id === id);
+  $: if (!timer) window.location.hash = "";
 
-  function update() {
-    timer.refresh();
-    window.location.hash = "";
+  function startOrStop() {
+    if (timer.running) {
+      timer.stop();
+    } else {
+      timer.unstop();
+    }
   }
 </script>
 
-<section class="p-6 flex flex-col flex-1">
-  <Heading as="h4" variant="section">Timer Details</Heading>
-  <form
-    class="mt-6 flex flex-col flex-1"
-    on:submit|preventDefault={() => update()}
-  >
-    <div class="flex-1">
-      <Field name="timerTask" label="Task Name" bind:val={timer.task} />
-      <Field label="Duration">
-        <span class="text-3xl">
-          {Math.round(timer.duration / 1000 / 60)} mins
-        </span>
-      </Field>
-    </div>
-    <footer class="flex flex-none justify-end">
-      {#if timer.running}
-        <Button
-          title="stop timer"
-          on:click={() => timer.stop()}
-          class="bg-red-500 flex items-center"
+<section class="p-6 flex-1">
+  <header class="mb-4">
+    <Heading as="h4" variant="section">Timer Details</Heading>
+  </header>
+  {#if timer}
+    <Field
+      name="timerTask"
+      label="Task Name"
+      bind:val={timer.task}
+      on:change={() => timer.persist()}
+    />
+    <Field label="Project">
+      <span slot="readonly">
+        {timer.project.name}
+      </span>
+    </Field>
+    <div class="flex my-10">
+      <div class="flex-none w-36 flex justify-center">
+        <Field label="Start Time" bg={false}>
+          <span slot="readonly">
+            {timer.start.toLocaleTimeString("en")}
+          </span>
+        </Field>
+      </div>
+      <div class="flex-1 mt-2">
+        <Timer
+          hideChip={true}
+          color={timer.project.color}
+          project={timer.project.name}
         >
-          <Icon icon="heroicons:stop-20-solid" class="h-8 w-8 mr-2" />
-          <span class="text-xl">Stop Timer</span>
-        </Button>
-      {/if}
-      <Button>
-        <span class="inline-block text-xl p-4">Update</span>
+          <div class="flex-1 grid grid-cols-[2rem_auto_2rem]">
+            <button on:click={() => timer.shiftStart()}>
+              <Icon
+                icon="heroicons:chevron-double-left-20-solid"
+                class="h-8 w-8"
+              />
+            </button>
+            <span class="flex items-center justify-center">
+              {timer.hours} hours {#if timer.running}(running){/if}
+            </span>
+            {#if !timer.running}
+              <button on:click={() => timer.shiftEnd()}>
+                <Icon
+                  icon="heroicons:chevron-double-right-20-solid"
+                  class="h-8 w-8"
+                />
+              </button>
+            {/if}
+          </div>
+        </Timer>
+      </div>
+      <div class="flex-none w-36 flex justify-center">
+        <Field label="End Time" bg={false}>
+          <span slot="readonly">
+            {timer.end.toLocaleTimeString("en")}
+          </span>
+        </Field>
+      </div>
+    </div>
+    <div class="flex justify-between">
+      <Button on:click={() => startOrStop()} class="justify-self-center">
+        {#if timer.running}
+          <span class="flex items-center py-4">
+            <Icon icon="heroicons:stop-20-solid" class="h-4 w-4" />
+            <span class="ml-1">Stop Timer</span>
+          </span>
+        {:else}
+          <span class="flex items-center py-4">
+            <Icon icon="heroicons:play-20-solid" class="h-4 w-4" />
+            <span class="ml-1">Restart Timer</span>
+          </span>
+        {/if}
       </Button>
-    </footer>
-  </form>
+      <Button on:click={() => timer.delete()} class="bg-red-500">
+        <span class="flex items-center py-4">
+          <Icon icon="heroicons:trash" class="h-4 w-4" />
+          <span class="ml-1">Delete Timer</span>
+        </span>
+      </Button>
+    </div>
+  {/if}
 </section>

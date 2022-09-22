@@ -1,5 +1,5 @@
 import lf from "localforage";
-import { timers } from "./timers";
+import { Timer } from "./timers";
 import { writable, type Writable, get } from "svelte/store";
 
 export interface IProject {
@@ -9,16 +9,19 @@ export interface IProject {
   imgurl?: string;
 }
 
-const cache = new Map();
+const projects: Writable<Project[]> = writable([]);
 const persistence = lf.createInstance({
   name: "projects.time.me",
 });
 
-const projects: Writable<Project[]> = writable([]);
-const existing: IProject[] = await persistence.getItem("projects");
-
 export class Project {
+  public timers: Timer[];
   private instance: IProject;
+
+  constructor(instance: IProject) {
+    this.instance = instance;
+    this.timers = [];
+  }
 
   get id() {
     return this.instance.id;
@@ -28,12 +31,27 @@ export class Project {
     return this.instance.name;
   }
 
+  set name(n: string) {
+    this.instance.name = n;
+    this.persist();
+  }
+
   get image() {
     return this.instance.imgurl;
   }
 
+  set image(i: string) {
+    this.instance.imgurl = i;
+    this.persist();
+  }
+
   get color() {
     return this.instance.color;
+  }
+
+  set color(c: string) {
+    this.instance.color = c;
+    this.persist();
   }
 
   get bgColor() {
@@ -44,52 +62,47 @@ export class Project {
     return `text-${this.instance.color}`;
   }
 
-  get timers() {
-    return get(timers).filter(t => t.project === this);
-  }
-
   get hasRunningTimer() {
-    const projectTimers = this.timers;
-    return projectTimers.some(t => t.running);
-  }
-
-  constructor(instance: IProject) {
-    this.instance = instance;
+    return this.timers.some((t) => t.running);
   }
 
   serialize() {
     return this.instance;
   }
 
-  refresh() {
-    projects.update(p => ([...p]));
+  persist() {
+    persistence.setItem(this.id, this.serialize());
+  }
+
+  async loadTimers() {
+    const timers = await Timer.getAll();
+    this.timers = timers.filter((t) => t.project === this);
+  }
+
+  async refresh() {
+    await this.loadTimers();
+    projects.update((p) => p);
   }
 }
-
-if (existing?.length) {
-  existing.forEach((t) => {
-    cache.set(t.id, t);
-  });
-  projects.set(existing.map((p) => new Project(p)));
-}
-
-projects.subscribe((projects) => {
-  const serialized = projects.map((p) => p.serialize());
-  persistence.setItem("projects", serialized);
-});
 
 function add(name: string, color: string, imgurl: string) {
   const project: IProject = {
     name,
     color,
     imgurl,
-    id: `project_${+new Date}`,
+    id: `project_${+new Date()}`,
   };
 
   const projectClass = new Project(project);
-
+  projectClass.persist();
   projects.update((projects) => [...projects, projectClass]);
 }
 
+let existing: Project[] = [];
+await persistence.iterate(async (v: IProject) => {
+  existing.push(new Project(v));
+});
+
+projects.set(existing);
 
 export { add, projects };

@@ -1,30 +1,81 @@
 <script lang="ts">
   import cl from "../helpers/classlist";
+  import { createEventDispatcher } from "svelte";
 
+  let classes;
   let props: any;
-  let name: string;
   let label: string;
   let val: string = "";
   let required: boolean;
+  let bg: boolean = true;
+  let name: string = null;
+  let dispatch = createEventDispatcher();
 
-  const classes = {
-    input: cl`
-      p-3
-      flex-1
-      border
-      bg-white
+  $: classes = {
+    container: cl`
+      my-1
+      h-16
+      flex
+      relative
       rounded-lg
+      items-center
+      border-white
+      
+      ${bg ? "px-4" : ""}
+      ${bg ? "border" : ""}
+      ${bg ? "bg-neutral-50" : ""}
+      ${bg ? "dark:border-black" : ""}
+      ${bg ? "dark:bg-neutral-700" : ""}
+
+      focus-within:ring-2
+      focus-within:ring-blue-500
+    `,
+    field: cl`
+      flex
+      flex1 
+      flex-col 
+    `,
+    label: cl`
+      h-16
+      flex
+      absolute
+      scale-75
+      opacity-50
+      origin-left
+      items-center
+      duration-200
+      -translate-y-4
+      transition-all
+      whitespace-nowrap
+      
+      peer-focus:scale-75
+      peer-focus:opacity-100
+      peer-focus:text-blue-500
+      peer-focus:-translate-y-4
+      peer-placeholder-shown:scale-100
+      peer-placeholder-shown:opacity-100
+      peer-placeholder-shown:translate-y-0
+    `,
+    readonly: cl`
+      h-12
+      flex
+      flex-1
+      flex-col
+      self-end
+      text-black
+      justify-center
+      dark:text-white
+    `,
+    input: cl`
+      peer
+      h-12
+      flex-1
+      self-end
+      text-black
       outline-none
-      border-gray-300
-
-      dark:bg-neutral-700
-      dark:border-black
-      dark:focus:ring-offset-neutral-800
-
-      focus:ring
-      focus:ring-offset-2
-      focus:ring-blue-500
-`,
+      bg-transparent
+      dark:text-white
+    `,
   };
 
   $: {
@@ -35,22 +86,34 @@
     delete props.required;
   }
 
-  export { label, name, val };
+  export { label, name, val, bg };
 </script>
 
-<fieldset
-  class="py-3 px-4 mb-2 rounded-lg flex items-center bg-gray-100 dark:bg-neutral-800"
->
-  <label class="flex-none w-52" for={name}>{label}</label>
-  {#if Object.keys($$slots).length === 0}
-    <input
-      {...props}
-      {name}
-      id={name}
-      {required}
-      bind:value={val}
-      class={classes.input}
-    />
-  {/if}
-  <slot />
-</fieldset>
+<label class={classes.container}>
+  <slot name="icon" />
+  <div class="flex flex-1 relative self-stretch">
+    {#if $$slots.readonly}
+      <div class={classes.readonly}>
+        <slot name="readonly" />
+      </div>
+    {:else}
+      <input
+        {...props}
+        {name}
+        id={name}
+        {required}
+        placeholder=" "
+        bind:value={val}
+        class={classes.input}
+        on:change={(e) => dispatch("change", e.target.value)}
+      />
+    {/if}
+    <span class={classes.label}>{label}</span>
+  </div>
+</label>
+
+<style lang="postcss">
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+  }
+</style>

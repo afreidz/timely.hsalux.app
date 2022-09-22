@@ -1,7 +1,9 @@
 <script lang="ts">
+  import Icon from "@iconify/svelte";
   import cl from "../helpers/classlist";
   import subview from "../stores/subview";
   import type { SvelteComponent } from "svelte";
+  import Settings from "../subviews/Settings.svelte";
   import NewProject from "../subviews/project/New.svelte";
   import TimerDetail from "../subviews/timer/Detail.svelte";
 
@@ -15,6 +17,18 @@
   let componentProps: IComponentProps = {};
 
   const classes = {
+    close: cl`
+      top-0
+      right-0
+      absolute
+      w-10 h-10
+      rounded-sm
+      inline-flex
+      items-center
+      justify-center 
+      hover:bg-red-500 
+      transition-colors
+    `,
     overlay: cl`
       z-50
       fixed
@@ -68,6 +82,9 @@
         componentProps.id = id?.split("/")[1];
         component = TimerDetail;
         break;
+      case id?.startsWith("settings"):
+        component = Settings;
+        break;
       default:
         component = null;
         break;
@@ -89,6 +106,9 @@
   class:open={!!component}
 >
   <article class={classes.window}>
+    <a href="#" class={classes.close}>
+      <Icon icon="mi:close" alt="close" />
+    </a>
     <svelte:component this={component} {...componentProps} />
   </article>
 </main>

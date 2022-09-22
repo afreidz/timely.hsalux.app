@@ -1,11 +1,22 @@
 <script lang="ts">
   import now from "../stores/now";
-  import { onMount } from "svelte";
+  import Timer from "./Timer.svelte";
   import cl from "../helpers/classlist";
-  import { timers } from "../stores/timers";
+  import { onMount, tick } from "svelte";
+  import subview from "../stores/subview";
+  import { isToday } from "../helpers/date";
+  import { timers, viewDate } from "../stores/timers";
 
+  let viewIsToday;
   let offset: number;
+  let timerNodes = [];
+  let scrolled = false;
   let nowtime: HTMLElement;
+  let timeline: HTMLElement;
+
+  $: if ($timers) setview?.();
+  $: if ($viewDate) scrolled = false;
+  $: viewIsToday = isToday($viewDate);
   $: offset = $now.getHours() * 60 + $now.getMinutes();
 
   const hours = [
@@ -53,15 +64,6 @@
       w-[4880px]
       grid-cols-[repeat(1440,0.15rem)]
 `,
-    item: cl`
-      z-20
-      h-12
-      px-3
-      flex
-      items-center
-      rounded-full
-      justify-start
-`,
     hour: cl`
       border-l
       row-start-2
@@ -99,26 +101,32 @@
       whitespace-nowrap
       ml-[calc(100%_+_2px)]
 `,
-    chip: cl`
-      h-6
-      w-6
-      flex
-      bg-white
-      rounded-full
-      items-center
-      justify-center
-`,
   };
 
   onMount(setview);
 
-  function setview() {
-    if (!nowtime) return;
-    nowtime.scrollIntoView({ behavior: "smooth", inline: "center" });
+  async function setview() {
+    await tick();
+    const node = nowtime || timerNodes?.at(-1);
+    if (!!node && !scrolled)
+      node.scrollIntoView({ behavior: "smooth", inline: "center" });
+  }
+
+  function scroll(e) {
+    if (!timeline) return;
+    if (timeline.scrollHeight <= timeline.clientHeight) {
+      e.preventDefault();
+      timeline.scrollLeft -= e.deltaY;
+      scrolled = true;
+    }
   }
 </script>
 
-<section class={`timeline ${classes.section}`}>
+<section
+  class={`timeline ${classes.section}`}
+  bind:this={timeline}
+  on:mousewheel={scroll}
+>
   <div
     class={classes.grid}
     style={`grid-template-rows: 2.1rem 1.5rem repeat(${Math.max(
@@ -140,34 +148,32 @@
         >
       </div>
     {/each}
-    {#each $timers as item, index}
+    {#each $timers as item, index (item.id)}
       <a
+        bind:this={timerNodes[index]}
         href={`#edit-timer/${item.id}`}
-        class={`${classes.item} ${item.project.bgColor}`}
         style={`grid-row-start: ${index + 3}; grid-column-start: ${
           item.startCol
         }; grid-column-end: ${item.endCol};`}
         title={`${item.project.name} - ${item.task}`}
       >
-        <figure
-          title={item.project.name}
-          class={`h-12 flex flex-shrink-0 flex-col justify-center ${item.project.textColor}`}
-        >
-          <span class={classes.chip}>{item.project.name.charAt(0)}</span>
-        </figure>
-        <strong class="font-normal text-xs ml-2 text-white line-clamp-1"
-          >{item.task}</strong
-        >
+        <Timer color={item.project.color} project={item.project.name}>
+          <span class="ml-2">
+            {item.task}
+          </span>
+        </Timer>
       </a>
     {/each}
-    <div
-      class={classes.now}
-      style={`grid-column-start: ${offset}; grid-column-end: ${offset + 1};`}
-    >
-      <span class={classes.nowtime} bind:this={nowtime}
-        >{$now.toLocaleTimeString("en-US", { timeStyle: "short" })}</span
+    {#if viewIsToday}
+      <div
+        class={classes.now}
+        style={`grid-column-start: ${offset}; grid-column-end: ${offset + 1};`}
       >
-    </div>
+        <span class={classes.nowtime} bind:this={nowtime}
+          >{$now.toLocaleTimeString("en-US", { timeStyle: "short" })}</span
+        >
+      </div>
+    {/if}
   </div>
 </section>
 

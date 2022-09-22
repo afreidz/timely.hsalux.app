@@ -41,9 +41,7 @@
      `,
   };
 
-  onMount(() => {
-    if (window.location.hash) navigate();
-  });
+  onMount(navigate);
 
   function navigate() {
     $subview = window.location.hash;

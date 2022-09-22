@@ -10,7 +10,6 @@
     font-medium
     rounded-full
     transition-all
-    active:bg-blue-600
     active:translate-y-px
 `;
 </script>

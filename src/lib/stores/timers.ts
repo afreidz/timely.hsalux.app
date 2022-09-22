@@ -1,8 +1,9 @@
 import now from "./now";
 import lf from "localforage";
 import { projects } from "./projects";
-import { writable, get } from "svelte/store";
 import type { Writable } from "svelte/store";
+import { isToday, isSameDay } from "../helpers/date";
+import { writable, get, type Unsubscriber } from "svelte/store";
 
 export interface ITimer {
   id: string;
@@ -12,16 +13,16 @@ export interface ITimer {
   projectId?: string;
 }
 
-const cache = new Map();
 const persistence = lf.createInstance({
   name: "timers.time.me",
 });
 
+let pollUnsubscribe: Unsubscriber;
 const timers: Writable<Timer[]> = writable([]);
-const viewDate: Writable<Date> = writable(new Date());
-const existing: ITimer[] = await persistence.getItem(
-  `timers_${get(viewDate).toLocaleDateString("en")}`
-);
+const hashDate =
+  window?.location.hash.startsWith("#viewday_") &&
+  new Date(window.location.hash.split("#viewday_")[1]);
+const viewDate: Writable<Date> = writable(hashDate || new Date());
 
 export class Timer {
   private instance: ITimer;
@@ -40,10 +41,12 @@ export class Timer {
 
   set task(task) {
     this.instance.task = task;
+    this.persist();
+    Timer.refresh();
   }
 
   get running() {
-    return !this.instance.end;
+    return isToday(this.instance.start) ? !this.instance.end : false;
   }
 
   get start() {
@@ -55,7 +58,12 @@ export class Timer {
   }
 
   get duration() {
-    return +this.end - +this.start;
+    return new Date(+this.end - +this.start);
+  }
+
+  get hours() {
+    const hours = +this.duration / 1000 / 60 / 60;
+    return hours.toFixed(1);
   }
 
   get startCol() {
@@ -63,46 +71,86 @@ export class Timer {
   }
 
   get endCol() {
-    const endCol = this.end.getHours() * 60 + this.end.getMinutes();
-    return endCol - this.startCol > 15 ? endCol : this.startCol + 15;
+    const diff = Math.ceil(+this.duration / (1000 * 60));
+    const endCol =
+      this.startCol + diff - this.startCol > 15
+        ? this.startCol + diff
+        : this.startCol + 15;
+    return isToday(this.start) ? endCol : Math.min(endCol, 1440);
   }
 
   get project() {
     return get(projects).find((p) => p.id === this.instance.projectId);
   }
 
+  shiftEnd() {
+    if (this.running) return;
+    this.instance.end = new Date(+this.instance.end + 1000 * 60 * 15);
+    this.persist();
+    Timer.refresh();
+  }
+
+  shiftStart() {
+    this.instance.start = new Date(+this.instance.start - 1000 * 60 * 15);
+    this.persist();
+    Timer.refresh();
+  }
+
   stop() {
     this.instance.end = new Date();
     this.project.refresh();
-    this.refresh();
+    this.persist();
+    Timer.refresh();
+  }
+
+  unstop() {
+    this.instance.end = null;
+    this.project.refresh();
+    this.persist();
+    Timer.refresh();
   }
 
   serialize() {
     return this.instance;
   }
 
-  refresh() {
-    timers.update((t) => [...t]);
+  persist() {
+    persistence.setItem(this.id, this.serialize());
+  }
+
+  async delete() {
+    await persistence.removeItem(this.id);
+    this.project.refresh();
+    timers.update((t) => t.filter((t) => t.id !== this.id));
+  }
+
+  static refresh() {
+    timers.update((t) => t);
+  }
+
+  static async getAll() {
+    let existing: Timer[] = [];
+
+    await persistence.iterate((v: ITimer, k) => {
+      existing.push(new Timer(v));
+    });
+
+    return existing;
   }
 }
 
-if (existing?.length) {
-  existing.forEach((t) => {
-    cache.set(t.id, new Timer(t));
+viewDate.subscribe(async (d) => {
+  pollUnsubscribe?.();
+
+  let existing: Timer[] = (await Timer.getAll()).filter((t) => {
+    return isSameDay(d, t.start);
   });
-  timers.set(existing.map((t) => new Timer(t)));
-}
 
-timers.subscribe((timers) => {
-  const serialized = timers.map((t) => t.serialize());
-  timers.forEach((t) => t.project?.refresh());
-  persistence.setItem(
-    `timers_${get(viewDate).toLocaleDateString("en")}`,
-    serialized
-  );
+  timers.set(existing);
+
+  if (isToday(d))
+    pollUnsubscribe = now.subscribe(() => timers.update((t) => t));
 });
-
-now.subscribe(() => timers.update((t) => t));
 
 function add(projectId?: string, task = "Timer") {
   const timer: ITimer = {
@@ -113,8 +161,9 @@ function add(projectId?: string, task = "Timer") {
   };
 
   const timerClass = new Timer(timer);
-
+  timerClass.persist();
   timers.update((timers) => [...timers, timerClass]);
+  timerClass.project.refresh();
 }
 
-export { add, timers };
+export { add, timers, viewDate };

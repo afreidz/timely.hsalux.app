@@ -15,7 +15,7 @@
   $: {
     if (variant === "page") {
       classlist = cl`text-4xl leading-relaxed`;
-    } else if(variant === "section") {
+    } else if (variant === "section") {
       classlist = cl`text-xl leading-relaxed font-light`;
     } else {
       classlist = cl`text-6xl leading-relaxed`;
@@ -28,6 +28,6 @@
   export { as, variant };
 </script>
 
-<svelte:element this={as} {...props} class={classlist}>
+<svelte:element this={as} {...props} class={"flex items-center " + classlist}>
   <slot />
 </svelte:element>
