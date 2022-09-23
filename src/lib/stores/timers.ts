@@ -228,4 +228,11 @@ function add(projectId?: string, task = "Timer") {
   timerClass.project.refresh();
 }
 
-export { add, timers, viewDate };
+async function deleteAllTimers() {
+  await persistence.iterate((v: ITimer) => {
+    persistence.removeItem(v.id);
+  });
+  timers.update((t) => []);
+}
+
+export { add, timers, viewDate, deleteAllTimers };

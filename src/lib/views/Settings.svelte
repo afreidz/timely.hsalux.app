@@ -2,8 +2,11 @@
   import Icon from "@iconify/svelte";
   import { settings } from "../stores/settings";
   import Field from "../components/Field.svelte";
+  import Button from "../components/Button.svelte";
   import Switch from "../components/Switch.svelte";
   import Heading from "../components/Heading.svelte";
+  import { deleteAllTimers } from "../stores/timers";
+  import { deleteAllProjects } from "../stores/projects";
 
   let endofday;
   $: endofday = $settings?.endofday ?? null;
@@ -34,4 +37,19 @@
   >
     <Icon slot="icon" icon="heroicons:clock" class="h-6 w-6 opacity-50 mr-2" />
   </Field>
+  <div class="mt-12">
+    <Heading as="h5" variant="section">
+      <span class="text-red-500">Danger Zone</span>
+    </Heading>
+    <Field readonly>
+      <div slot="readonly" class="flex justify-around">
+        <Button on:click={() => deleteAllProjects()} class="bg-red-500 py-4"
+          >Delete All Projects</Button
+        >
+        <Button on:click={() => deleteAllTimers()} class="bg-red-500 py-4"
+          >Delete All Timers</Button
+        >
+      </div>
+    </Field>
+  </div>
 </section>

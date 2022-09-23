@@ -94,6 +94,12 @@ await persistence.iterate((v: IProject) => {
   existing.push(new Project(v));
 });
 
+async function deleteAllProjects() {
+  await persistence.iterate((v: IProject) => {
+    persistence.removeItem(v.id);
+  });
+}
+
 projects.set(existing);
 
-export { add, projects };
+export { add, projects, deleteAllProjects };
