@@ -16,6 +16,7 @@ export interface ITimer {
 
 const persistence = lf.createInstance({
   name: "timers.time.me",
+  driver: lf.LOCALSTORAGE,
 });
 
 let pollUnsubscribe: Unsubscriber;
@@ -198,7 +199,7 @@ viewDate.subscribe(async (d) => {
 });
 
 async function handlePollSubscription(n) {
-  const { autoStop, endofday } = get(settings);
+  const { autoStop, endofday } = get(settings) || {};
 
   if (autoStop && endofday) {
     const [hour, min] = endofday.split(":");

@@ -11,6 +11,7 @@ export interface IProject {
 const projects: Writable<Project[]> = writable([]);
 const persistence = lf.createInstance({
   name: "projects.time.me",
+  driver: lf.LOCALSTORAGE,
 });
 
 export class Project {

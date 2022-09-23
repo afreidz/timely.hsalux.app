@@ -8,6 +8,7 @@ interface ISettings {
 
 const persistence = lf.createInstance({
   name: "settings.time.me",
+  driver: lf.LOCALSTORAGE,
 });
 
 const settings: Writable<ISettings> = writable(null);
