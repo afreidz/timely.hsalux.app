@@ -3,10 +3,10 @@
   import cl from "../helpers/classlist";
   import subview from "../stores/subview";
   import type { SvelteComponent } from "svelte";
-  import Settings from "../subviews/Settings.svelte";
-  import NewProject from "../subviews/project/New.svelte";
-  import TimerDetail from "../subviews/timer/Detail.svelte";
-  import ProjectDetail from "../subviews/project/Detail.svelte";
+  import Settings from "../views/Settings.svelte";
+  import NewProject from "../views/project/New.svelte";
+  import TimerDetail from "../views/timer/Detail.svelte";
+  import ProjectDetail from "../views/project/Detail.svelte";
 
   interface IComponentProps {
     id?: string;
