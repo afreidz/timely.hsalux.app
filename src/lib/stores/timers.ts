@@ -16,7 +16,6 @@ export interface ITimer {
 
 const persistence = lf.createInstance({
   name: "timers.time.me",
-  driver: lf.LOCALSTORAGE,
 });
 
 let pollUnsubscribe: Unsubscriber;

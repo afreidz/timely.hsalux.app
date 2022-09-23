@@ -133,7 +133,7 @@
     style={`grid-template-rows: 2.1rem 1.5rem repeat(${Math.max(
       $timers.length,
       1
-    )}, 3rem) auto`}
+    )}, 2.5rem) auto`}
   >
     {#each hours as hour, index}
       <div
