@@ -6,6 +6,7 @@
   import Settings from "../subviews/Settings.svelte";
   import NewProject from "../subviews/project/New.svelte";
   import TimerDetail from "../subviews/timer/Detail.svelte";
+  import ProjectDetail from "../subviews/project/Detail.svelte";
 
   interface IComponentProps {
     id?: string;
@@ -79,12 +80,16 @@
       case id?.startsWith("new-project"):
         component = NewProject;
         break;
-      case id?.startsWith("edit-timer"):
-        componentProps.id = id?.split("/")[1];
+      case id?.startsWith("timer_"):
+        componentProps.id = id;
         component = TimerDetail;
         break;
       case id?.startsWith("settings"):
         component = Settings;
+        break;
+      case id?.startsWith("project_"):
+        componentProps.id = id;
+        component = ProjectDetail;
         break;
       default:
         component = null;

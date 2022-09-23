@@ -39,11 +39,13 @@
     </Field>
     <div class="flex my-10">
       <div class="flex-none w-36 flex justify-center">
-        <Field label="Start Time" bg={false}>
-          <span slot="readonly">
-            {timer.start.toLocaleTimeString("en")}
-          </span>
-        </Field>
+        <Field
+          bg={false}
+          type="time"
+          label="Start Time"
+          bind:value={timer.startString}
+          on:change={(e) => (timer.startString = e.detail)}
+        />
       </div>
       <div class="flex-1 mt-2">
         <Timer
@@ -85,11 +87,13 @@
         </Timer>
       </div>
       <div class="flex-none w-36 flex justify-center">
-        <Field label="End Time" bg={false}>
-          <span slot="readonly">
-            {timer.end.toLocaleTimeString("en")}
-          </span>
-        </Field>
+        <Field
+          bg={false}
+          type="time"
+          label="End Time"
+          bind:value={timer.endString}
+          on:change={(e) => (timer.endString = e.detail)}
+        />
       </div>
     </div>
     <div class="flex justify-between">

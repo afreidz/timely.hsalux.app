@@ -6,7 +6,6 @@ export interface IProject {
   id: string;
   name: string;
   color: string;
-  imgurl?: string;
 }
 
 const projects: Writable<Project[]> = writable([]);
@@ -34,15 +33,7 @@ export class Project {
   set name(n: string) {
     this.instance.name = n;
     this.persist();
-  }
-
-  get image() {
-    return this.instance.imgurl;
-  }
-
-  set image(i: string) {
-    this.instance.imgurl = i;
-    this.persist();
+    this.refresh();
   }
 
   get color() {
@@ -52,6 +43,7 @@ export class Project {
   set color(c: string) {
     this.instance.color = c;
     this.persist();
+    this.refresh();
   }
 
   get bgColor() {
@@ -85,11 +77,10 @@ export class Project {
   }
 }
 
-function add(name: string, color: string, imgurl: string) {
+function add(name: string, color: string) {
   const project: IProject = {
     name,
     color,
-    imgurl,
     id: `project_${+new Date()}`,
   };
 

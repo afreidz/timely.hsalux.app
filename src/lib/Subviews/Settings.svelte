@@ -5,10 +5,7 @@
   import Switch from "../components/Switch.svelte";
   import Heading from "../components/Heading.svelte";
 
-  let autoStop;
   let endofday;
-
-  $: autoStop = $settings?.autoStop ?? false;
   $: endofday = $settings?.endofday ?? null;
 </script>
 
@@ -18,11 +15,15 @@
     <Switch
       slot="switch"
       name="autoStop"
-      enabled={autoStop}
+      enabled={$settings?.autoStop}
       class="flex-1 justify-between"
       label="Enable Auto Stop of Timers"
       on:change={(e) => ($settings = { ...$settings, autoStop: e.detail })}
     />
+    <p slot="lower" class="py-4 text-xs opacity-30">
+      When enabled, any running timers will automatically stop when they meet
+      the time set in "End of Workday."
+    </p>
   </Field>
   <Field
     name="test"

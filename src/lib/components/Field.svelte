@@ -14,9 +14,9 @@
   $: classes = {
     container: cl`
       my-1
-      h-16
       flex
       relative
+      flex-wrap
       rounded-lg
       items-center
       border-white
@@ -26,17 +26,19 @@
       ${bg ? "bg-neutral-50" : ""}
       ${bg ? "dark:border-black" : ""}
       ${bg ? "dark:bg-neutral-700" : ""}
-
+      
       focus-within:ring-2
       focus-within:ring-blue-500
     `,
     field: cl`
+      pb-2
       flex
-      flex1 
-      flex-col 
+      flex-1
+      relative
+      self-stretch
+      ${!!label ? "pt-6" : "pt-4"}
     `,
     label: cl`
-      h-16
       flex
       absolute
       scale-75
@@ -57,8 +59,8 @@
       peer-placeholder-shown:translate-y-0
     `,
     readonly: cl`
-      h-12
       flex
+      my-2
       flex-1
       flex-col
       self-end
@@ -68,10 +70,10 @@
     `,
     input: cl`
       peer
-      h-12
-      flex-1
-      self-end
+      flex-1 
+      leading-10
       text-black
+      self-stretch
       outline-none
       bg-transparent
       dark:text-white
@@ -96,7 +98,7 @@
 
 <label class={classes.container}>
   <slot name="icon" />
-  <div class="flex flex-1 relative self-stretch">
+  <div class={classes.field}>
     {#if $$slots.switch}
       <div class={classes.switch}>
         <slot name="switch" />
@@ -119,6 +121,11 @@
     {/if}
     {#if label}<span class={classes.label}>{label}</span>{/if}
   </div>
+  {#if $$slots.lower}
+    <div class="flex-shrink-0 w-full">
+      <slot name="lower" />
+    </div>
+  {/if}
 </label>
 
 <style lang="postcss">

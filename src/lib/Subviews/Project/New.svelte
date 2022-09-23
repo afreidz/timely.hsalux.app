@@ -30,21 +30,19 @@
         name="newProjectName"
         bind:val={newProjectName}
       />
-      <Field
-        label="Image URL"
-        name="newProjectImgurl"
-        bind:val={newProjectImgurl}
-      />
-      <RadioGroup
-        name="newProjectColor"
-        class="flex flex-wrap"
-        value={newProjectColor}
-        on:change={(e) => (newProjectColor = e.detail)}
-      >
-        {#each colorKeys as color}
-          <Checkbox {color} />
-        {/each}
-      </RadioGroup>
+      <Field readonly label="Project Color">
+        <RadioGroup
+          slot="readonly"
+          name="newProjectColor"
+          value={newProjectColor}
+          class="flex flex-wrap mt-2"
+          on:change={(e) => (newProjectColor = e.detail)}
+        >
+          {#each colorKeys as color}
+            <Checkbox {color} />
+          {/each}
+        </RadioGroup>
+      </Field>
     </div>
     <footer class="flex flex-none justify-end">
       <Button>

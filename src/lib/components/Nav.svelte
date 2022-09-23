@@ -42,12 +42,14 @@
       </div>
       <ul>
         {#each $projects as project}
-          <li class="pl-12 py-2 flex items-center">
+          <li class="pl-12 flex items-center">
             <div class={`mr-1 rounded-sm ${project.bgColor} w-4 h-4`} />
-            <span class="flex-1 ml-2 line-clamp-1">{project.name}</span>
+            <a href={`#${project.id}`} class="flex-1 ml-2 line-clamp-1 py-2"
+              >{project.name}</a
+            >
             <button
               class="flex-none"
-              on:click={() => handleProjectClick(project.id)}
+              on:click|stopPropagation={() => handleProjectClick(project.id)}
             >
               {#await project.loadTimers()}
                 <Icon icon="eos-icons:loading" class="h-6 w-6" />

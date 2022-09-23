@@ -107,9 +107,10 @@
 
   async function setview() {
     await tick();
-    const node = nowtime || timerNodes?.at(-1);
+    const node = nowtime || timerNodes?.at(0);
+    const inline = nowtime ? "center" : "start";
     if (!!node && !scrolled)
-      node.scrollIntoView({ behavior: "smooth", inline: "center" });
+      node.scrollIntoView({ behavior: "smooth", inline });
   }
 
   function scroll(e) {
@@ -150,8 +151,8 @@
     {/each}
     {#each $timers as item, index (item.id)}
       <a
+        href={`#${item.id}`}
         bind:this={timerNodes[index]}
-        href={`#edit-timer/${item.id}`}
         style={`grid-row-start: ${index + 3}; grid-column-start: ${
           item.startCol
         }; grid-column-end: ${item.endCol};`}

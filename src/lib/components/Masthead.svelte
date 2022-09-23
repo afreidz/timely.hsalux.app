@@ -21,10 +21,15 @@
   function next() {
     $viewDate = nextDay;
   }
+
+  function setview(v) {
+    const [yyyy, mm, dd] = v.split("-");
+    $viewDate = new Date(yyyy, mm - 1, dd);
+  }
 </script>
 
 <header
-  class="p-5 flex justify-between bg-white dark:bg-neutral-900 border-b border-white dark:border-black"
+  class="p-5 pr-16 flex justify-between bg-white dark:bg-neutral-900 border-b border-white dark:border-black"
 >
   <div>
     <small class="text-neutral-400 ml-8">
@@ -50,4 +55,20 @@
       {/if}
     </Heading>
   </div>
+  <div class="flex flex-col justify-center">
+    <label class="relative">
+      <Icon icon="heroicons:calendar-days" class="w-12 h-12" />
+      <input
+        type="date"
+        on:change={(e) => setview(e.target.value)}
+        class="absolute top-0 bottom-0 left-0 right-0 opacity-0"
+      />
+    </label>
+  </div>
 </header>
+
+<style lang="postcss">
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    @apply absolute top-0 bottom-0 left-0 right-0 bg-transparent w-auto h-auto;
+  }
+</style>

@@ -20,10 +20,7 @@ const persistence = lf.createInstance({
 
 let pollUnsubscribe: Unsubscriber;
 const timers: Writable<Timer[]> = writable([]);
-const hashDate =
-  window?.location.hash.startsWith("#viewday_") &&
-  new Date(window.location.hash.split("#viewday_")[1]);
-const viewDate: Writable<Date> = writable(hashDate || new Date());
+const viewDate: Writable<Date> = writable(new Date());
 
 export class Timer {
   private instance: ITimer;
@@ -54,8 +51,39 @@ export class Timer {
     return this.instance.start;
   }
 
+  get startString() {
+    return `${("0" + this.instance.start.getHours()).slice(-2)}:${(
+      "0" + this.instance.start.getMinutes()
+    ).slice(-2)}`;
+  }
+
+  set startString(s) {
+    if (!s) return;
+    const [hh, mm] = s.split(":");
+    this.instance.start.setHours(+hh);
+    this.instance.start.setMinutes(+mm);
+    this.persist();
+    Timer.refresh();
+  }
+
   get end() {
     return this.instance.end || new Date();
+  }
+
+  get endString() {
+    return `${("0" + this.end.getHours()).slice(-2)}:${(
+      "0" + this.end.getMinutes()
+    ).slice(-2)}`;
+  }
+
+  set endString(s) {
+    if (!s) return;
+    const [hh, mm] = s.split(":");
+    if (this.running) this.stop();
+    this.instance.end.setHours(+hh);
+    this.instance.end.setMinutes(+mm);
+    this.persist();
+    Timer.refresh();
   }
 
   get duration() {
@@ -166,21 +194,25 @@ viewDate.subscribe(async (d) => {
 
   timers.set(existing);
 
-  if (isToday(d))
-    pollUnsubscribe = now.subscribe(async (n) => {
-      const check = new Date(n);
-      check.setHours(17);
-      check.setMinutes(0);
-      check.setSeconds(0);
-      (await Timer.getAll()).forEach((t) => {
-        if (t.running && +t.end >= +check && get(settings).autoStop) {
-          t.stop();
-        }
-      });
-
-      timers.update((t) => t);
-    });
+  if (isToday(d)) pollUnsubscribe = now.subscribe(handlePollSubscription);
 });
+
+async function handlePollSubscription(n) {
+  const { autoStop, endofday } = get(settings);
+
+  if (autoStop && endofday) {
+    const [hour, min] = endofday.split(":");
+    const check = new Date();
+    check.setHours(+hour);
+    check.setMinutes(+min);
+
+    (await Timer.getAll()).forEach((t) => {
+      if (t.running && +t.end >= +check) t.stop();
+    });
+  }
+
+  timers.update((t) => t);
+}
 
 function add(projectId?: string, task = "Timer") {
   const timer: ITimer = {

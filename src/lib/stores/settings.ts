@@ -2,7 +2,7 @@ import lf from "localforage";
 import { writable, type Writable } from "svelte/store";
 
 interface ISettings {
-  endofwork?: Date;
+  endofday?: string;
   autoStop?: boolean;
 }
 
