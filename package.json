@@ -17,6 +17,7 @@
     "@tailwindcss/line-clamp": "^0.4.2",
     "@tsconfig/svelte": "^3.0.0",
     "autoprefixer": "^10.4.10",
+    "firebase": "^9.10.0",
     "postcss": "^8.4.16",
     "prettier": "^2.7.1",
     "prettier-plugin-svelte": "^2.7.0",

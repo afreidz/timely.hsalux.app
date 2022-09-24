@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import auth from "./lib/stores/auth";
   import cl from "./lib/helpers/classlist";
   import subview from "./lib/stores/subview";
   import Nav from "./lib/components/Nav.svelte";
@@ -7,6 +8,8 @@
   import Titlebar from "./lib/components/Titlebar.svelte";
   import Masthead from "./lib/components/Masthead.svelte";
   import Timeline from "./lib/components/Timeline.svelte";
+
+  console.log($auth);
 
   const classes = {
     layout: cl`
