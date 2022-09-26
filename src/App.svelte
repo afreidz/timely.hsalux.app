@@ -3,13 +3,12 @@
   import auth from "./lib/stores/auth";
   import cl from "./lib/helpers/classlist";
   import subview from "./lib/stores/subview";
+  import Auth from "./lib/views/Auth.svelte";
   import Nav from "./lib/components/Nav.svelte";
   import Subview from "./lib/components/Subview.svelte";
   import Titlebar from "./lib/components/Titlebar.svelte";
   import Masthead from "./lib/components/Masthead.svelte";
   import Timeline from "./lib/components/Timeline.svelte";
-
-  console.log($auth);
 
   const classes = {
     layout: cl`
@@ -53,14 +52,18 @@
 
 <svelte:window on:hashchange={navigate} />
 
-<Titlebar />
+{#if !$auth}
+  <Auth />
+{:else}
+  <Titlebar />
 
-<main class={classes.layout}>
-  <Masthead />
-  <Timeline />
-  <aside class={classes.sidenav}>
-    <Nav />
-  </aside>
-</main>
+  <main class={classes.layout}>
+    <Masthead />
+    <Timeline />
+    <aside class={classes.sidenav}>
+      <Nav />
+    </aside>
+  </main>
 
-<Subview />
+  <Subview />
+{/if}

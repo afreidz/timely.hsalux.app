@@ -3,23 +3,26 @@ import {
   getAuth,
   type User,
   deleteUser,
+  OAuthProvider,
   signInWithPopup,
-  GoogleAuthProvider,
   onAuthStateChanged,
   signOut as fbSignOut,
 } from "firebase/auth";
 
 const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
+const provider = new OAuthProvider("microsoft.com");
+provider.setCustomParameters({
+  tenant: "e85feadf-11e7-47bb-a160-43b98dcc96f1",
+});
 
 export async function signin(callback: VoidFunction) {
   await signInWithPopup(auth, provider);
-  callback();
+  callback?.();
 }
 
-export async function signOut(callback: VoidFunction) {
+export async function signout(callback: VoidFunction) {
   await fbSignOut(auth);
-  callback();
+  callback?.();
 }
 
 export function onAuthChange(callback: (user: User | null) => void) {
@@ -28,4 +31,4 @@ export function onAuthChange(callback: (user: User | null) => void) {
 
 export { deleteUser } from "firebase/auth";
 
-export default { signin, onAuthChange, signOut, deleteUser };
+export default { signin, onAuthChange, signout, deleteUser };
