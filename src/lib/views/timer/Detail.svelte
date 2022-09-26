@@ -1,5 +1,4 @@
 <script lang="ts">
-  import debounce from "debounce";
   import Icon from "@iconify/svelte";
   import Timer from "../../components/Timer.svelte";
   import Field from "../../components/Field.svelte";
