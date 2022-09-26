@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import paused from "../stores/paused";
   import cl from "../helpers/classlist";
   import subview from "../stores/subview";
   import type { SvelteComponent } from "svelte";
@@ -75,26 +76,29 @@
 
   $: {
     id = $subview?.replace("#", "");
+    componentProps = {};
 
     switch (true) {
       case id?.startsWith("new-project"):
         component = NewProject;
         break;
-      case id?.startsWith("timer_"):
-        componentProps.id = id;
+      case id?.startsWith("timer/"):
+        componentProps.id = id.split("timer/")[1];
         component = TimerDetail;
         break;
       case id?.startsWith("settings"):
         component = Settings;
         break;
-      case id?.startsWith("project_"):
-        componentProps.id = id;
+      case id?.startsWith("project/"):
+        componentProps.id = id.split("project/")[1];
         component = ProjectDetail;
         break;
       default:
         component = null;
         break;
     }
+
+    $paused = !!component;
   }
 
   function close(e: MouseEvent) {

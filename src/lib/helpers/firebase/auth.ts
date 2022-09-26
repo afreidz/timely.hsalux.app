@@ -4,7 +4,7 @@ import {
   type User,
   deleteUser,
   OAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
   onAuthStateChanged,
   signOut as fbSignOut,
 } from "firebase/auth";
@@ -16,7 +16,7 @@ provider.setCustomParameters({
 });
 
 export async function signin(callback: VoidFunction) {
-  await signInWithPopup(auth, provider);
+  await signInWithRedirect(auth, provider);
   callback?.();
 }
 

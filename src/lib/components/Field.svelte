@@ -4,8 +4,8 @@
 
   let classes;
   let props: any;
-  let value: string;
   let val: string = "";
+  let readonly: boolean;
   let required: boolean;
   let bg: boolean = true;
   let name: string = null;
@@ -91,7 +91,6 @@
     delete props.val;
     delete props.name;
     delete props.label;
-    delete props.required;
   }
 
   export { label, name, val, bg };
@@ -108,12 +107,11 @@
       <div class={classes.readonly}>
         <slot name="readonly" />
       </div>
-    {:else if val}
+    {:else if readonly}
       <input
         {...props}
         {name}
         id={name}
-        {required}
         value={val}
         placeholder=" "
         class={classes.input}
@@ -124,9 +122,8 @@
         {...props}
         {name}
         id={name}
-        {required}
+        bind:value={val}
         placeholder=" "
-        bind:value
         class={classes.input}
         on:change={(e) => dispatch("change", e.target.value)}
       />

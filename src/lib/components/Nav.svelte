@@ -2,7 +2,9 @@
   import Icon from "@iconify/svelte";
   import cl from "../helpers/classlist";
   import { add } from "../stores/timers";
-  import { projects } from "../stores/projects";
+  import { isToday } from "../helpers/date";
+  import viewDate from "../stores/viewDate";
+  import projects, { load } from "../stores/projects";
 
   const navclass = cl`
     grid
@@ -11,9 +13,8 @@
     grid-rows-[7rem_auto_4rem]
 `;
 
-  async function handleProjectClick(projectId: string) {
+  function handleProjectClick(projectId: string) {
     const project = $projects.find((p) => p.id === projectId);
-    await project?.loadTimers();
     if (project?.hasRunningTimer) {
       const timer = project.timers.find((t) => t.running);
       timer?.stop();
@@ -41,28 +42,34 @@
         </a>
       </div>
       <ul>
-        {#each $projects as project}
-          <li class="pl-12 flex items-center">
-            <div class={`mr-1 rounded-sm ${project.bgColor} w-4 h-4`} />
-            <a href={`#${project.id}`} class="flex-1 ml-2 line-clamp-1 py-2"
-              >{project.name}</a
-            >
-            <button
-              class="flex-none"
-              on:click|stopPropagation={() => handleProjectClick(project.id)}
-            >
-              {#await project.loadTimers()}
-                <Icon icon="eos-icons:loading" class="h-6 w-6" />
-              {:then}
-                {#if project.hasRunningTimer}
-                  <Icon icon="heroicons:stop-circle" class="h-6 w-6" />
-                {:else}
-                  <Icon icon="heroicons:play-circle" class="h-6 w-6" />
-                {/if}
-              {/await}
-            </button>
+        {#await load()}
+          <li class="pl-12">
+            <Icon icon="eos-icons:loading" class="h-6 w-6" />
           </li>
-        {/each}
+        {:then}
+          {#each $projects as project}
+            <li class="pl-12 flex items-center">
+              <div class={`mr-1 rounded-sm ${project.bgColor} w-4 h-4`} />
+              <a
+                href={`#project/${project.id}`}
+                class="flex-1 ml-2 line-clamp-1 py-2">{project.name}</a
+              >
+              {#if isToday($viewDate)}
+                <button
+                  class="flex-none"
+                  on:click|stopPropagation={() =>
+                    handleProjectClick(project.id)}
+                >
+                  {#if project.hasRunningTimer}
+                    <Icon icon="heroicons:stop-circle" class="h-6 w-6" />
+                  {:else}
+                    <Icon icon="heroicons:play-circle" class="h-6 w-6" />
+                  {/if}
+                </button>
+              {/if}
+            </li>
+          {/each}
+        {/await}
       </ul>
     </li>
   </ul>

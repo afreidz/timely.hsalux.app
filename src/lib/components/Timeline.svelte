@@ -1,11 +1,13 @@
 <script lang="ts">
   import now from "../stores/now";
+  import Icon from "@iconify/svelte";
   import Timer from "./Timer.svelte";
   import cl from "../helpers/classlist";
   import { onMount, tick } from "svelte";
   import subview from "../stores/subview";
+  import viewDate from "../stores/viewDate";
   import { isToday } from "../helpers/date";
-  import { timers, viewDate } from "../stores/timers";
+  import timers, { load } from "../stores/timers";
 
   let viewIsToday;
   let offset: number;
@@ -128,54 +130,62 @@
   bind:this={timeline}
   on:mousewheel={scroll}
 >
-  <div
-    class={classes.grid}
-    style={`grid-template-rows: 2.1rem 1.5rem repeat(${Math.max(
-      $timers.length,
-      1
-    )}, 3rem) auto`}
-  >
-    {#each hours as hour, index}
-      <div
-        class={classes.hour}
-        style={`grid-column-start:${Math.max(
-          index * 60,
-          1
-        )}; grid-column-end:${Math.max(index * 60 + 1, 2)};`}
-      >
-        <span
-          class="ml-3 inline-block bg-gray-100 dark:bg-neutral-800 relative z-10"
-          >{hour}</span
+  {#await load()}
+    <div class="self-center justify-self-center">
+      <Icon icon="eos-icons:loading" class="w-12 h-12" />
+    </div>
+  {:then}
+    <div
+      class={classes.grid}
+      style={`grid-template-rows: 2.1rem 1.5rem repeat(${Math.max(
+        $timers.length,
+        1
+      )}, 3rem) auto`}
+    >
+      {#each hours as hour, index}
+        <div
+          class={classes.hour}
+          style={`grid-column-start:${Math.max(
+            index * 60,
+            1
+          )}; grid-column-end:${Math.max(index * 60 + 1, 2)};`}
         >
-      </div>
-    {/each}
-    {#each $timers as item, index (item.id)}
-      <a
-        href={`#${item.id}`}
-        bind:this={timerNodes[index]}
-        style={`grid-row-start: ${index + 3}; grid-column-start: ${
-          item.startCol
-        }; grid-column-end: ${item.endCol};`}
-        title={`${item.project.name} - ${item.task}`}
-      >
-        <Timer color={item.project.color} project={item.project.name}>
-          <span class="ml-2">
-            {item.task}
-          </span>
-        </Timer>
-      </a>
-    {/each}
-    {#if viewIsToday}
-      <div
-        class={classes.now}
-        style={`grid-column-start: ${offset}; grid-column-end: ${offset + 1};`}
-      >
-        <span class={classes.nowtime} bind:this={nowtime}
-          >{$now.toLocaleTimeString("en-US", { timeStyle: "short" })}</span
+          <span
+            class="ml-3 inline-block bg-gray-100 dark:bg-neutral-800 relative z-10"
+            >{hour}</span
+          >
+        </div>
+      {/each}
+      {#each $timers as item, index (item.id)}
+        <a
+          href={`#timer/${item.id}`}
+          bind:this={timerNodes[index]}
+          style={`grid-row-start: ${index + 3}; grid-column-start: ${
+            item.startCol
+          }; grid-column-end: ${item.endCol};`}
+          title={`${item.project?.name} - ${item.task}`}
         >
-      </div>
-    {/if}
-  </div>
+          <Timer color={item.project?.color} project={item.project?.name}>
+            <span class="ml-2">
+              {item.task}
+            </span>
+          </Timer>
+        </a>
+      {/each}
+      {#if viewIsToday}
+        <div
+          class={classes.now}
+          style={`grid-column-start: ${offset}; grid-column-end: ${
+            offset + 1
+          };`}
+        >
+          <span class={classes.nowtime} bind:this={nowtime}
+            >{$now.toLocaleTimeString("en-US", { timeStyle: "short" })}</span
+          >
+        </div>
+      {/if}
+    </div>
+  {/await}
 </section>
 
 <style lang="postcss">

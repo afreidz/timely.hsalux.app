@@ -4,7 +4,7 @@
   import Heading from "../../components/Heading.svelte";
   import Checkbox from "../..//components/Checkbox.svelte";
   import { RadioGroup } from "@rgossiaux/svelte-headlessui";
-  import { projects, type Project } from "../../stores/projects";
+  import projects, { type Project } from "../../stores/projects";
 
   export let id: string;
   let project: Project;

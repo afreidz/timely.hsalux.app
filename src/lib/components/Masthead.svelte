@@ -33,7 +33,7 @@
 >
   <div>
     <small class="text-neutral-400 ml-8">
-      {$viewDate.toLocaleDateString("en", {
+      {$viewDate?.toLocaleDateString("en", {
         month: "long",
         year: "numeric",
       })}
@@ -46,7 +46,7 @@
         </button>
       {/if}
       <span class="flex-none w-72">
-        {$viewDate.toLocaleString("en", { weekday: "long", day: "numeric" })}
+        {$viewDate?.toLocaleString("en", { weekday: "long", day: "numeric" })}
       </span>
       {#if nextDay}
         <button on:click={() => next()}>
