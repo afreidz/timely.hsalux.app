@@ -61,11 +61,11 @@
       </Heading>
       <Field readonly>
         <div slot="readonly" class="flex justify-around">
-          <Button on:click={() => deleteAllProjects()} class="bg-red-500 py-4"
-            >Delete All Projects</Button
-          >
           <Button on:click={() => deleteAllTimers()} class="bg-red-500 py-4"
             >Delete All Timers</Button
+          >
+          <Button on:click={() => deleteAllProjects()} class="bg-red-500 py-4"
+            >Delete All Projects</Button
           >
         </div>
       </Field>
