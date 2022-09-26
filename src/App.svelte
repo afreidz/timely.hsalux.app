@@ -4,11 +4,14 @@
   import cl from "./lib/helpers/classlist";
   import subview from "./lib/stores/subview";
   import Auth from "./lib/views/Auth.svelte";
+  import viewDate from "./lib/stores/viewDate";
   import Nav from "./lib/components/Nav.svelte";
   import Subview from "./lib/components/Subview.svelte";
-  import Titlebar from "./lib/components/Titlebar.svelte";
   import Masthead from "./lib/components/Masthead.svelte";
   import Timeline from "./lib/components/Timeline.svelte";
+  import Titlebar from "./lib/components/Titlebar.svelte";
+
+  $: if (!!$auth && !$viewDate) $viewDate = new Date();
 
   const classes = {
     layout: cl`
@@ -56,7 +59,6 @@
   <Auth />
 {:else}
   <Titlebar />
-
   <main class={classes.layout}>
     <Masthead />
     <Timeline />
@@ -64,6 +66,5 @@
       <Nav />
     </aside>
   </main>
-
   <Subview />
 {/if}

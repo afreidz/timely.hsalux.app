@@ -1,25 +1,22 @@
-import lf from "localforage";
-import { Timer } from "./timers";
-import { writable, type Writable, get } from "svelte/store";
+import { get } from "svelte/store";
+import timers, { Timer } from "./timers";
+import { writable, type Writable } from "svelte/store";
+import { projects as persistence } from "../helpers/firebase/db";
 
 export interface IProject {
-  id: string;
+  id?: string;
   name: string;
   color: string;
+  owner?: string;
 }
 
 const projects: Writable<Project[]> = writable([]);
-const persistence = lf.createInstance({
-  name: "projects.time.me",
-});
 
 export class Project {
-  public timers: Timer[];
   private instance: IProject;
 
   constructor(instance: IProject) {
     this.instance = instance;
-    this.timers = [];
   }
 
   get id() {
@@ -32,8 +29,8 @@ export class Project {
 
   set name(n: string) {
     this.instance.name = n;
-    this.persist();
-    this.refresh();
+    persistence.update(this.instance);
+    Project.update();
   }
 
   get color() {
@@ -42,8 +39,8 @@ export class Project {
 
   set color(c: string) {
     this.instance.color = c;
-    this.persist();
-    this.refresh();
+    persistence.update(this.instance);
+    Project.update();
   }
 
   get bgColor() {
@@ -58,48 +55,38 @@ export class Project {
     return this.timers.some((t) => t.running);
   }
 
+  get timers() {
+    return get(timers).filter((t) => t.project === this);
+  }
+
   serialize() {
     return this.instance;
   }
 
-  persist() {
-    persistence.setItem(this.id, this.serialize());
-  }
-
-  async loadTimers() {
-    const timers = await Timer.getAll();
-    this.timers = timers.filter((t) => t.project === this);
-  }
-
-  async refresh() {
-    await this.loadTimers();
-    projects.update((p) => p);
+  static async update() {
+    return load();
   }
 }
 
-function add(name: string, color: string) {
+async function add(name: string, color: string) {
   const project: IProject = {
     name,
     color,
-    id: `project_${+new Date()}`,
   };
 
-  const projectClass = new Project(project);
-  projectClass.persist();
-  projects.update((projects) => [...projects, projectClass]);
+  await persistence.add(project);
+  await load();
 }
 
-let existing: Project[] = [];
-await persistence.iterate((v: IProject) => {
-  existing.push(new Project(v));
-});
+async function load() {
+  const existing = await persistence.get();
+  projects.update(() => existing);
+}
 
 async function deleteAllProjects() {
-  await persistence.iterate((v: IProject) => {
-    persistence.removeItem(v.id);
-  });
+  await persistence.deleteAll();
+  await Project.update();
 }
 
-projects.set(existing);
-
-export { add, projects, deleteAllProjects };
+export default projects;
+export { add, deleteAllProjects, load };

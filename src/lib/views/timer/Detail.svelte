@@ -1,10 +1,11 @@
 <script lang="ts">
+  import debounce from "debounce";
   import Icon from "@iconify/svelte";
   import Timer from "../../components/Timer.svelte";
   import Field from "../../components/Field.svelte";
   import Button from "../../components/Button.svelte";
   import Heading from "../../components/Heading.svelte";
-  import { timers, type Timer } from "../../stores/timers";
+  import timers, { type Timer } from "../../stores/timers";
 
   export let id: string;
   let timer: Timer;
@@ -29,8 +30,8 @@
     <Field
       name="timerTask"
       label="Task Name"
-      bind:val={timer.task}
-      on:change={() => timer.persist()}
+      val={timer.task}
+      on:change={(e) => (timer.task = e.detail)}
     />
     <Field label="Project">
       <span slot="readonly">
@@ -43,7 +44,7 @@
           bg={false}
           type="time"
           label="Start Time"
-          bind:value={timer.startString}
+          bind:val={timer.startString}
           on:change={(e) => (timer.startString = e.detail)}
         />
       </div>
@@ -91,7 +92,7 @@
           bg={false}
           type="time"
           label="End Time"
-          bind:value={timer.endString}
+          bind:val={timer.endString}
           on:change={(e) => (timer.endString = e.detail)}
         />
       </div>

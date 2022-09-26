@@ -1,22 +1,22 @@
-import lf from "localforage";
 import { writable, type Writable } from "svelte/store";
+import { settings as persistence } from "../helpers/firebase/db";
 
-interface ISettings {
+export interface ISettings {
   endofday?: string;
   autoStop?: boolean;
 }
 
-const persistence = lf.createInstance({
-  name: "settings.time.me",
-});
-
 const settings: Writable<ISettings> = writable(null);
-const existing: ISettings = await persistence.getItem(`settings`);
 
-if (existing) settings.set(existing);
+async function load() {
+  const existing: ISettings = await persistence.get();
+  if (existing) settings.update(() => existing);
+}
 
 settings.subscribe((settings) => {
-  persistence.setItem(`settings`, settings);
+  if (!settings) return;
+  persistence.update(settings);
 });
 
-export { settings };
+export default settings;
+export { load };

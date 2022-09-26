@@ -1,26 +1,24 @@
 import now from "./now";
-import lf from "localforage";
-import { settings } from "./settings";
-import { projects } from "./projects";
+import paused from "./paused";
+import viewDate from "./viewDate";
+import settings from "./settings";
+import { isToday } from "../helpers/date";
 import type { Writable } from "svelte/store";
-import { isToday, isSameDay } from "../helpers/date";
+import { timers as persistence } from "../helpers/firebase/db";
 import { writable, get, type Unsubscriber } from "svelte/store";
+import projects, { Project, load as loadProjects } from "./projects";
 
 export interface ITimer {
-  id: string;
+  id?: string;
   end?: Date;
   start: Date;
   task: string;
+  owner?: string;
   projectId?: string;
 }
 
-const persistence = lf.createInstance({
-  name: "timers.time.me",
-});
-
 let pollUnsubscribe: Unsubscriber;
 const timers: Writable<Timer[]> = writable([]);
-const viewDate: Writable<Date> = writable(new Date());
 
 export class Timer {
   private instance: ITimer;
@@ -40,7 +38,7 @@ export class Timer {
   set task(task) {
     this.instance.task = task;
     this.persist();
-    Timer.refresh();
+    Timer.update();
   }
 
   get running() {
@@ -63,7 +61,7 @@ export class Timer {
     this.instance.start.setHours(+hh);
     this.instance.start.setMinutes(+mm);
     this.persist();
-    Timer.refresh();
+    Timer.update();
   }
 
   get end() {
@@ -83,7 +81,7 @@ export class Timer {
     this.instance.end.setHours(+hh);
     this.instance.end.setMinutes(+mm);
     this.persist();
-    Timer.refresh();
+    Timer.update();
   }
 
   get duration() {
@@ -116,7 +114,7 @@ export class Timer {
     if (this.running) return;
     this.instance.end = new Date(+this.instance.end + 1000 * 60 * min);
     this.persist();
-    Timer.refresh();
+    Timer.update();
   }
 
   unshiftEnd(min = 5) {
@@ -125,13 +123,13 @@ export class Timer {
     if (+unshifted - +this.start <= 1000 * 60) return;
     this.instance.end = unshifted;
     this.persist();
-    Timer.refresh();
+    Timer.update();
   }
 
   shiftStart(min = 5) {
     this.instance.start = new Date(+this.instance.start - 1000 * 60 * min);
     this.persist();
-    Timer.refresh();
+    Timer.update();
   }
 
   unshiftStart(min = 5) {
@@ -139,66 +137,67 @@ export class Timer {
     if (+this.end - +unshifted <= 1000 * 60) return;
     this.instance.start = unshifted;
     this.persist();
-    Timer.refresh();
+    Timer.update();
   }
 
   stop() {
     this.instance.end = new Date();
-    this.project.refresh();
+    Project.update();
     this.persist();
-    Timer.refresh();
+    Timer.update();
   }
 
   unstop() {
     this.instance.end = null;
-    this.project.refresh();
+    Project.update();
     this.persist();
-    Timer.refresh();
+    Timer.update();
   }
 
   serialize() {
     return this.instance;
   }
 
-  persist() {
-    persistence.setItem(this.id, this.serialize());
+  async persist() {
+    if (!this.instance.end) delete this.instance.end;
+    await persistence.update(this.instance);
   }
 
   async delete() {
-    await persistence.removeItem(this.id);
-    this.project.refresh();
-    timers.update((t) => t.filter((t) => t.id !== this.id));
+    await persistence.delete(this.instance);
+    Project.update();
+    Timer.update();
   }
 
-  static refresh() {
-    timers.update((t) => t);
+  static async update() {
+    let existing: Timer[] = await persistence.get(get(viewDate));
+    timers.update(() => existing);
   }
 
   static async getAll() {
-    let existing: Timer[] = [];
-
-    await persistence.iterate((v: ITimer, k) => {
-      existing.push(new Timer(v));
-    });
-
-    return existing;
+    return await persistence.getAll();
   }
 }
 
 viewDate.subscribe(async (d) => {
+  if (!d) return;
   pollUnsubscribe?.();
 
-  let existing: Timer[] = (await Timer.getAll()).filter((t) => {
-    return isSameDay(d, t.start);
-  });
-
+  let existing: Timer[] = await persistence.get(d);
   timers.set(existing);
 
   if (isToday(d)) pollUnsubscribe = now.subscribe(handlePollSubscription);
 });
 
-async function handlePollSubscription(n) {
-  const { autoStop, endofday } = get(settings) || {};
+async function load() {
+  await loadProjects();
+  let existing: Timer[] = await persistence.get(get(viewDate));
+  timers.set(existing);
+}
+
+async function handlePollSubscription() {
+  if (get(paused)) return;
+  const { autoStop, endofday } = get(settings) ?? {};
 
   if (autoStop && endofday) {
     const [hour, min] = endofday.split(":");
@@ -206,7 +205,7 @@ async function handlePollSubscription(n) {
     check.setHours(+hour);
     check.setMinutes(+min);
 
-    (await Timer.getAll()).forEach((t) => {
+    (await Timer.getAll()).forEach((t: Timer) => {
       if (t.running && +t.end >= +check) t.stop();
     });
   }
@@ -214,25 +213,23 @@ async function handlePollSubscription(n) {
   timers.update((t) => t);
 }
 
-function add(projectId?: string, task = "Timer") {
+async function add(projectId?: string, task = "Timer") {
   const timer: ITimer = {
     task,
     projectId,
     start: new Date(),
-    id: `timer_${+new Date()}`,
   };
 
-  const timerClass = new Timer(timer);
-  timerClass.persist();
-  timers.update((timers) => [...timers, timerClass]);
-  timerClass.project.refresh();
+  await persistence.add(timer);
+  await Timer.update();
+  await Project.update();
 }
 
 async function deleteAllTimers() {
-  await persistence.iterate((v: ITimer) => {
-    persistence.removeItem(v.id);
-  });
-  timers.update((t) => []);
+  await persistence.deleteAll();
+  await Timer.update();
+  await Project.update();
 }
 
-export { add, timers, viewDate, deleteAllTimers };
+export default timers;
+export { add, viewDate, deleteAllTimers, load };
