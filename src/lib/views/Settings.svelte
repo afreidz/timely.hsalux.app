@@ -1,4 +1,5 @@
 <script lang="ts">
+  import auth from "../stores/auth";
   import Icon from "@iconify/svelte";
   import { settings } from "../stores/settings";
   import Field from "../components/Field.svelte";
@@ -6,6 +7,7 @@
   import Switch from "../components/Switch.svelte";
   import Heading from "../components/Heading.svelte";
   import { deleteAllTimers } from "../stores/timers";
+  import { signout } from "../helpers/firebase/auth";
   import { deleteAllProjects } from "../stores/projects";
 
   let endofday;
@@ -13,7 +15,7 @@
 </script>
 
 <section class="p-6">
-  <Heading as="h4" variant="section">Settings</Heading>
+  <Heading as="h4" variant="section">Application Settings</Heading>
   <Field readonly>
     <Switch
       slot="switch"
@@ -29,8 +31,8 @@
     </p>
   </Field>
   <Field
-    name="test"
     type="time"
+    name="endofday"
     bind:value={endofday}
     label="End of Workday"
     on:change={(e) => ($settings = { ...$settings, endofday: e.detail })}
@@ -38,7 +40,16 @@
     <Icon slot="icon" icon="heroicons:clock" class="h-6 w-6 opacity-50 mr-2" />
   </Field>
   <div class="mt-12">
-    <Heading as="h5" variant="section">
+    <Heading as="h4" variant="section">Account Settings</Heading>
+    <Field readonly name="account" label="Signed in as" val={$auth.email}>
+      <Icon icon="logos:microsoft-icon" slot="icon" class="h-6 w-6 mr-4" />
+      <Button slot="sub" class="py-2" on:click={() => signout()}
+        >Sign Out</Button
+      >
+    </Field>
+  </div>
+  <div class="mt-12">
+    <Heading as="h4" variant="section">
       <span class="text-red-500">Danger Zone</span>
     </Heading>
     <Field readonly>

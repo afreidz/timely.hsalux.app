@@ -4,6 +4,7 @@
 
   let classes;
   let props: any;
+  let value: string;
   let val: string = "";
   let required: boolean;
   let bg: boolean = true;
@@ -107,6 +108,17 @@
       <div class={classes.readonly}>
         <slot name="readonly" />
       </div>
+    {:else if val}
+      <input
+        {...props}
+        {name}
+        id={name}
+        {required}
+        value={val}
+        placeholder=" "
+        class={classes.input}
+        on:change={(e) => dispatch("change", e.target.value)}
+      />
     {:else}
       <input
         {...props}
@@ -114,13 +126,16 @@
         id={name}
         {required}
         placeholder=" "
-        bind:value={val}
+        bind:value
         class={classes.input}
         on:change={(e) => dispatch("change", e.target.value)}
       />
     {/if}
     {#if label}<span class={classes.label}>{label}</span>{/if}
   </div>
+  {#if $$slots.sub}
+    <slot name="sub" />
+  {/if}
   {#if $$slots.lower}
     <div class="flex-shrink-0 w-full">
       <slot name="lower" />
