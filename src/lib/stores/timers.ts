@@ -1,9 +1,9 @@
 import now from "./now";
 import paused from "./paused";
 import viewDate from "./viewDate";
-import settings from "./settings";
 import { isToday } from "../helpers/date";
 import type { Writable } from "svelte/store";
+import settings, { load as loadSettings } from "./settings";
 import { timers as persistence } from "../helpers/firebase/db";
 import { writable, get, type Unsubscriber } from "svelte/store";
 import projects, { Project, load as loadProjects } from "./projects";
@@ -78,6 +78,7 @@ export class Timer {
     if (!s) return;
     const [hh, mm] = s.split(":");
     if (this.running) this.stop();
+    if (!this.instance.end) this.instance.end = this.instance.start;
     this.instance.end.setHours(+hh);
     this.instance.end.setMinutes(+mm);
     this.persist();
@@ -197,6 +198,7 @@ async function load() {
 
 async function handlePollSubscription() {
   if (get(paused)) return;
+  await loadSettings();
   const { autoStop, endofday } = get(settings) ?? {};
 
   if (autoStop && endofday) {

@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import { isToday } from "../../helpers/date";
   import Timer from "../../components/Timer.svelte";
   import Field from "../../components/Field.svelte";
   import Button from "../../components/Button.svelte";
@@ -43,7 +44,7 @@
           bg={false}
           type="time"
           label="Start Time"
-          bind:val={timer.startString}
+          val={timer.startString}
           on:change={(e) => (timer.startString = e.detail)}
         />
       </div>
@@ -91,25 +92,27 @@
           bg={false}
           type="time"
           label="End Time"
-          bind:val={timer.endString}
+          val={timer.endString}
           on:change={(e) => (timer.endString = e.detail)}
         />
       </div>
     </div>
-    <div class="flex justify-between">
-      <Button on:click={() => startOrStop()} class="justify-self-center">
-        {#if timer.running}
+    <div class="flex justify-around">
+      {#if timer.running}
+        <Button on:click={() => startOrStop()} class="justify-self-center">
           <span class="flex items-center py-4">
             <Icon icon="heroicons:stop-20-solid" class="h-4 w-4" />
             <span class="ml-1">Stop Timer</span>
           </span>
-        {:else}
+        </Button>
+      {:else if isToday(timer.start)}
+        <Button on:click={() => startOrStop()} class="justify-self-center">
           <span class="flex items-center py-4">
             <Icon icon="heroicons:play-20-solid" class="h-4 w-4" />
             <span class="ml-1">Restart Timer</span>
           </span>
-        {/if}
-      </Button>
+        </Button>
+      {/if}
       <Button on:click={() => timer.delete()} class="bg-red-500">
         <span class="flex items-center py-4">
           <Icon icon="heroicons:trash" class="h-4 w-4" />

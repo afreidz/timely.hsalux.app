@@ -5,6 +5,7 @@
   import { isToday } from "../helpers/date";
   import viewDate from "../stores/viewDate";
   import projects, { load } from "../stores/projects";
+  import { load as loadSettings } from "../stores/projects";
 
   const navclass = cl`
     grid
@@ -76,8 +77,12 @@
   <footer
     class="h-full flex justify-center items-center border-t bg-white dark:bg-neutral-900 border-white dark:border-black"
   >
-    <a href="#settings">
-      <Icon icon="heroicons:cog" class="w-10 h-10" />
-    </a>
+    {#await loadSettings()}
+      <Icon icon="eos-icons:loading" class="w-10 h-10" />
+    {:then}
+      <a href="#settings">
+        <Icon icon="heroicons:cog" class="w-10 h-10" />
+      </a>
+    {/await}
   </footer>
 </nav>
