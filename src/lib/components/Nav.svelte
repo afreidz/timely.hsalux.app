@@ -9,9 +9,10 @@
 
   const navclass = cl`
     grid
+    pt-4
     flex-1
     items-center
-    grid-rows-[7rem_auto_4rem]
+    grid-rows-[auto_4rem]
 `;
 
   function handleProjectClick(projectId: string) {
@@ -26,13 +27,6 @@
 </script>
 
 <nav class={navclass}>
-  <h1 class="text-3xl font-thin flex justify-center text-white">
-    <Icon
-      icon="heroicons:bolt"
-      class="p-2 w-12 h-12 rounded-full bg-blue-500"
-    />
-    <span class="sr-only">Time.me</span>
-  </h1>
   <ul class="self-start px-4">
     <li>
       <div class="flex items-center">
@@ -49,7 +43,7 @@
           </li>
         {:then}
           {#each $projects as project}
-            <li class="pl-12 flex items-center">
+            <li class="pl-3 sm:pl-12 flex items-center">
               <div class={`mr-1 rounded-sm ${project.bgColor} w-4 h-4`} />
               <a
                 href={`#project/${project.id}`}

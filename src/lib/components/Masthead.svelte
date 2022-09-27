@@ -29,7 +29,7 @@
 </script>
 
 <header
-  class="p-5 pr-16 flex justify-between bg-white dark:bg-neutral-900 border-b border-white dark:border-black"
+  class={`p-5 pr-16 flex justify-between bg-white dark:bg-neutral-900 border-b border-white dark:border-black ${$$props.class}`}
 >
   <div>
     <small class="text-neutral-400 ml-8">

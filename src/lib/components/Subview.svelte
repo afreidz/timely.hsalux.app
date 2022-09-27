@@ -62,6 +62,7 @@
       border-l
       ease-in-out
       duration-300
+      overflow-auto
       min-w-[600px]
       translate-x-full
       border-neutral-200

@@ -126,7 +126,7 @@
 </script>
 
 <section
-  class={`timeline ${classes.section}`}
+  class={`timeline ${classes.section} ${$$props.class}`}
   bind:this={timeline}
   on:mousewheel={scroll}
 >
