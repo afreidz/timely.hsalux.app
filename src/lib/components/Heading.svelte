@@ -14,11 +14,11 @@
 
   $: {
     if (variant === "page") {
-      classlist = cl`text-4xl leading-relaxed`;
+      classlist = cl`text-xl sm:text-4xl leading-relaxed`;
     } else if (variant === "section") {
-      classlist = cl`text-xl leading-relaxed font-light`;
+      classlist = cl`text-md sm:text-xl leading-relaxed font-light`;
     } else {
-      classlist = cl`text-6xl leading-relaxed`;
+      classlist = cl`text-xl sm:text-6xl leading-relaxed`;
     }
     props = { ...$$props };
     delete props.as;

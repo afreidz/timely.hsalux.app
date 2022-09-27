@@ -12,6 +12,7 @@
     pt-4
     flex-1
     items-center
+    overflow-auto
     grid-rows-[auto_4rem]
 `;
 
@@ -65,6 +66,23 @@
             </li>
           {/each}
         {/await}
+      </ul>
+    </li>
+    <li>
+      <div class="flex items-center">
+        <Icon
+          icon="heroicons:clipboard-document-list"
+          class="flex-none p-2 w-10 h-10"
+        />
+        <span class="flex-1 ml-2">Reports</span>
+      </div>
+      <ul>
+        <li class="pl-3 sm:pl-12 flex items-center">
+          <Icon icon="heroicons:clock" class="mr-1 w-4 h-4" />
+          <a href={`#report/daily`} class="flex-1 ml-2 line-clamp-1 py-2"
+            >By Day</a
+          >
+        </li>
       </ul>
     </li>
   </ul>

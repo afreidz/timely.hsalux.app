@@ -15,7 +15,6 @@
 
   let classes;
   $: if (!!$auth && !$viewDate) $viewDate = new Date();
-  $: console.log("nav", $nav);
 
   $: classes = {
     layout: cl`

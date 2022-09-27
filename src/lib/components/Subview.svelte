@@ -7,6 +7,7 @@
   import Settings from "../views/Settings.svelte";
   import NewProject from "../views/project/New.svelte";
   import TimerDetail from "../views/timer/Detail.svelte";
+  import DailyReport from "../views/report/Daily.svelte";
   import ProjectDetail from "../views/project/Detail.svelte";
 
   interface IComponentProps {
@@ -93,6 +94,9 @@
       case id?.startsWith("project/"):
         componentProps.id = id.split("project/")[1];
         component = ProjectDetail;
+        break;
+      case id?.startsWith("report/daily"):
+        component = DailyReport;
         break;
       default:
         component = null;
