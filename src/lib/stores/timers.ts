@@ -38,7 +38,6 @@ export class Timer {
   set task(task) {
     this.instance.task = task;
     this.persist();
-    Timer.update();
   }
 
   get running() {
@@ -61,7 +60,6 @@ export class Timer {
     this.instance.start.setHours(+hh);
     this.instance.start.setMinutes(+mm);
     this.persist();
-    Timer.update();
   }
 
   get end() {
@@ -82,7 +80,6 @@ export class Timer {
     this.instance.end.setHours(+hh);
     this.instance.end.setMinutes(+mm);
     this.persist();
-    Timer.update();
   }
 
   get duration() {
@@ -115,7 +112,6 @@ export class Timer {
     if (this.running) return;
     this.instance.end = new Date(+this.instance.end + 1000 * 60 * min);
     this.persist();
-    Timer.update();
   }
 
   unshiftEnd(min = 5) {
@@ -124,13 +120,11 @@ export class Timer {
     if (+unshifted - +this.start <= 1000 * 60) return;
     this.instance.end = unshifted;
     this.persist();
-    Timer.update();
   }
 
   shiftStart(min = 5) {
     this.instance.start = new Date(+this.instance.start - 1000 * 60 * min);
     this.persist();
-    Timer.update();
   }
 
   unshiftStart(min = 5) {
@@ -138,21 +132,18 @@ export class Timer {
     if (+this.end - +unshifted <= 1000 * 60) return;
     this.instance.start = unshifted;
     this.persist();
-    Timer.update();
   }
 
   stop() {
     this.instance.end = new Date();
     Project.update();
     this.persist();
-    Timer.update();
   }
 
   unstop() {
     this.instance.end = null;
     Project.update();
     this.persist();
-    Timer.update();
   }
 
   serialize() {
@@ -162,6 +153,7 @@ export class Timer {
   async persist() {
     if (!this.instance.end) delete this.instance.end;
     await persistence.update(this.instance);
+    await Timer.update();
   }
 
   async delete() {

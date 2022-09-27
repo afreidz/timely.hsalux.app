@@ -93,6 +93,7 @@
           type="time"
           label="End Time"
           val={timer.endString}
+          readonly={timer.running}
           on:change={(e) => (timer.endString = e.detail)}
         />
       </div>

@@ -29,8 +29,7 @@ export class Project {
 
   set name(n: string) {
     this.instance.name = n;
-    persistence.update(this.instance);
-    Project.update();
+    this.persist();
   }
 
   get color() {
@@ -39,8 +38,7 @@ export class Project {
 
   set color(c: string) {
     this.instance.color = c;
-    persistence.update(this.instance);
-    Project.update();
+    this.persist();
   }
 
   get bgColor() {
@@ -57,6 +55,11 @@ export class Project {
 
   get timers() {
     return get(timers).filter((t) => t.project === this);
+  }
+
+  async persist() {
+    await persistence.update(this.instance);
+    await Project.update();
   }
 
   serialize() {
