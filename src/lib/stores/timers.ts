@@ -185,7 +185,9 @@ viewDate.subscribe(async (d) => {
   timers.set(existing);
 
   if (isToday(d))
-    pollUnsubscribe = now.subscribe(() => timers.update((t) => t));
+    pollUnsubscribe = now.subscribe(() => {
+      if (!get(paused)) timers.update((t) => t);
+    });
 });
 
 async function load() {

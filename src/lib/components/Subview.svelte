@@ -53,23 +53,25 @@
     window: cl`
       z-50   
       flex
-      px-10
       fixed
       top-0
-      w-[50%]
+      w-full
       right-0
       flex-col
       bottom-0
       border-l
+      bg-white
       ease-in-out
       duration-300
       overflow-auto
-      min-w-[600px]
       translate-x-full
       border-neutral-200
       transition-transform
-      bg-white max-w-[1200px]
       group-target:translate-x-0
+      
+      sm:w-[50%]
+      sm:min-w-[600px]
+      sm:max-w-[1200px]
 
       dark:border-black
       dark:bg-neutral-800

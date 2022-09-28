@@ -38,8 +38,10 @@
         {timer.project.name}
       </span>
     </Field>
-    <div class="flex my-10">
-      <div class="flex-none w-36 flex justify-center">
+    <div
+      class="my-6 grid grid-cols-[auto_auto] grid-rows-[auto_auto] sm:grid-cols-[9rem_auto_9rem] sm:grid-rows-[auto] items-center"
+    >
+      <div class="order-2 place-self-center sm:order-1">
         <Field
           bg={false}
           type="time"
@@ -48,7 +50,7 @@
           on:change={(e) => (timer.startString = e.detail)}
         />
       </div>
-      <div class="flex-1 mt-2">
+      <div class="order-1 col-span-2 sm:order-2 sm:col-span-1">
         <Timer
           hideChip={true}
           color={timer.project.color}
@@ -67,7 +69,7 @@
                 class="h-8 w-8"
               />
             </button>
-            <span class="flex items-center justify-center">
+            <span class="flex items-center justify-center whitespace-nowrap">
               {timer.hours} hours {#if timer.running}(running){/if}
             </span>
             {#if !timer.running}
@@ -87,7 +89,7 @@
           </div>
         </Timer>
       </div>
-      <div class="flex-none w-36 flex justify-center">
+      <div class="order-3 place-self-end">
         <Field
           bg={false}
           type="time"
@@ -100,21 +102,21 @@
     <div class="flex justify-around">
       {#if timer.running}
         <Button on:click={() => startOrStop()} class="justify-self-center">
-          <span class="flex items-center py-4">
+          <span class="flex items-center">
             <Icon icon="heroicons:stop-20-solid" class="h-4 w-4" />
             <span class="ml-1">Stop Timer</span>
           </span>
         </Button>
       {:else if isToday(timer.start)}
         <Button on:click={() => startOrStop()} class="justify-self-center">
-          <span class="flex items-center py-4">
+          <span class="flex items-center">
             <Icon icon="heroicons:play-20-solid" class="h-4 w-4" />
             <span class="ml-1">Restart Timer</span>
           </span>
         </Button>
       {/if}
       <Button on:click={() => timer.delete()} class="bg-red-500">
-        <span class="flex items-center py-4">
+        <span class="flex items-center">
           <Icon icon="heroicons:trash" class="h-4 w-4" />
           <span class="ml-1">Delete Timer</span>
         </span>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import nav from "../stores/nav";
   import Icon from "@iconify/svelte";
+  import isweb from "../helpers/isweb";
   import cl from "../helpers/classlist";
 
   let classlist;
@@ -15,7 +16,8 @@
     justify-center
 
     dark:border-black
-    sm:bg-transparent
+
+    ${isweb ? "dark:bg-neutral-900" : "sm:bg-transparent"}
 
     ${$$props.class}
   `;

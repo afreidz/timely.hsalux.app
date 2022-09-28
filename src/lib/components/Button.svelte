@@ -3,14 +3,18 @@
 
   const classlist = cl`
     m-4
-    px-7
+    p-4
+    text-sm
     shadow-md
     text-white
     bg-blue-500
-    font-medium
     rounded-full
     transition-all
+    whitespace-nowrap
     active:translate-y-px
+
+    sm:px-7
+    sm:text-base
 `;
 </script>
 

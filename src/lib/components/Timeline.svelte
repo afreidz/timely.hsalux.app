@@ -128,7 +128,6 @@
 <section
   class={`timeline ${classes.section} ${$$props.class}`}
   bind:this={timeline}
-  on:mousewheel={scroll}
 >
   {#await load()}
     <div class="self-center justify-self-center">

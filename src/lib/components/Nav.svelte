@@ -44,7 +44,7 @@
           </li>
         {:then}
           {#each $projects as project}
-            <li class="pl-3 sm:pl-12 flex items-center">
+            <li class="pl-12 flex items-center">
               <div class={`mr-1 rounded-sm ${project.bgColor} w-4 h-4`} />
               <a
                 href={`#project/${project.id}`}
@@ -77,7 +77,7 @@
         <span class="flex-1 ml-2">Reports</span>
       </div>
       <ul>
-        <li class="pl-3 sm:pl-12 flex items-center">
+        <li class="pl-12 flex items-center">
           <Icon icon="heroicons:clock" class="mr-1 w-4 h-4" />
           <a href={`#report/daily`} class="flex-1 ml-2 line-clamp-1 py-2"
             >By Day</a

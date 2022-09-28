@@ -29,11 +29,9 @@
 </script>
 
 <header
-  class={`p-5 pr-16 flex justify-between bg-white dark:bg-neutral-900 border-b border-white dark:border-black ${
-    $$props.class || ""
-  }`}
+  class={`p-5 flex justify-between bg-white dark:bg-neutral-900 border-b border-white dark:border-black`}
 >
-  <div class="flex-1">
+  <div class="flex-1 shrink">
     <small class="text-neutral-400 ml-8">
       {$viewDate?.toLocaleDateString("en", {
         month: "long",
@@ -47,7 +45,7 @@
           <Icon icon="heroicons:chevron-left" class="w-8 h-8" />
         </button>
       {/if}
-      <span class="flex-none w-72">
+      <span class="flex-none">
         {$viewDate?.toLocaleString("en", { weekday: "long", day: "numeric" })}
       </span>
       {#if nextDay}
@@ -57,7 +55,7 @@
       {/if}
     </Heading>
   </div>
-  <div class="flex flex-none flex-col justify-center">
+  <div class="flex flex-none flex-col justify-center place-self-center">
     <label class="relative">
       <Icon icon="heroicons:calendar-days" class="w-12 h-12" />
       <input
