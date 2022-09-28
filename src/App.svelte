@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import nav from "./lib/stores/nav";
   import auth from "./lib/stores/auth";
+  import isWeb from "./lib/helpers/isweb";
   import cl from "./lib/helpers/classlist";
   import subview from "./lib/stores/subview";
   import Auth from "./lib/views/Auth.svelte";
@@ -28,6 +29,18 @@
       sm:grid-cols-[20rem_auto]
       
       `,
+    logo: cl`
+      bg-white
+      border-r
+      order-first
+      border-white
+      dark:border-black
+      ${
+        isWeb
+          ? "sm:bg-white sm:dark:bg-neutral-900"
+          : "sm:bg-transparent dark:bg-neutral-900"
+      }
+    `,
     sidenav: cl`
       z-20
       flex
@@ -46,14 +59,17 @@
       transition-transform
       
       ${$nav ? "translate-x-0" : "-translate-x-full"}
+      ${
+        isWeb
+          ? "sm:bg-white sm:dark:bg-neutral-900"
+          : "sm:bg-transparent dark:bg-neutral-900"
+      }
       
       dark:border-black
-      dark:bg-neutral-900
       
       sm:static
       sm:right-auto
       sm:translate-x-0
-      sm:bg-transparent
 `,
     subview: cl`
       z-50
@@ -81,7 +97,7 @@
 {:else}
   <Titlebar />
   <main class={classes.layout}>
-    <Logo class="order-first" />
+    <Logo class={classes.logo} />
     <Masthead />
     <aside class={classes.sidenav}>
       <Nav />

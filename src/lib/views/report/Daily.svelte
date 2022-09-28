@@ -56,7 +56,7 @@
               </small>
             </div>
           </Timer>
-          <div class="mx-6 p-4 bg-black/50 rounded-b-lg">
+          <div class="mx-6 p-4 bg-neutral-50 dark:bg-black/50 rounded-b-lg">
             <strong class="block font-semibold mb-2">Tasks:</strong>
             <ul>
               {#each timers as timer}

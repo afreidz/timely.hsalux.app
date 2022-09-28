@@ -96,12 +96,17 @@ export class Timer {
   }
 
   get endCol() {
+    const { autoStop, endofday } = get(settings) ?? {};
+    const [hour, min] = endofday.split(":");
+    const maxEnd = autoStop && endofday ? +hour * 60 + +min : 1440;
     const diff = Math.ceil(+this.duration / (1000 * 60));
     const endCol =
       this.startCol + diff - this.startCol > 15
         ? this.startCol + diff
         : this.startCol + 15;
-    return isToday(this.start) ? endCol : Math.min(endCol, 1440);
+
+    if (endCol > maxEnd) this.stop();
+    return Math.min(endCol, maxEnd);
   }
 
   get project() {
@@ -179,32 +184,15 @@ viewDate.subscribe(async (d) => {
   let existing: Timer[] = await persistence.get(d);
   timers.set(existing);
 
-  if (isToday(d)) pollUnsubscribe = now.subscribe(handlePollSubscription);
+  if (isToday(d))
+    pollUnsubscribe = now.subscribe(() => timers.update((t) => t));
 });
 
 async function load() {
+  await loadSettings();
   await loadProjects();
   let existing: Timer[] = await persistence.get(get(viewDate));
   timers.set(existing);
-}
-
-async function handlePollSubscription() {
-  if (get(paused)) return;
-  await loadSettings();
-  const { autoStop, endofday } = get(settings) ?? {};
-
-  if (autoStop && endofday) {
-    const [hour, min] = endofday.split(":");
-    const check = new Date();
-    check.setHours(+hour);
-    check.setMinutes(+min);
-
-    (await Timer.getAll()).forEach((t: Timer) => {
-      if (t.running && +t.end >= +check) t.stop();
-    });
-  }
-
-  timers.update((t) => t);
 }
 
 async function add(projectId?: string, task = "Timer") {

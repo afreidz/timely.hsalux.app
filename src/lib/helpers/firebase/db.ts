@@ -42,6 +42,7 @@ const timerConverter = {
 
 const projects = {
   async get() {
+    console.log("db call: get projects");
     const uid = get(auth)?.uid;
     if (!uid) throw new Error("no authorized user");
 
@@ -54,6 +55,7 @@ const projects = {
     return existing;
   },
   async add(project: IProject) {
+    console.log("db call: add project");
     const uid = get(auth)?.uid;
     if (!uid) throw new Error("no authorized user");
 
@@ -61,12 +63,15 @@ const projects = {
     await addDoc(collection(db, "projects"), project);
   },
   async update(project: IProject) {
+    console.log("db call: update project");
     await setDoc(doc(db, "projects", project.id), project);
   },
   async delete(project: IProject) {
+    console.log("db call: delete project");
     await deleteDoc(doc(db, "projects", project.id));
   },
   async deleteAll() {
+    console.log("db call: delete all projects");
     const projects = await this.get();
     for await (const project of projects) {
       deleteDoc(doc(db, "projects", project.id));
@@ -76,6 +81,7 @@ const projects = {
 
 const timers = {
   async get(date: Date) {
+    console.log("db call: get timers");
     if (!date) return [];
     const uid = get(auth)?.uid;
     if (!uid) throw new Error("no authorized user");
@@ -95,9 +101,13 @@ const timers = {
       where("start", "<", new Date(+date + 1000 * 60 * 60 * 24))
     );
     (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
+
+    existing.forEach((t) => {});
+
     return existing;
   },
   async getAll() {
+    console.log("db call: get all timers");
     const uid = get(auth)?.uid;
     if (!uid) throw new Error("no authorized user");
 
@@ -108,6 +118,7 @@ const timers = {
     return existing;
   },
   async add(timer: ITimer) {
+    console.log("db call: add timer");
     const uid = get(auth)?.uid;
     if (!uid) throw new Error("no authorized user");
 
@@ -115,12 +126,15 @@ const timers = {
     await addDoc(collection(db, "timers"), timer);
   },
   async update(timer: ITimer) {
+    console.log("db call: update timer");
     await setDoc(doc(db, "timers", timer.id), timer);
   },
   async delete(timer: ITimer) {
+    console.log("db call: delete timer");
     await deleteDoc(doc(db, "timers", timer.id));
   },
   async deleteAll() {
+    console.log("db call: delete all timers");
     const timers = await this.getAll();
     for await (const timer of timers) {
       deleteDoc(doc(db, "timers", timer.id));
@@ -130,6 +144,7 @@ const timers = {
 
 const settings = {
   async get() {
+    console.log("db call: get settings");
     const uid = get(auth)?.uid;
     if (!uid) throw new Error("no authorized user");
 
@@ -137,6 +152,7 @@ const settings = {
     return settings.data();
   },
   async update(settings: ISettings): Promise<void> {
+    console.log("db call: update settings");
     const uid = get(auth)?.uid;
     if (!uid) throw new Error("no authorized user");
     await setDoc(doc(db, "settings", uid), settings);

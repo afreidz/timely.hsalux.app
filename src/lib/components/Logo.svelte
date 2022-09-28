@@ -13,7 +13,6 @@
     items-center
     border-white
     justify-center
-    bg-neutral-900
 
     dark:border-black
     sm:bg-transparent
