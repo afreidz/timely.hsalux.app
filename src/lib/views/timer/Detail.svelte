@@ -1,5 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import cl from "../../helpers/classlist";
   import { isToday } from "../../helpers/date";
   import Timer from "../../components/Timer.svelte";
   import Field from "../../components/Field.svelte";
@@ -13,12 +14,53 @@
   $: timer = $timers.find((t) => t.id === id);
   $: if (!timer) window.location.hash = "";
 
-  function startOrStop() {
-    if (timer.running) {
-      timer.stop();
-    } else {
-      timer.unstop();
-    }
+  function changeStart(e) {
+    const [hh, mm] = e.detail.split(":");
+    const newStart = new Date(timer.start);
+
+    newStart.setHours(+hh);
+    newStart.setMinutes(+mm);
+
+    timer.start = newStart;
+  }
+
+  function changeEnd(e) {
+    const [hh, mm] = e.detail.split(":");
+    const newEnd = new Date(timer.start);
+
+    newEnd.setHours(+hh);
+    newEnd.setMinutes(+mm);
+
+    timer.end = newEnd;
+  }
+
+  function dateToString(d: Date) {
+    return `${("0" + d.getHours()).slice(-2)}:${("0" + d.getMinutes()).slice(
+      -2
+    )}`;
+  }
+
+  function shiftStart(min = 5) {
+    const shiftAmount = Math.abs(min);
+    const shiftDirection = min > 0 ? 1 : -1;
+    const newStart = new Date(
+      +timer.start + 1000 * 60 * shiftAmount * shiftDirection
+    );
+
+    if (shiftDirection > 0 && +timer.end - +newStart <= 1000 * 60) return;
+    timer.start = newStart;
+  }
+
+  function shiftEnd(min = 5) {
+    if (timer.running) return;
+    const shiftAmount = Math.abs(min);
+    const shiftDirection = min > 0 ? 1 : -1;
+    const newEnd = new Date(
+      +timer.end + 1000 * 60 * shiftAmount * shiftDirection
+    );
+
+    if (shiftDirection < 1 && +newEnd - +timer.start <= 1000 * 60) return;
+    timer.end = newEnd;
   }
 </script>
 
@@ -28,9 +70,9 @@
   </header>
   {#if timer}
     <Field
+      val={timer.task}
       name="timerTask"
       label="Task Name"
-      val={timer.task}
       on:change={(e) => (timer.task = e.detail)}
     />
     <Field label="Project">
@@ -39,15 +81,24 @@
       </span>
     </Field>
     <div
-      class="my-6 grid grid-cols-[auto_auto] grid-rows-[auto_auto] sm:grid-cols-[9rem_auto_9rem] sm:grid-rows-[auto] items-center"
+      class={cl`
+        my-6
+        grid
+        items-center
+        grid-cols-[auto_auto]
+        grid-rows-[auto_auto]
+
+        sm:grid-rows-[auto]
+        sm:grid-cols-[9rem_auto_9rem]
+      `}
     >
       <div class="order-2 place-self-center sm:order-1">
         <Field
           bg={false}
           type="time"
           label="Start Time"
-          val={timer.startString}
-          on:change={(e) => (timer.startString = e.detail)}
+          on:change={changeStart}
+          val={dateToString(timer.start)}
         />
       </div>
       <div class="order-1 col-span-2 sm:order-2 sm:col-span-1">
@@ -57,13 +108,13 @@
           project={timer.project.name}
         >
           <div class="flex-1 grid grid-cols-[2rem_2rem_auto_2rem_2rem]">
-            <button on:click={() => timer.shiftStart()}>
+            <button on:click={() => shiftStart(-5)}>
               <Icon
                 icon="heroicons:chevron-double-left-20-solid"
                 class="h-8 w-8"
               />
             </button>
-            <button on:click={() => timer.unshiftStart()}>
+            <button on:click={() => shiftStart(5)}>
               <Icon
                 icon="heroicons:chevron-double-right-20-solid"
                 class="h-8 w-8"
@@ -73,13 +124,13 @@
               {timer.hours} hours {#if timer.running}(running){/if}
             </span>
             {#if !timer.running}
-              <button on:click={() => timer.unshiftEnd()}>
+              <button on:click={() => shiftEnd(-5)}>
                 <Icon
                   icon="heroicons:chevron-double-left-20-solid"
                   class="h-8 w-8"
                 />
               </button>
-              <button on:click={() => timer.shiftEnd()}>
+              <button on:click={() => shiftEnd(5)}>
                 <Icon
                   icon="heroicons:chevron-double-right-20-solid"
                   class="h-8 w-8"
@@ -94,21 +145,21 @@
           bg={false}
           type="time"
           label="End Time"
-          val={timer.endString}
-          on:change={(e) => (timer.endString = e.detail)}
+          on:change={changeEnd}
+          val={dateToString(timer.end)}
         />
       </div>
     </div>
     <div class="flex justify-around">
       {#if timer.running}
-        <Button on:click={() => startOrStop()} class="justify-self-center">
+        <Button on:click={() => timer.stop()} class="justify-self-center">
           <span class="flex items-center">
             <Icon icon="heroicons:stop-20-solid" class="h-4 w-4" />
             <span class="ml-1">Stop Timer</span>
           </span>
         </Button>
       {:else if isToday(timer.start)}
-        <Button on:click={() => startOrStop()} class="justify-self-center">
+        <Button on:click={() => timer.unstop()} class="justify-self-center">
           <span class="flex items-center">
             <Icon icon="heroicons:play-20-solid" class="h-4 w-4" />
             <span class="ml-1">Restart Timer</span>

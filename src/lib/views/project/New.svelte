@@ -45,9 +45,7 @@
       </Field>
     </div>
     <footer class="flex flex-none justify-end">
-      <Button>
-        <span class="inline-block text-xl p-4">Create</span>
-      </Button>
+      <Button class="sm:text-xl">Create</Button>
     </footer>
   </form>
 </section>

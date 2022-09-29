@@ -150,8 +150,14 @@
           )}; grid-column-end:${Math.max(index * 60 + 1, 2)};`}
         >
           <span
-            class="ml-3 inline-block bg-gray-100 dark:bg-neutral-800 relative z-10"
-            >{hour}</span
+            class={`
+              z-10
+              ml-3
+              relative
+              bg-gray-100
+              inline-block
+              dark:bg-neutral-800
+            `}>{hour}</span
           >
         </div>
       {/each}

@@ -4,9 +4,9 @@ import viewDate from "./viewDate";
 import { isToday } from "../helpers/date";
 import type { Writable } from "svelte/store";
 import settings, { load as loadSettings } from "./settings";
+import projects, { load as loadProjects } from "./projects";
 import { timers as persistence } from "../helpers/firebase/db";
 import { writable, get, type Unsubscriber } from "svelte/store";
-import projects, { Project, load as loadProjects } from "./projects";
 
 export interface ITimer {
   id?: string;
@@ -25,6 +25,11 @@ export class Timer {
 
   constructor(instance: ITimer) {
     this.instance = instance;
+
+    if (!this.running && !this.end) {
+      this.instance.end = this.scheduledEnd;
+      persistence.update(this.instance);
+    }
   }
 
   get id() {
@@ -48,17 +53,8 @@ export class Timer {
     return this.instance.start;
   }
 
-  get startString() {
-    return `${("0" + this.instance.start.getHours()).slice(-2)}:${(
-      "0" + this.instance.start.getMinutes()
-    ).slice(-2)}`;
-  }
-
-  set startString(s) {
-    if (!s) return;
-    const [hh, mm] = s.split(":");
-    this.instance.start.setHours(+hh);
-    this.instance.start.setMinutes(+mm);
+  set start(d: Date) {
+    this.instance.start = d;
     this.persist();
   }
 
@@ -66,19 +62,8 @@ export class Timer {
     return this.instance.end || new Date();
   }
 
-  get endString() {
-    return `${("0" + this.end.getHours()).slice(-2)}:${(
-      "0" + this.end.getMinutes()
-    ).slice(-2)}`;
-  }
-
-  set endString(s) {
-    if (!s) return;
-    const [hh, mm] = s.split(":");
-    if (this.running) this.stop();
-    if (!this.instance.end) this.instance.end = this.instance.start;
-    this.instance.end.setHours(+hh);
-    this.instance.end.setMinutes(+mm);
+  set end(d: Date) {
+    this.instance.end = d;
     this.persist();
   }
 
@@ -96,58 +81,44 @@ export class Timer {
   }
 
   get endCol() {
-    const { autoStop, endofday } = get(settings) ?? {};
-    const [hour, min] = endofday.split(":");
-    const maxEnd = autoStop && endofday ? +hour * 60 + +min : 1440;
     const diff = Math.ceil(+this.duration / (1000 * 60));
     const endCol =
       this.startCol + diff - this.startCol > 15
         ? this.startCol + diff
         : this.startCol + 15;
-
-    if (endCol > maxEnd) this.stop();
-    return Math.min(endCol, maxEnd);
+    return Math.min(endCol, +this.scheduledEnd / (1000 * 60), 1440);
   }
 
   get project() {
     return get(projects).find((p) => p.id === this.instance.projectId);
   }
 
-  shiftEnd(min = 5) {
-    if (this.running) return;
-    this.instance.end = new Date(+this.instance.end + 1000 * 60 * min);
-    this.persist();
+  get scheduledEnd() {
+    const { endofday } = get(settings);
+    const scheduledEnd = new Date(this.start);
+    if (endofday) {
+      const [hh, mm] = endofday?.split(":");
+      scheduledEnd.setHours(+hh);
+      scheduledEnd.setMinutes(+mm);
+
+      if (+this.start > +scheduledEnd) {
+        scheduledEnd.setHours(24);
+        scheduledEnd.setMinutes(0);
+      }
+    } else {
+      scheduledEnd.setHours(24);
+      scheduledEnd.setMinutes(0);
+    }
+    return scheduledEnd;
   }
 
-  unshiftEnd(min = 5) {
-    if (this.running) return;
-    const unshifted = new Date(+this.instance.end - 1000 * 60 * min);
-    if (+unshifted - +this.start <= 1000 * 60) return;
-    this.instance.end = unshifted;
-    this.persist();
-  }
-
-  shiftStart(min = 5) {
-    this.instance.start = new Date(+this.instance.start - 1000 * 60 * min);
-    this.persist();
-  }
-
-  unshiftStart(min = 5) {
-    const unshifted = new Date(+this.instance.start + 1000 * 60 * min);
-    if (+this.end - +unshifted <= 1000 * 60) return;
-    this.instance.start = unshifted;
-    this.persist();
-  }
-
-  stop() {
-    this.instance.end = new Date();
-    Project.update();
+  stop(d: Date = new Date()) {
+    this.instance.end = d;
     this.persist();
   }
 
   unstop() {
     this.instance.end = null;
-    Project.update();
     this.persist();
   }
 
@@ -157,13 +128,13 @@ export class Timer {
 
   async persist() {
     if (!this.instance.end) delete this.instance.end;
+
     await persistence.update(this.instance);
     await Timer.update();
   }
 
   async delete() {
     await persistence.delete(this.instance);
-    Project.update();
     Timer.update();
   }
 
@@ -183,6 +154,7 @@ viewDate.subscribe(async (d) => {
 
   let existing: Timer[] = await persistence.get(d);
   timers.set(existing);
+  console.log("Rendering Timers:", get(timers));
 
   if (isToday(d))
     pollUnsubscribe = now.subscribe(() => {
@@ -206,13 +178,11 @@ async function add(projectId?: string, task = "Timer") {
 
   await persistence.add(timer);
   await Timer.update();
-  await Project.update();
 }
 
 async function deleteAllTimers() {
   await persistence.deleteAll();
   await Timer.update();
-  await Project.update();
 }
 
 export default timers;

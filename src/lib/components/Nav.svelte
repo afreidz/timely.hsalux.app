@@ -56,11 +56,7 @@
                   on:click|stopPropagation={() =>
                     handleProjectClick(project.id)}
                 >
-                  {#if project.hasRunningTimer}
-                    <Icon icon="heroicons:stop-circle" class="h-6 w-6" />
-                  {:else}
-                    <Icon icon="heroicons:play-circle" class="h-6 w-6" />
-                  {/if}
+                  <Icon icon="heroicons:play-circle" class="h-6 w-6" />
                 </button>
               {/if}
             </li>
@@ -87,7 +83,18 @@
     </li>
   </ul>
   <footer
-    class="h-full flex justify-center items-center border-t bg-white dark:bg-neutral-900 border-white dark:border-black"
+    class={cl`
+      flex
+      h-full
+      bg-white
+      border-t
+      border-white
+      items-center
+      justify-center
+
+      dark:border-black
+      dark:bg-neutral-900
+    `}
   >
     {#await loadSettings()}
       <Icon icon="eos-icons:loading" class="w-10 h-10" />

@@ -29,7 +29,16 @@
 </script>
 
 <header
-  class={`p-5 flex justify-between bg-white dark:bg-neutral-900 border-b border-white dark:border-black`}
+  class={`
+    p-5
+    flex 
+    bg-white 
+    border-b
+    border-white
+    justify-between 
+    dark:border-black
+    dark:bg-neutral-900
+  `}
 >
   <div class="flex-1 shrink">
     <small class="text-neutral-400 ml-8">

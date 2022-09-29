@@ -49,10 +49,6 @@ export class Project {
     return `text-${this.instance.color}`;
   }
 
-  get hasRunningTimer() {
-    return this.timers.some((t) => t.running);
-  }
-
   get timers() {
     return get(timers).filter((t) => t.project === this);
   }

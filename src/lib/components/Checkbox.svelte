@@ -51,7 +51,22 @@
 </script>
 
 <RadioGroupOption
-  class={`mb-2 mr-2 bg-${color}-400 w-${size} h-${size} rounded-lg flex justify-center items-center focus:ring focus:ring-offset-2 focus:ring-blue-300 dark:focus:ring-offset-neutral-800`}
+  class={`
+    mb-2
+    mr-2
+    flex
+    w-${size}
+    h-${size}
+    rounded-lg
+    focus:ring
+    items-center
+    justify-center
+    bg-${color}-400
+    focus:ring-offset-2
+    focus:ring-blue-300
+
+    dark:focus:ring-offset-neutral-800
+  `}
   value={`${color}-400`}
   let:checked
 >

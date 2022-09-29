@@ -26,8 +26,13 @@
 
 <section class="p-6">
   <Heading as="h4" variant="section" class="flex">
-    <span class="flex-1">
-      Daily Report for {$viewDate.toLocaleDateString("en")}
+    <span class="flex-1 font-semibold">
+      Daily Report for
+      <span
+        class="px-4 py-2 font-normal rounded-full inline-block bg-neutral-50 dark:bg-black/30"
+      >
+        {$viewDate.toLocaleDateString("en")}
+      </span>
     </span>
     <label class="relative flex-none">
       <Icon icon="heroicons:calendar-days" class="w-12 h-12" />
@@ -68,4 +73,13 @@
       {/each}
     </ul>
   </div>
+  <footer
+    class="mx-12 p-6 flex border-t text-3xl border-black dark:border-white"
+  >
+    <strong class="flex-1 font-light">Total:</strong>
+    <small class="flex-none font-semibold">
+      {sumTimers($timers)}
+      <span class="font-normal opacity-50">hr</span>
+    </small>
+  </footer>
 </section>

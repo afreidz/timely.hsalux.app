@@ -1,7 +1,7 @@
-<script lang="ts">
-  import cl from "../helpers/classlist";
-
-  const classlist = cl`
+<button
+  {...$$props}
+  on:click
+  class={`
     m-4
     p-4
     text-sm
@@ -15,9 +15,9 @@
 
     sm:px-7
     sm:text-base
-`;
-</script>
 
-<button {...$$props} on:click class={`${classlist} ${$$props.class}`}>
+    ${$$props.class || ""}
+  `}
+>
   <slot />
 </button>
