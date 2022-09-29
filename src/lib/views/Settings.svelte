@@ -1,6 +1,7 @@
 <script lang="ts">
-  import auth from "../stores/auth";
   import Icon from "@iconify/svelte";
+  import auth from "../stores/auth";
+  import theme from "../stores/theme";
   import Field from "../components/Field.svelte";
   import Button from "../components/Button.svelte";
   import Switch from "../components/Switch.svelte";
@@ -19,6 +20,19 @@
   {#await load()}
     <Icon icon="eos-icons:loading" class="w-6 h-6" />
   {:then}
+    <Field readonly>
+      <Switch
+        slot="switch"
+        enabled={$theme !== "dark"}
+        label="Turn the Lights On?"
+        class="flex-1 justify-between"
+        on:change={(e) =>
+          ($settings = {
+            ...$settings,
+            theme: $theme === "dark" ? "light" : "dark",
+          })}
+      />
+    </Field>
     <Field readonly>
       <Switch
         slot="switch"

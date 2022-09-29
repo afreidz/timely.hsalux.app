@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import nav from "./lib/stores/nav";
   import auth from "./lib/stores/auth";
+  import theme from "./lib/stores/theme";
   import isweb from "./lib/helpers/isweb";
   import cl from "./lib/helpers/classlist";
   import subview from "./lib/stores/subview";
@@ -75,17 +76,24 @@
 
 <svelte:window on:hashchange={navigate} />
 
-{#if !$auth}
-  <Auth />
-{:else}
-  {#if !isweb}<Titlebar />{/if}
-  <main class={classes.layout}>
-    <Logo />
-    <Masthead />
-    <aside class={classes.sidenav}>
-      <Nav />
-    </aside>
-    <Timeline class="col-span-full sm:col-span-1" />
-  </main>
-  <Subview />
-{/if}
+<div
+  class="flex flex-col flex-1"
+  class:dark={$theme === "dark"}
+  class:text-white={$theme === "dark"}
+  class:text-black={$theme !== "dark"}
+>
+  {#if !$auth}
+    <Auth />
+  {:else}
+    {#if !isweb}<Titlebar />{/if}
+    <main class={classes.layout}>
+      <Logo />
+      <Masthead />
+      <aside class={classes.sidenav}>
+        <Nav />
+      </aside>
+      <Timeline class="col-span-full sm:col-span-1" />
+    </main>
+    <Subview />
+  {/if}
+</div>

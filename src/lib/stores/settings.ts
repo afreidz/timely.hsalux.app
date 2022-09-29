@@ -4,6 +4,7 @@ import { settings as persistence } from "../helpers/firebase/db";
 export interface ISettings {
   endofday?: string;
   autoStop?: boolean;
+  theme?: "dark" | "light";
 }
 
 const settings: Writable<ISettings> = writable(null);
