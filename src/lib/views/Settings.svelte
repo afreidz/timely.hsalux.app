@@ -22,6 +22,7 @@
   {:then}
     <Field>
       <Switch
+        name="theme"
         slot="custom"
         enabled={$theme !== "dark"}
         label="Turn the Lights On?"
