@@ -16,9 +16,9 @@
   let nowtime: HTMLElement;
   let timeline: HTMLElement;
 
-  $: if ($timers) setview?.();
   $: if ($viewDate) scrolled = false;
   $: viewIsToday = isToday($viewDate);
+  $: if ($timers && !scrolled) setview?.();
   $: offset = $now.getHours() * 60 + $now.getMinutes();
 
   const hours = [
@@ -114,18 +114,10 @@
     if (!!node && !scrolled)
       node.scrollIntoView({ behavior: "smooth", inline });
   }
-
-  function scroll(e) {
-    if (!timeline) return;
-    if (timeline.scrollHeight <= timeline.clientHeight) {
-      e.preventDefault();
-      timeline.scrollLeft -= e.deltaY;
-      scrolled = true;
-    }
-  }
 </script>
 
 <section
+  on:scroll={() => (scrolled = true)}
   class={`timeline ${classes.section} ${$$props.class}`}
   bind:this={timeline}
 >

@@ -26,7 +26,7 @@ export class Timer {
   constructor(instance: ITimer) {
     this.instance = instance;
 
-    if (!this.running && !this.end) {
+    if (!isToday(this.instance.start) && (this.running || !this.end)) {
       this.instance.end = this.scheduledEnd;
       persistence.update(this.instance);
     }
@@ -86,7 +86,12 @@ export class Timer {
       this.startCol + diff - this.startCol > 15
         ? this.startCol + diff
         : this.startCol + 15;
-    return Math.min(endCol, +this.scheduledEnd / (1000 * 60), 1440);
+
+    const scheduledEndCol =
+      Math.ceil((+this.scheduledEnd - +this.start) / (1000 * 60)) +
+      this.startCol;
+
+    return Math.min(endCol, scheduledEndCol, 1440);
   }
 
   get project() {
