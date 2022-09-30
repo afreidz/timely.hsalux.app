@@ -1,7 +1,6 @@
 <script lang="ts">
   import nav from "../stores/nav";
   import Icon from "@iconify/svelte";
-  import isweb from "../helpers/isweb";
   import cl from "../helpers/classlist";
 
   let classlist;
@@ -9,6 +8,7 @@
     flex
     text-3xl
     border-b
+    border-r
     font-thin
     text-white
     items-center
@@ -16,8 +16,7 @@
     justify-center
 
     dark:border-black
-
-    ${isweb ? "dark:bg-neutral-900" : "sm:bg-transparent"}
+    dark:bg-neutral-900
 
     ${$$props.class}
   `;
@@ -26,7 +25,7 @@
 <h1 class={classlist}>
   <button on:click={() => ($nav = !$nav)}>
     <Icon
-      icon="heroicons:bolt"
+      icon="heroicons:bolt-20-solid"
       class="p-2 w-12 h-12 rounded-full bg-blue-500"
     />
   </button>

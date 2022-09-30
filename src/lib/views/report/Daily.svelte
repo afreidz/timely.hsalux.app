@@ -43,7 +43,7 @@
       />
     </label>
   </Heading>
-  <div class="flex justify-center p-12">
+  <div class="flex justify-center my-6">
     <ul class="flex-1 max-w-xl">
       {#each Object.entries(groups) as [projectName, timers]}
         <li class="mb-6">

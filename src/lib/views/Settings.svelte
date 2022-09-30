@@ -20,9 +20,9 @@
   {#await load()}
     <Icon icon="eos-icons:loading" class="w-6 h-6" />
   {:then}
-    <Field readonly>
+    <Field>
       <Switch
-        slot="switch"
+        slot="custom"
         enabled={$theme !== "dark"}
         label="Turn the Lights On?"
         class="flex-1 justify-between"
@@ -33,9 +33,9 @@
           })}
       />
     </Field>
-    <Field readonly>
+    <Field>
       <Switch
-        slot="switch"
+        slot="custom"
         name="autoStop"
         enabled={$settings?.autoStop}
         class="flex-1 justify-between"
@@ -64,7 +64,7 @@
       <Heading as="h4" variant="section">Account Settings</Heading>
       <Field readonly name="account" label="Signed in as" val={$auth.email}>
         <Icon icon="logos:microsoft-icon" slot="icon" class="h-6 w-6 mr-4" />
-        <Button slot="sub" class="py-2" on:click={() => signout()}
+        <Button slot="lower" class="py-2 flex-1" on:click={() => signout()}
           >Sign Out</Button
         >
       </Field>
@@ -74,7 +74,7 @@
         <span class="text-red-500">Danger Zone</span>
       </Heading>
       <Field readonly>
-        <div slot="readonly" class="flex justify-around">
+        <div slot="readonly" class="flex justify-around flex-wrap">
           <Button on:click={() => deleteAllTimers()} class="bg-red-500 py-4"
             >Delete All Timers</Button
           >

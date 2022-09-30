@@ -15,12 +15,14 @@
   $: classes = {
     container: cl`
       my-1
-      flex
+      grid
       relative
-      flex-wrap
       rounded-lg
       items-center
       border-white
+      grid-rows-[auto_auto]
+
+      ${$$slots.icon ? "grid-cols-[2.5rem_auto]" : "grid-cols-[auto]"}
       
       ${bg ? "px-4" : ""}
       ${bg ? "border" : ""}
@@ -99,10 +101,8 @@
 <label class={classes.container}>
   <slot name="icon" />
   <div class={classes.field}>
-    {#if $$slots.switch}
-      <div class={classes.switch}>
-        <slot name="switch" />
-      </div>
+    {#if $$slots.custom}
+      <slot name="custom" />
     {:else if $$slots.readonly}
       <div class={classes.readonly}>
         <slot name="readonly" />
@@ -130,13 +130,10 @@
     {/if}
     {#if label}<span class={classes.label}>{label}</span>{/if}
   </div>
-  {#if $$slots.sub}
-    <slot name="sub" />
-  {/if}
   {#if $$slots.lower}
-    <div class="flex-shrink-0 w-full">
+    <footer class="col-span-full flex">
       <slot name="lower" />
-    </div>
+    </footer>
   {/if}
 </label>
 
