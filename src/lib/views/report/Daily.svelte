@@ -64,8 +64,8 @@
           <div class="mx-6 p-4 bg-neutral-50 dark:bg-black/50 rounded-b-lg">
             <strong class="block font-semibold mb-2">Tasks:</strong>
             <ul>
-              {#each timers as timer}
-                <li class="text-neutral-600 text-sm">- {timer.task}</li>
+              {#each [...new Set(timers.map((t) => t.task))] as task}
+                <li class="text-neutral-600 text-sm">- {task}</li>
               {/each}
             </ul>
           </div>

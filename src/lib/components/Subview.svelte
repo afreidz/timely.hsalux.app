@@ -41,11 +41,13 @@
       right-0
       bottom-0
       opacity-0
-      invisible 
+      invisible
+      bg-white/5 
       ease-in-out
       duration-300
+      dark:bg-black/10
       transition-opacity
-      backdrop-blur-sm
+      backdrop-blur-[1px]
 
       target:visible
       target:opacity-100
