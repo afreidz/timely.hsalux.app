@@ -63,6 +63,12 @@
         </button>
       {/if}
     </Heading>
+    {#if !viewIsToday}
+      <button
+        class="p-2 ml-8 sm:ml-16 text-xs opacity-50"
+        on:click={() => ($viewDate = new Date())}>Go To Today</button
+      >
+    {/if}
   </div>
   <div class="flex flex-none flex-col justify-center place-self-center">
     <label class="relative">
