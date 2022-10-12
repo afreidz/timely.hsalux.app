@@ -25,11 +25,6 @@ export class Timer {
 
   constructor(instance: ITimer) {
     this.instance = instance;
-
-    if (!isToday(this.instance.start) && (this.running || !this.end)) {
-      this.instance.end = this.scheduledEnd;
-      persistence.update(this.instance);
-    }
   }
 
   get id() {
@@ -59,7 +54,15 @@ export class Timer {
   }
 
   get end() {
-    return this.instance.end || new Date();
+    if (this.instance.end) return this.instance.end;
+
+    if (+this.scheduledEnd < +new Date()) {
+      this.instance.end = this.scheduledEnd;
+      this.persist();
+      return this.instance.end;
+    }
+
+    return new Date();
   }
 
   set end(d: Date) {

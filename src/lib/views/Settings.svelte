@@ -43,10 +43,16 @@
         label="Enable Auto Stop of Timers"
         on:change={(e) => ($settings = { ...$settings, autoStop: e.detail })}
       />
-      <p slot="lower" class="py-4 text-xs opacity-30">
-        When enabled, any running timers will automatically stop when they meet
-        the time set in "End of Workday."
-      </p>
+      <div slot="lower" class="py-4 text-xs opacity-30">
+        <p>
+          When enabled, any running timers will automatically stop when they
+          meet the time set in "End of Workday."
+        </p>
+        <p>
+          <strong>Note:</strong> all timers will automatically stop at midnight of
+          the day they started regardless of this setting.
+        </p>
+      </div>
     </Field>
     <Field
       type="time"
