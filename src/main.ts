@@ -1,8 +1,15 @@
-import './app.css'
-import App from './App.svelte'
+import "./app.css";
+import App from "./App.svelte";
+import { onAuthChange } from "./lib/helpers/firebase/auth";
 
-const app = new App({
-  target: document.getElementById('app')
-})
+let app: App;
 
-export default app
+onAuthChange(() => {
+  if (!app) {
+    app = new App({
+      target: document.getElementById("app"),
+    });
+  }
+});
+
+export default app;
