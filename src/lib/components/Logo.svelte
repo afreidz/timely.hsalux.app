@@ -29,5 +29,5 @@
       class="p-2 w-12 h-12 rounded-full bg-blue-500"
     />
   </button>
-  <span class="sr-only">Time.me</span>
+  <span class="sr-only">HSAL/UX: Timely</span>
 </h1>

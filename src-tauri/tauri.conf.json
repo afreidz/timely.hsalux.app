@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "time.me",
+    "productName": "timely.hsalux.app",
     "version": "0.1.0"
   },
   "tauri": {
@@ -57,7 +57,7 @@
         "height": 600,
         "decorations": false,
         "resizable": true,
-        "title": "time.me",
+        "title": "timely.hsalux.app",
         "transparent": true,
         "width": 800
       }

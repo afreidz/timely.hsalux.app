@@ -44,7 +44,7 @@
         icon="heroicons:bolt-20-solid"
         class="p-2 w-20 h-20 rounded-full bg-blue-500 shadow-xl"
       />
-      <span class="sr-only">Time.me</span>
+      <span class="sr-only">HSAL/UX: Timely</span>
     </h1>
     <button class="p-6 flex bg-blue-500 rounded-md" on:click={() => signin()}>
       <Icon icon="logos:microsoft-icon" class="w-6 h-6 mr-4" />
