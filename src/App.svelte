@@ -3,7 +3,6 @@
   import nav from "./lib/stores/nav";
   import auth from "./lib/stores/auth";
   import theme from "./lib/stores/theme";
-  import isweb from "./lib/helpers/isweb";
   import cl from "./lib/helpers/classlist";
   import subview from "./lib/stores/subview";
   import Auth from "./lib/views/Auth.svelte";
@@ -13,7 +12,6 @@
   import Subview from "./lib/components/Subview.svelte";
   import Masthead from "./lib/components/Masthead.svelte";
   import Timeline from "./lib/components/Timeline.svelte";
-  import Titlebar from "./lib/components/Titlebar.svelte";
 
   let classes;
   $: if (!!$auth && !$viewDate) $viewDate = new Date();
@@ -22,11 +20,10 @@
     layout: cl`
       grid
       flex-1
-      rounded-md
       shadow-2xl
       overflow-hidden
-      grid-rows-[7.75rem_auto]
       grid-cols-[6rem_auto]
+      grid-rows-[7.75rem_auto]
       sm:grid-cols-[20rem_auto]
     `,
     sidenav: cl`
@@ -35,6 +32,7 @@
       fixed
       left-0
       w-full
+      bg-white
       border-r
       flex-col
       bottom-0
@@ -46,9 +44,9 @@
       transition-transform
       
       ${$nav ? "translate-x-0" : "-translate-x-full"}
-      ${isweb ? "bg-white dark:bg-neutral-900" : "sm:bg-transparent"}
       
       dark:border-black
+      dark:bg-neutral-900
       
       sm:static
       sm:w-[20rem]
@@ -85,7 +83,6 @@
   {#if !$auth}
     <Auth />
   {:else}
-    {#if !isweb}<Titlebar />{/if}
     <main class={classes.layout}>
       <Logo />
       <Masthead />

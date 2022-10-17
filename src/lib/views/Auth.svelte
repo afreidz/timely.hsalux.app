@@ -1,8 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import isweb from "../helpers/isweb";
   import cl from "../helpers/classlist";
-  import { signin } from "../helpers/firebase/auth";
+  import { signin, demoSignin } from "../helpers/firebase/auth";
 
   let classes;
   $: classes = {
@@ -13,11 +12,12 @@
       left-0
       right-0
       bottom-0
+      bg-white
       items-center
       justify-center
       backdrop-blur-sm
 
-      ${isweb ? "bg-white dark:bg-neutral-900" : "bg-transparent"}
+      dark:bg-neutral-900
   `,
     window: cl`
       mx-2
@@ -40,10 +40,12 @@
 <main class={classes.overlay}>
   <article class={classes.window}>
     <h1 class="mb-10 text-3xl font-thin flex justify-center text-white">
-      <Icon
-        icon="heroicons:bolt-20-solid"
-        class="p-2 w-20 h-20 rounded-full bg-blue-500 shadow-xl"
-      />
+      <button on:click={() => demoSignin()}>
+        <Icon
+          icon="heroicons:bolt-20-solid"
+          class="p-2 w-20 h-20 rounded-full bg-blue-500 shadow-xl"
+        />
+      </button>
       <span class="sr-only">HSAL/UX: Timely</span>
     </h1>
     <button class="p-6 flex bg-blue-500 rounded-md" on:click={() => signin()}>
