@@ -102,7 +102,7 @@ export class Timer {
   }
 
   get scheduledEnd() {
-    const { endofday } = get(settings);
+    const { endofday } = get(settings) || {};
     const scheduledEnd = new Date(this.start);
     if (endofday) {
       const [hh, mm] = endofday?.split(":");

@@ -7,7 +7,7 @@
     "distDir": "../dist"
   },
   "package": {
-    "productName": "timely.hsalux.app",
+    "productName": "Timely",
     "version": "0.1.0"
   },
   "tauri": {
@@ -27,7 +27,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "com.tauri.dev",
+      "identifier": "app.hsalux.timely",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
