@@ -1,0 +1,18 @@
+{
+  "short_name": "Timely",
+  "name": "Timely HSALUX",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "id": "/",
+  "start_url": "/",
+  "background_color": "#3B82F7",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#3B82F7",
+  "description": "Personal time tracking app"
+}

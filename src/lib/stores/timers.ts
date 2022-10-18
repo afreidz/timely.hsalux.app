@@ -1,3 +1,4 @@
+import bg from "./bg";
 import now from "./now";
 import paused from "./paused";
 import viewDate from "./viewDate";
@@ -164,10 +165,11 @@ viewDate.subscribe(async (d) => {
   timers.set(existing);
   console.log("Rendering Timers:", get(timers));
 
-  if (isToday(d))
+  if (isToday(d)) {
     pollUnsubscribe = now.subscribe(() => {
       if (!get(paused)) timers.update((t) => t);
     });
+  }
 });
 
 async function load() {

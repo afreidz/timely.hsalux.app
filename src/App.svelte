@@ -1,4 +1,5 @@
 <script lang="ts">
+  import bg from "./lib/stores/bg";
   import { onMount } from "svelte";
   import nav from "./lib/stores/nav";
   import auth from "./lib/stores/auth";
@@ -72,7 +73,10 @@
   }
 </script>
 
-<svelte:window on:hashchange={navigate} />
+<svelte:window
+  on:hashchange={navigate}
+  on:visibilitychange={() => ($bg = document.hidden)}
+/>
 
 <div
   class="flex flex-col flex-1"
