@@ -76,6 +76,7 @@
 <svelte:window
   on:hashchange={navigate}
   on:visibilitychange={() => ($bg = document.hidden)}
+  on:load={() => navigator.serviceWorker.register("/sw.js")}
 />
 
 <div
