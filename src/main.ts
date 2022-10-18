@@ -12,4 +12,5 @@ onAuthChange(() => {
   }
 });
 
+navigator.serviceWorker.register("/sw.js");
 export default app;

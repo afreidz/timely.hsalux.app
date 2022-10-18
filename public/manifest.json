@@ -1,17 +1,27 @@
 {
   "short_name": "Timely",
   "name": "Timely HSALUX",
+  "description": "Personal time tracking app",
   "icons": [
+    {
+      "src": "/icons/192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
     {
       "src": "/icons/512.png",
       "type": "image/png",
       "sizes": "512x512"
+    },
+    {
+      "src": "/icons/512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
   "start_url": "/",
-  "background_color": "#3B82F7",
   "display": "standalone",
-  "scope": "/",
   "theme_color": "#3B82F7",
-  "description": "Personal time tracking app"
+  "background_color": "#3B82F7"
 }
