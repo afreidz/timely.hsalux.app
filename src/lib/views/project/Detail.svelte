@@ -13,6 +13,10 @@
   $: if (!project) window.location.hash = "";
 </script>
 
+<svelte:head>
+  <title>Project Details for: {project.name}</title>
+</svelte:head>
+
 <section class="p-6 flex flex-col flex-1">
   <Heading as="h4" variant="section">Project Details</Heading>
   <div class="flex-1">

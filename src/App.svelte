@@ -14,8 +14,11 @@
   import Masthead from "./lib/components/Masthead.svelte";
   import Timeline from "./lib/components/Timeline.svelte";
 
+  let title;
   let classes;
+
   $: if (!!$auth && !$viewDate) $viewDate = new Date();
+  $: title = !$subview ? $viewDate.toLocaleDateString("en") : null;
 
   $: classes = {
     layout: cl`
@@ -72,6 +75,12 @@
     $subview = window.location.hash;
   }
 </script>
+
+<svelte:head>
+  {#if title}
+    <title>{title}</title>
+  {/if}
+</svelte:head>
 
 <svelte:window
   on:hashchange={navigate}

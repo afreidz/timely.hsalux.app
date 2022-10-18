@@ -17,6 +17,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Add new project</title>
+</svelte:head>
+
 <section class="p-6 flex flex-col flex-1">
   <Heading as="h4" variant="section">Add A New Project</Heading>
   <form

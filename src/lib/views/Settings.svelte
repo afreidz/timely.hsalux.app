@@ -15,6 +15,10 @@
   $: endofday = $settings?.endofday ?? null;
 </script>
 
+<svelte:head>
+  <title>Settings</title>
+</svelte:head>
+
 <section class="p-6">
   <Heading as="h4" variant="section">Application Settings</Heading>
   {#await load()}

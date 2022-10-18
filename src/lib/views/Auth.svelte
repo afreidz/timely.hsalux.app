@@ -37,6 +37,10 @@
   };
 </script>
 
+<svelte:head>
+  <title>Login</title>
+</svelte:head>
+
 <main class={classes.overlay}>
   <article class={classes.window}>
     <h1 class="mb-10 text-3xl font-thin flex justify-center text-white">

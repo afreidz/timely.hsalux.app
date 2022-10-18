@@ -64,6 +64,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Details for: {timer.project.name} - {timer.project.task}</title>
+</svelte:head>
+
 <section class="p-6 flex-1">
   <header class="mb-4">
     <Heading as="h4" variant="section">Timer Details</Heading>

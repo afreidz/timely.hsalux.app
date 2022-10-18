@@ -24,6 +24,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Daily report for: {$viewDate.toLocaleDateString("en")}</title>
+</svelte:head>
+
 <section class="p-6">
   <Heading as="h4" variant="section" class="flex">
     <span class="flex-1 font-semibold">
