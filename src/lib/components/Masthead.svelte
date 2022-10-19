@@ -70,9 +70,9 @@
       >
     {/if}
   </div>
-  <div class="flex flex-none flex-col justify-center place-self-center">
+  <div class="mr-5 flex flex-none flex-col justify-center place-self-center">
     <label class="relative">
-      <Icon icon="heroicons:calendar-days" class="w-12 h-12" />
+      <Icon icon="heroicons:calendar-days" class="w-8 h-8 sm:w-12 sm:h-12" />
       <input
         type="date"
         on:change={(e) => setview(e.target.value)}

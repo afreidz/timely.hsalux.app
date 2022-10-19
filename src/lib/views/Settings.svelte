@@ -19,8 +19,10 @@
   <title>Settings</title>
 </svelte:head>
 
+<header class="view-heading">
+  <Heading as="h4">Application Settings</Heading>
+</header>
 <section class="p-6">
-  <Heading as="h4" variant="section">Application Settings</Heading>
   {#await load()}
     <Icon icon="eos-icons:loading" class="w-6 h-6" />
   {:then}

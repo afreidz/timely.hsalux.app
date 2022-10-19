@@ -21,11 +21,13 @@
 
   const classes = {
     close: cl`
+      m-1
       top-0
       right-0
+      w-8 h-8
       absolute
-      w-10 h-10
       rounded-sm
+      bg-white/5
       inline-flex
       items-center
       justify-center 
@@ -66,6 +68,7 @@
       ease-in-out
       duration-300
       overflow-auto
+      drop-shadow-2xl
       translate-x-full
       border-neutral-200
       transition-transform

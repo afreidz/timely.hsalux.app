@@ -68,10 +68,10 @@
   <title>Details for: {timer.project.name} - {timer.project.task}</title>
 </svelte:head>
 
+<header class="view-heading">
+  <Heading as="h4">Timer Details</Heading>
+</header>
 <section class="p-6 flex-1">
-  <header class="mb-4">
-    <Heading as="h4" variant="section">Timer Details</Heading>
-  </header>
   {#if timer}
     <Field
       val={timer.task}

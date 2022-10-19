@@ -28,25 +28,23 @@
   <title>Daily report for: {$viewDate.toLocaleDateString("en")}</title>
 </svelte:head>
 
-<section class="p-6">
-  <Heading as="h4" variant="section" class="flex">
-    <span class="flex-1 font-semibold">
-      Daily Report for
-      <span
-        class="px-4 py-2 font-normal rounded-full inline-block bg-neutral-50 dark:bg-black/30"
-      >
-        {$viewDate.toLocaleDateString("en")}
-      </span>
-    </span>
-    <label class="relative flex-none">
-      <Icon icon="heroicons:calendar-days" class="w-12 h-12" />
+<header class="view-heading">
+  <Heading as="h4">
+    Daily Report for
+    {$viewDate.toLocaleDateString("en")}
+  </Heading>
+  <div class="mr-5 flex flex-none flex-col justify-center place-self-center">
+    <label class="relative">
+      <Icon icon="heroicons:calendar-days" class="w-8 h-8 sm:w-12 sm:h-12" />
       <input
         type="date"
         on:change={(e) => setview(e.target.value)}
         class="absolute top-0 bottom-0 left-0 right-0 opacity-0"
       />
     </label>
-  </Heading>
+  </div>
+</header>
+<section class="p-6">
   <div class="flex justify-center my-6">
     <ul class="flex-1 max-w-xl">
       {#each Object.entries(groups) as [projectName, timers]}
