@@ -4,6 +4,7 @@ import { settings as persistence } from "../helpers/firebase/db";
 export interface ISettings {
   endofday?: string;
   autoStop?: boolean;
+  showHours?: string[];
   theme?: "dark" | "light";
 }
 

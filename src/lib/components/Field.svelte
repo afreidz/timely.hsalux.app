@@ -39,7 +39,7 @@
       flex-1
       relative
       self-stretch
-      ${!!label ? "pt-6" : "pt-4"}
+      ${!!label ? "pt-6" : "pt-2"}
     `,
     label: cl`
       flex
