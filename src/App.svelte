@@ -18,7 +18,7 @@
   let classes;
 
   $: if (!!$auth && !$viewDate) $viewDate = new Date();
-  $: title = !$subview ? $viewDate.toLocaleDateString("en") : null;
+  $: title = !$subview ? $viewDate?.toLocaleDateString("en") || "" : null;
 
   $: classes = {
     layout: cl`
