@@ -21,8 +21,10 @@
   <title>Add new project</title>
 </svelte:head>
 
+<header class="view-heading">
+  <Heading as="h4">Add A New Project</Heading>
+</header>
 <section class="p-6 flex flex-col flex-1">
-  <Heading as="h4" variant="section">Add A New Project</Heading>
   <form
     class="mt-6 flex flex-col flex-1"
     on:submit|preventDefault={() => create()}

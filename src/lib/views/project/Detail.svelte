@@ -17,8 +17,10 @@
   <title>Project Details for: {project.name}</title>
 </svelte:head>
 
+<header class="view-heading">
+  <Heading as="h4">Project Details</Heading>
+</header>
 <section class="p-6 flex flex-col flex-1">
-  <Heading as="h4" variant="section">Project Details</Heading>
   <div class="flex-1">
     <Field
       required
