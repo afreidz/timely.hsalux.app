@@ -1,6 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import cl from "../../helpers/classlist";
+  import subview from "../../stores/subview";
   import { isToday } from "../../helpers/date";
   import Timer from "../../components/Timer.svelte";
   import Field from "../../components/Field.svelte";
@@ -12,7 +13,10 @@
   let timer: Timer;
 
   $: timer = $timers.find((t) => t.id === id);
-  $: if (!timer) window.location.hash = "";
+  $: if (!timer) {
+    $subview = null;
+    window.location.hash = "";
+  }
 
   function changeStart(e) {
     const [hh, mm] = e.detail.split(":");
@@ -65,7 +69,10 @@
 </script>
 
 <svelte:head>
-  <title>Details for: {timer.project.name} - {timer.project.task}</title>
+  <title
+    >Details for: {timer?.project?.name || ""} - {timer?.project?.task ||
+      ""}</title
+  >
 </svelte:head>
 
 <header class="view-heading">

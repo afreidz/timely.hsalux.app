@@ -1,4 +1,3 @@
-import bg from "./bg";
 import now from "./now";
 import paused from "./paused";
 import viewDate from "./viewDate";
@@ -155,6 +154,10 @@ export class Timer {
   static async getAll() {
     return await persistence.getAll();
   }
+
+  static async getByProject(pid: string) {
+    return await persistence.getByProject(pid);
+  }
 }
 
 viewDate.subscribe(async (d) => {
@@ -179,14 +182,24 @@ async function load() {
   timers.set(existing);
 }
 
-async function add(projectId?: string, task = "Timer") {
+async function add(projectId?: string, date: Date = new Date()) {
+  const now = new Date();
+  date.setHours(now.getHours());
+  date.setMinutes(now.getMinutes());
+  date.setSeconds(now.getSeconds());
+
   const timer: ITimer = {
-    task,
     projectId,
-    start: new Date(),
+    start: date,
+    task: "Timer",
   };
 
-  await persistence.add(timer);
+  const nt = await persistence.add(timer);
+
+  if (!isToday(date)) {
+    nt?.stop();
+  }
+
   await Timer.update();
 }
 

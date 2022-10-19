@@ -74,10 +74,10 @@
     input: cl`
       peer
       flex-1 
-      leading-10
       text-black
       self-stretch
       outline-none
+      leading-[2.5]
       bg-transparent
       dark:text-white
     `,
@@ -114,7 +114,7 @@
         id={name}
         value={val}
         placeholder=" "
-        class={classes.input}
+        class={`${props.class} ${classes.input}`}
         on:change={(e) => dispatch("change", e.target.value)}
       />
     {:else}
@@ -124,7 +124,7 @@
         id={name}
         bind:value={val}
         placeholder=" "
-        class={classes.input}
+        class={`${props.class} ${classes.input}`}
         on:change={(e) => dispatch("change", e.target.value)}
       />
     {/if}

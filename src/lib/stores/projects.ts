@@ -8,6 +8,8 @@ export interface IProject {
   name: string;
   color: string;
   owner?: string;
+  budget?: number;
+  archived?: boolean;
 }
 
 const projects: Writable<Project[]> = writable([]);
@@ -53,6 +55,39 @@ export class Project {
     return get(timers).filter((t) => t.project === this);
   }
 
+  get archived() {
+    return this.instance.archived;
+  }
+
+  get budget() {
+    return this.instance.budget || 0;
+  }
+
+  set budget(b: number) {
+    this.instance.budget = b;
+    this.persist();
+  }
+
+  async calculateHours() {
+    const timers = await Timer.getByProject(this.id);
+    return timers.reduce((a, b) => a + Math.round(+b.hours), 0);
+  }
+
+  async archive() {
+    this.instance.archived = true;
+    await this.persist();
+  }
+
+  async unarchive() {
+    this.instance.archived = false;
+    await this.persist();
+  }
+
+  async delete() {
+    await persistence.delete(this.instance);
+    Project.update();
+  }
+
   async persist() {
     await persistence.update(this.instance);
     await Project.update();
@@ -71,6 +106,8 @@ async function add(name: string, color: string) {
   const project: IProject = {
     name,
     color,
+    budget: 0,
+    archived: false,
   };
 
   await persistence.add(project);

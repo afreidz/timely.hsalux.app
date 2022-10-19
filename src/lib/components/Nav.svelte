@@ -7,6 +7,8 @@
   import projects, { load } from "../stores/projects";
   import { load as loadSettings } from "../stores/projects";
 
+  let showArchived = false;
+
   const navclass = cl`
     grid
     pt-4
@@ -17,13 +19,7 @@
 `;
 
   function handleProjectClick(projectId: string) {
-    const project = $projects.find((p) => p.id === projectId);
-    if (project?.hasRunningTimer) {
-      const timer = project.timers.find((t) => t.running);
-      timer?.stop();
-    } else {
-      add(projectId);
-    }
+    add(projectId, $viewDate);
   }
 </script>
 
@@ -43,24 +39,51 @@
             <Icon icon="eos-icons:loading" class="h-6 w-6" />
           </li>
         {:then}
-          {#each $projects as project}
+          {#each $projects.filter((p) => !p.archived) as project}
             <li class="pl-12 flex items-center">
               <div class={`mr-1 rounded-sm ${project.bgColor} w-4 h-4`} />
               <a
                 href={`#project/${project.id}`}
                 class="flex-1 ml-2 line-clamp-1 py-2">{project.name}</a
               >
-              {#if isToday($viewDate)}
-                <button
-                  class="flex-none"
-                  on:click|stopPropagation={() =>
-                    handleProjectClick(project.id)}
-                >
+              <button
+                class="flex-none"
+                on:click|stopPropagation={() => handleProjectClick(project.id)}
+              >
+                {#if isToday($viewDate)}
                   <Icon icon="heroicons:play-circle" class="h-6 w-6" />
-                </button>
-              {/if}
+                {:else}
+                  <Icon icon="heroicons:plus-circle" class="h-6 w-6" />
+                {/if}
+              </button>
             </li>
           {/each}
+          {#if $projects.some((p) => p.archived)}
+            <li class="my-4">
+              <button
+                class="pl-12 flex items-center"
+                on:click={() => (showArchived = !showArchived)}
+              >
+                {#if showArchived}
+                  <Icon icon="heroicons:eye-slash" class="mr-3 h-4 w-4" />
+                {:else}
+                  <Icon icon="heroicons:eye" class="mr-3 h-4 w-4" />
+                {/if}
+                <span>Archived</span>
+              </button>
+            </li>
+            {#if showArchived}
+              {#each $projects.filter((p) => p.archived) as project}
+                <li class="pl-12 flex items-center">
+                  <div class={`mr-1 rounded-sm ${project.bgColor} w-4 h-4`} />
+                  <a
+                    href={`#project/${project.id}`}
+                    class="flex-1 ml-2 line-clamp-1 py-2">{project.name}</a
+                  >
+                </li>
+              {/each}
+            {/if}
+          {/if}
         {/await}
       </ul>
     </li>

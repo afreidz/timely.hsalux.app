@@ -14,6 +14,7 @@ import {
   getDocs,
   deleteDoc,
   collection,
+  writeBatch,
   getFirestore,
 } from "firebase/firestore";
 
@@ -72,10 +73,16 @@ const projects = {
   },
   async deleteAll() {
     console.log("db call: delete all projects");
-    const projects = await this.get();
-    for await (const project of projects) {
-      deleteDoc(doc(db, "projects", project.id));
-    }
+    const uid = get(auth)?.uid;
+    const c = collection(db, "projects");
+    const q = query(c, where("owner", "==", uid));
+
+    const snap = await getDocs(q);
+    const batch = writeBatch(db);
+
+    snap.forEach((doc) => batch.delete(doc.ref));
+
+    await batch.commit();
   },
 };
 
@@ -102,8 +109,21 @@ const timers = {
     );
     (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
 
-    existing.forEach((t) => {});
+    return existing;
+  },
+  async getByProject(pid: string) {
+    console.log("db call: get timers by project", pid);
+    const uid = get(auth)?.uid;
+    if (!uid) throw new Error("no authorized user");
 
+    const existing = [];
+    const timerRef = collection(db, "timers").withConverter(timerConverter);
+    const q = query(
+      timerRef,
+      where("owner", "==", uid),
+      where("projectId", "==", pid)
+    );
+    (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
     return existing;
   },
   async getAll() {
@@ -123,7 +143,14 @@ const timers = {
     if (!uid) throw new Error("no authorized user");
 
     timer.owner = uid;
-    await addDoc(collection(db, "timers"), timer);
+    const result = await addDoc(collection(db, "timers"), timer);
+    const nt = await getDoc(
+      doc(db, "timers", result.id).withConverter(timerConverter)
+    );
+
+    if (nt.exists) return nt.data();
+
+    return null;
   },
   async update(timer: ITimer) {
     console.log("db call: update timer");
@@ -135,10 +162,16 @@ const timers = {
   },
   async deleteAll() {
     console.log("db call: delete all timers");
-    const timers = await this.getAll();
-    for await (const timer of timers) {
-      deleteDoc(doc(db, "timers", timer.id));
-    }
+    const uid = get(auth)?.uid;
+    const c = collection(db, "timers");
+    const q = query(c, where("owner", "==", uid));
+
+    const snap = await getDocs(q);
+    const batch = writeBatch(db);
+
+    snap.forEach((doc) => batch.delete(doc.ref));
+
+    await batch.commit();
   },
 };
 
