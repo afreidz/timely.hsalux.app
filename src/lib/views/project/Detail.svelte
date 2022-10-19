@@ -80,8 +80,8 @@
         />
       </Field>
     </div>
-    {#if $settings.showHours?.includes(project.id)}
-      <div class="flex-1 flex flex-col items-center justify-center">
+    <div class="flex-1 flex flex-col items-center justify-center">
+      {#if $settings.showHours?.includes(project.id)}
         <strong class="text-2xl font-light mb-4">Project Hours</strong>
         <div class="w-full max-w-xs">
           <Field
@@ -144,8 +144,8 @@
             </small>
           {/if}
         </div>
-      </div>
-    {/if}
+      {/if}
+    </div>
     <div class="flex justify-around items-center gap-10">
       <div class="flex-1">
         <Heading as="h4" variant="section">
