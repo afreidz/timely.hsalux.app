@@ -41,7 +41,7 @@
   `}
 >
   <div class="flex-1 shrink">
-    <small class="text-neutral-400 ml-8">
+    <small class="text-neutral-400">
       {$viewDate?.toLocaleDateString("en", {
         month: "long",
         year: "numeric",
@@ -49,28 +49,12 @@
     </small>
 
     <Heading>
-      {#if prevDay}
-        <button on:click={() => previous()}>
-          <Icon icon="heroicons:chevron-left" class="w-8 h-8" />
-        </button>
-      {/if}
       <span class="flex-none">
         {$viewDate?.toLocaleString("en", { weekday: "long", day: "numeric" })}
       </span>
-      {#if nextDay}
-        <button on:click={() => next()}>
-          <Icon icon="heroicons:chevron-right" class="w-8 h-8" />
-        </button>
-      {/if}
     </Heading>
-    {#if !viewIsToday}
-      <button
-        class="p-2 ml-8 sm:ml-16 text-xs opacity-50"
-        on:click={() => ($viewDate = new Date())}>Go To Today</button
-      >
-    {/if}
   </div>
-  <div class="mr-5 flex flex-none flex-col justify-center place-self-center">
+  <!-- <div class="mr-5 flex flex-none flex-col justify-center place-self-center">
     <label class="relative">
       <Icon icon="heroicons:calendar-days" class="w-8 h-8 sm:w-12 sm:h-12" />
       <input
@@ -79,11 +63,11 @@
         class="absolute top-0 bottom-0 left-0 right-0 opacity-0"
       />
     </label>
-  </div>
+  </div> -->
 </header>
 
-<style lang="postcss">
+<!-- <style lang="postcss">
   input[type="date"]::-webkit-calendar-picker-indicator {
     @apply absolute top-0 bottom-0 left-0 right-0 bg-transparent w-auto h-auto;
   }
-</style>
+</style> -->

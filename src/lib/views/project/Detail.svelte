@@ -3,6 +3,7 @@
   import subview from "../../stores/subview";
   import colorKeys from "../../helpers/colors";
   import settings from "../../stores/settings";
+  import Hours from "../../components/Hours.svelte";
   import Field from "../..//components/Field.svelte";
   import Switch from "../../components/Switch.svelte";
   import Button from "../../components/Button.svelte";
@@ -82,68 +83,7 @@
     </div>
     <div class="flex-1 flex flex-col items-center justify-center">
       {#if $settings.showHours?.includes(project.id)}
-        <strong class="text-2xl font-light mb-4">Project Hours</strong>
-        <div class="w-full max-w-xs">
-          <Field
-            min="0"
-            step="1"
-            type="number"
-            label="Budgeted"
-            name="projectBudget"
-            bind:val={project.budget}
-            class="text-2xl text-center"
-          />
-        </div>
-        <div class="w-full max-w-xs">
-          <Field readonly label="Recorded">
-            <div slot="readonly">
-              <span class="flex text-2xl items-center justify-center">
-                {#if hours}
-                  {#await hours}
-                    <Icon icon="eos-icons:loading" class="w-8 h-8" />
-                  {:then hours}
-                    {hours}
-                  {/await}
-                {/if}
-              </span>
-            </div>
-          </Field>
-        </div>
-        <div
-          class="w-full max-w-xs border-t mt-4 py-6 flex text-2xl border-black dark:border-white"
-        >
-          {#if project.budget == 0}
-            <strong class="flex-1 font-light">Total:</strong>
-            <small class="flex-none font-semibold">
-              {#if hours}
-                {#await hours}
-                  <span>?</span>
-                {:then hours}
-                  <span>{Math.round(hours)}</span>
-                {/await}
-              {/if}
-              <span class="font-normal opacity-50">hr</span>
-            </small>
-          {:else}
-            <strong class="flex-1 font-light">Remaining:</strong>
-            <small class="flex-none font-semibold">
-              {#if hours}
-                {#await hours}
-                  <span>?</span>
-                {:then hours}
-                  <span
-                    class={`${
-                      Math.round(project.budget - hours) < 8
-                        ? "text-red-500"
-                        : ""
-                    }`}>{Math.round(project.budget - hours)}</span
-                  >
-                {/await}
-              {/if}
-              <span class="font-normal opacity-50">hr</span>
-            </small>
-          {/if}
-        </div>
+        <Hours {project} />
       {/if}
     </div>
     <div class="flex justify-around items-center gap-10">

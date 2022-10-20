@@ -3,6 +3,7 @@
   import Icon from "@iconify/svelte";
   import Timer from "./Timer.svelte";
   import cl from "../helpers/classlist";
+  import Actions from "./Actions.svelte";
   import { onMount, tick } from "svelte";
   import subview from "../stores/subview";
   import viewDate from "../stores/viewDate";
@@ -48,63 +49,6 @@
     "11PM",
   ];
 
-  const classes = {
-    section: cl`
-      py-2
-      flex
-      flex-1
-      flex-col
-      bg-gray-100
-      overflow-auto
-      dark:bg-neutral-800
-`,
-    grid: cl`
-      grid
-      flex-1
-      gap-y-3
-      gap-x-px
-      w-[4880px]
-      grid-cols-[repeat(1440,0.15rem)]
-`,
-    hour: cl`
-      border-l
-      row-start-2
-      row-span-full
-      text-neutral-400
-      border-l-neutral-200
-
-      dark:text-neutral-700
-      dark:border-l-neutral-700
-`,
-    now: cl`
-      border-l
-      relative
-      row-start-1
-      pt-[0.4rem]
-      row-span-full
-      border-red-300
-      dark:border-red-500
-
-      after:w-2
-      after:h-2
-      after:-top-1
-      after:-left-1
-      after:absolute
-      after:bg-red-500
-      after:rounded-full
-      after:content-[" "]
-`,
-    nowtime: cl`
-      py-1
-      px-2
-      bg-black/5
-      text-red-500
-      rounded-full
-      whitespace-nowrap
-      ml-[calc(100%_+_2px)]
-`,
-  };
-
   onMount(setview);
 
   async function setview() {
@@ -117,29 +61,54 @@
 </script>
 
 <section
-  on:scroll={() => (scrolled = true)}
-  class={`timeline ${classes.section} ${$$props.class}`}
   bind:this={timeline}
+  on:scroll={() => (scrolled = true)}
+  class={`
+    timeline
+    flex
+    flex-1
+    flex-col
+    bg-gray-100
+    overflow-auto
+    dark:bg-neutral-800
+    ${$$props.class}
+  `}
 >
   {#await load()}
     <div class="self-center justify-self-center">
       <Icon icon="eos-icons:loading" class="w-12 h-12" />
     </div>
   {:then}
+    <header class="sticky left-0 top-0 mb-2">
+      <Actions />
+    </header>
     <div
-      class={classes.grid}
-      style={`grid-template-rows: 2.1rem 1.5rem repeat(${Math.max(
-        $timers.length,
-        1
-      )}, 2.5rem) auto`}
+      class={`
+        grid
+        flex-1
+        gap-y-3
+        gap-x-px
+        w-[4880px]
+        grid-cols-[repeat(1440,0.15rem)]
+        grid-rows-[2.1rem_1.5rem_repeat(${$timers?.length || 1},2.5rem)_auto]
+
+        ${!viewIsToday ? "-mt-[3.2rem]" : ""}
+    `}
     >
       {#each hours as hour, index}
         <div
-          class={classes.hour}
-          style={`grid-column-start:${Math.max(
-            index * 60,
-            1
-          )}; grid-column-end:${Math.max(index * 60 + 1, 2)};`}
+          class={`
+            border-l
+            invisible
+            sm:visible
+            row-start-2
+            row-span-full
+            text-neutral-400
+            border-l-neutral-200
+            dark:text-neutral-700
+            dark:border-l-neutral-700
+            col-start-[${index * 60 || 1}] 
+          `}
         >
           <span
             class={`
@@ -157,9 +126,11 @@
         <a
           href={`#timer/${item.id}`}
           bind:this={timerNodes[index]}
-          style={`grid-row-start: ${index + 3}; grid-column-start: ${
-            item.startCol
-          }; grid-column-end: ${item.endCol};`}
+          class={`
+            row-start-[${index + 3}]
+            col-end-[${item.endCol}]
+            col-start-[${item.startCol}]
+          `}
           title={`${item.project?.name} - ${item.task}`}
         >
           <Timer color={item.project?.color} project={item.project?.name}>
@@ -171,12 +142,32 @@
       {/each}
       {#if viewIsToday}
         <div
-          class={classes.now}
-          style={`grid-column-start: ${offset}; grid-column-end: ${
-            offset + 1
-          };`}
+          class={`
+            border-l
+            relative
+            invisible
+            sm:visible
+            row-start-1
+            pt-[0.4rem]
+            row-span-full
+            border-red-300
+            dark:border-red-500 
+
+            col-start-[${offset}]
+            col-end-[${offset + 1}]
+          `}
         >
-          <span class={classes.nowtime} bind:this={nowtime}
+          <span
+            class={`
+              py-1
+              px-2
+              text-red-500
+              rounded-full
+              bg-red-500/20
+              whitespace-nowrap
+              ml-[calc(100%_+_2px)]
+            `}
+            bind:this={nowtime}
             >{$now.toLocaleTimeString("en-US", { timeStyle: "short" })}</span
           >
         </div>

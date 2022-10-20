@@ -1,4 +1,4 @@
-import "./app.css";
+import "./app.postcss";
 import App from "./App.svelte";
 import { onAuthChange } from "./lib/helpers/firebase/auth";
 

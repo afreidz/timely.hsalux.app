@@ -2,7 +2,9 @@
   import Icon from "@iconify/svelte";
   import cl from "../../helpers/classlist";
   import subview from "../../stores/subview";
+  import settings from "../../stores/settings";
   import { isToday } from "../../helpers/date";
+  import Hours from "../../components/Hours.svelte";
   import Timer from "../../components/Timer.svelte";
   import Field from "../../components/Field.svelte";
   import Button from "../../components/Button.svelte";
@@ -78,7 +80,7 @@
 <header class="view-heading">
   <Heading as="h4">Timer Details</Heading>
 </header>
-<section class="p-6 flex-1">
+<section class="p-6 flex-1 flex flex-col">
   {#if timer}
     <Field
       val={timer.task}
@@ -98,10 +100,10 @@
         items-center
         grid-cols-[auto_auto]
         grid-rows-[auto_auto]
-
+        
         sm:grid-rows-[auto]
         sm:grid-cols-[9rem_auto_9rem]
-      `}
+        `}
     >
       <div class="order-2 place-self-center sm:order-1">
         <Field
@@ -160,6 +162,11 @@
           val={dateToString(timer.end)}
         />
       </div>
+    </div>
+    <div class="flex-1 flex flex-col items-center justify-center">
+      {#if $settings.showHours?.includes(timer.project.id)}
+        <Hours project={timer.project} readonly />
+      {/if}
     </div>
     <div class="flex justify-around">
       {#if timer.running}

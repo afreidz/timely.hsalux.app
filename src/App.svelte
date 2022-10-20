@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./lib/helpers/forceload";
   import bg from "./lib/stores/bg";
   import { onMount } from "svelte";
   import nav from "./lib/stores/nav";
