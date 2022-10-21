@@ -3,6 +3,7 @@
   import paused from "../stores/paused";
   import cl from "../helpers/classlist";
   import subview from "../stores/subview";
+  import Update from "../views/Update.svelte";
   import type { SvelteComponent } from "svelte";
   import Settings from "../views/Settings.svelte";
   import NewProject from "../views/project/New.svelte";
@@ -104,6 +105,9 @@
         break;
       case id?.startsWith("report/daily"):
         component = DailyReport;
+        break;
+      case id?.startsWith("update"):
+        component = Update;
         break;
       default:
         component = null;

@@ -10,6 +10,7 @@
   import { isToday } from "../helpers/date";
   import timers, { load } from "../stores/timers";
 
+  let classes;
   let viewIsToday;
   let offset: number;
   let timerNodes = [];
@@ -48,6 +49,42 @@
     "10PM",
     "11PM",
   ];
+
+  $: {
+    if ($timers) {
+      classes = {
+        now: cl`
+        border-l
+        relative
+        invisible
+        sm:visible
+        row-start-1
+        pt-[0.4rem]
+        row-span-full
+        border-red-300
+        dark:border-red-500
+  
+        after:w-2
+        after:h-2
+        after:-top-1
+        after:-left-1
+        after:absolute
+        after:bg-red-500
+        after:rounded-full
+        after:content-[" "]
+  `,
+        nowtime: cl`
+        py-1
+        px-2
+        text-red-500
+        rounded-full
+        bg-red-500/20
+        whitespace-nowrap
+        ml-[calc(100%_+_2px)]
+  `,
+      };
+    }
+  }
 
   onMount(setview);
 
@@ -151,7 +188,16 @@
             pt-[0.4rem]
             row-span-full
             border-red-300
-            dark:border-red-500 
+            dark:border-red-500
+            
+            after:w-2
+            after:h-2
+            after:-top-1
+            after:-left-1
+            after:absolute
+            after:bg-red-500
+            after:rounded-full
+            after:content-[" "]
 
             col-start-[${offset}]
             col-end-[${offset + 1}]
