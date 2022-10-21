@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite",
     "preview": "vite preview",
-    "build": "vite build && npm run sw",
-    "sw": "workbox generateSW ./workbox-config.cjs",
+    "build": "vite build",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {

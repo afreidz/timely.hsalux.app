@@ -38,7 +38,7 @@
         border
         mx-auto
         rounded-md
-        bg-black/20
+        bg-black/5
         overflow-auto
         prose-neutral
         dark:prose-invert
