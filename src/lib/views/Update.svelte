@@ -1,10 +1,12 @@
 <script lang="ts">
   import { marked } from "marked";
   import Icon from "@iconify/svelte";
-  import update from "../stores/update";
   import subview from "../stores/subview";
   import Button from "../components/Button.svelte";
   import Heading from "../components/Heading.svelte";
+  import { useRegisterSW } from "virtual:pwa-register/svelte";
+
+  const { updateServiceWorker } = useRegisterSW();
 
   async function loadChanges() {
     const md = await (await fetch("/changes.md")).text();
@@ -12,7 +14,7 @@
   }
 
   async function handleUpdate() {
-    await $update?.();
+    await updateServiceWorker?.();
     window.location.hash = "";
   }
 </script>
@@ -49,5 +51,5 @@
   </section>
 {/await}
 <footer class="text-center">
-  <Button on:click={handleUpdate}>Update Now!</Button>
+  <Button on:click={() => handleUpdate()``}>Update Now!</Button>
 </footer>
