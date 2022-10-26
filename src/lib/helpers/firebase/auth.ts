@@ -26,7 +26,7 @@ export async function demoSignin(callback: VoidFunction) {
   callback?.();
 }
 
-export async function signout(callback: VoidFunction) {
+export async function signout(callback?: VoidFunction) {
   await fbSignOut(auth);
   callback?.();
 }
