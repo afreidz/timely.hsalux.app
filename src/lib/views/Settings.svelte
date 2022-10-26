@@ -104,11 +104,15 @@
           })}
       />
       <div slot="lower" class="py-4 text-xs opacity-30">
-        <p>
+        <p class="mb-4">
           When enabled, you may have multiple running timers at once. If this
           option is enabled, gapless timers cannot be. It will be ambiguous as
           to which timer(s) should be adjusted when the surrounding timers
           change.
+        </p>
+        <p>
+          <strong>Note:</strong> If this setting is disabled, new timers will automatically
+          stop the previous running timer!
         </p>
       </div>
     </Field>

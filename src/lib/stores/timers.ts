@@ -49,8 +49,18 @@ export class Timer {
   }
 
   set start(d: Date) {
-    this.instance.start = d;
-    this.persist();
+    const { gapless } = get(settings) || {};
+
+    if(gapless && this.previousTimer) {
+      this.previousTimer.setEndAndBail(d).then(() => {
+        this.instance.start = d;
+        this.persist();
+      });
+    } else {
+      this.instance.start = d;
+      this.persist();
+    }
+
   }
 
   get end() {
@@ -66,8 +76,28 @@ export class Timer {
   }
 
   set end(d: Date) {
+    const { gapless } = get(settings) || {};
+
+    if(gapless && this.nextTimer) {
+      this.nextTimer.setStartAndBail(d).then(() => {
+        this.instance.end = d;
+        this.persist();
+      });
+    } else {
+      this.instance.end = d;
+
+    }
+
+  }
+
+  setEndAndBail(d: Date) {
     this.instance.end = d;
-    this.persist();
+    return this.persist();
+  }
+
+  setStartAndBail(d: Date) {
+    this.instance.start = d;
+    return this.persist();
   }
 
   get duration() {
@@ -118,6 +148,16 @@ export class Timer {
       scheduledEnd.setMinutes(0);
     }
     return scheduledEnd;
+  }
+
+  get nextTimer() {
+    return get(timers).find(t => t.start > this.start);
+  }
+
+  get previousTimer() {
+    const sort = get(timers).sort((a,b) => +a.start - +b.start);
+    const idx = sort.indexOf(this);
+    return sort[idx-1];
   }
 
   stop(d: Date = new Date()) {
@@ -184,9 +224,33 @@ async function load() {
 
 async function add(projectId?: string, date: Date = new Date()) {
   const now = new Date();
-  date.setHours(now.getHours());
-  date.setMinutes(now.getMinutes());
-  date.setSeconds(now.getSeconds());
+
+  if(!get(settings).multipleRunning && get(timers).some(t => t.running)) {
+    const running = get(timers).filter(t => t.running);
+    running.forEach(t => t.stop());
+  }
+
+  const latestTimer = get(timers).reduce((a,b) => a.end > b.end ? a : b);
+
+  if(get(settings).gapless) {
+    if(latestTimer) {
+      date.setHours(latestTimer.end.getHours());
+      date.setMinutes(latestTimer.end.getMinutes());
+      date.setSeconds(latestTimer.end.getSeconds());
+    } else if(get(settings).startofday) {
+      const [hh, mm] = get(settings).startofday.split(":");
+      date.setHours(+hh);
+      date.setMinutes(+mm);
+    }else {
+      date.setHours(9);
+      date.setMinutes(0);
+    }
+  } else {
+    date.setHours(now.getHours());
+    date.setMinutes(now.getMinutes());
+    date.setSeconds(now.getSeconds());
+  }
+
 
   const timer: ITimer = {
     projectId,

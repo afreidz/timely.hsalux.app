@@ -101,7 +101,7 @@
   }
 
   function startDrag(e) {
-    if(!timeline) return;
+    if (!timeline) return;
     drag.active = true;
     drag.scroll = timeline.scrollLeft;
     drag.start = e.pageX - timeline.offsetLeft;
@@ -112,7 +112,7 @@
   }
 
   function handleDrag(e) {
-    if(!drag.active || !timeline) return;
+    if (!drag.active || !timeline) return;
     const x = e.pageX - timeline.offsetLeft;
     const scroll = x - drag.start;
     timeline.scrollLeft = drag.scroll - scroll;
