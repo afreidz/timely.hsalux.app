@@ -5,7 +5,6 @@
   import cl from "../helpers/classlist";
   import Actions from "./Actions.svelte";
   import { onMount, tick } from "svelte";
-  import subview from "../stores/subview";
   import viewDate from "../stores/viewDate";
   import { isToday } from "../helpers/date";
   import timers, { load } from "../stores/timers";
@@ -17,6 +16,11 @@
   let scrolled = false;
   let nowtime: HTMLElement;
   let timeline: HTMLElement;
+  let drag = {
+    start: null,
+    scroll: null,
+    active: false,
+  };
 
   $: if ($viewDate) scrolled = false;
   $: viewIsToday = isToday($viewDate);
@@ -63,7 +67,7 @@
         row-span-full
         border-red-300
         dark:border-red-500
-  
+
         after:w-2
         after:h-2
         after:-top-1
@@ -95,11 +99,32 @@
     if (!!node && !scrolled)
       node.scrollIntoView({ behavior: "smooth", inline });
   }
+
+  function startDrag(e) {
+    if(!timeline) return;
+    drag.active = true;
+    drag.scroll = timeline.scrollLeft;
+    drag.start = e.pageX - timeline.offsetLeft;
+  }
+
+  function stopDrag() {
+    drag.active = false;
+  }
+
+  function handleDrag(e) {
+    if(!drag.active || !timeline) return;
+    const x = e.pageX - timeline.offsetLeft;
+    const scroll = x - drag.start;
+    timeline.scrollLeft = drag.scroll - scroll;
+  }
 </script>
 
 <section
   bind:this={timeline}
   on:scroll={() => (scrolled = true)}
+  on:mouseup={stopDrag}
+  on:mousedown={startDrag}
+  on:mousemove|preventDefault={handleDrag}
   class={`
     timeline
     flex
@@ -144,7 +169,7 @@
             border-l-neutral-200
             dark:text-neutral-700
             dark:border-l-neutral-700
-            col-start-[${index * 60 || 1}] 
+            col-start-[${index * 60 || 1}]
           `}
         >
           <span
@@ -189,7 +214,7 @@
             row-span-full
             border-red-300
             dark:border-red-500
-            
+
             after:w-2
             after:h-2
             after:-top-1
