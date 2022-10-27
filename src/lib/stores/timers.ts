@@ -230,7 +230,7 @@ async function add(projectId?: string, date: Date = new Date()) {
     running.forEach(t => t.stop());
   }
 
-  const latestTimer = get(timers).reduce((a,b) => a.end > b.end ? a : b);
+  const latestTimer = get(timers).reduce((a,b) => (a?.end > b?.end ? a : b), null);
 
   if(get(settings).gapless) {
     if(latestTimer) {
