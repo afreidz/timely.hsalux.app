@@ -4,9 +4,10 @@
   import viewDate from "../../stores/viewDate";
   import Timer from "../../components/Timer.svelte";
   import Heading from "../../components/Heading.svelte";
-  import timers, { type Timer } from "../../stores/timers";
+  import Actions from "../../components/Actions.svelte";
+  import timers, { type Timer as TTimer } from "../../stores/timers";
 
-  let groups;
+  let groups: Record<string, TTimer[]>;
   $: groups = group($timers, (t) => t.project.name);
 
   function setview(v) {
@@ -14,7 +15,7 @@
     $viewDate = new Date(yyyy, mm - 1, dd);
   }
 
-  function sumTimers(timers: Timer[]) {
+  function sumTimers(timers: TTimer[]) {
     return (
       timers.reduce((p, c) => p + +c.duration, 0) /
       1000 /
@@ -33,17 +34,8 @@
     Daily Report for
     {$viewDate.toLocaleDateString("en")}
   </Heading>
-  <div class="mr-5 flex flex-none flex-col justify-center place-self-center">
-    <label class="relative">
-      <Icon icon="heroicons:calendar-days" class="w-8 h-8 sm:w-12 sm:h-12" />
-      <input
-        type="date"
-        on:change={(e) => setview(e.target.value)}
-        class="absolute top-0 bottom-0 left-0 right-0 opacity-0"
-      />
-    </label>
-  </div>
 </header>
+<Actions />
 <section class="p-6">
   <div class="flex justify-center my-6">
     <ul class="flex-1 max-w-xl">

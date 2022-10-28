@@ -22,9 +22,11 @@ const timers: Writable<Timer[]> = writable([]);
 
 export class Timer {
   private instance: ITimer;
+  public afterhours: boolean;
 
   constructor(instance: ITimer) {
     this.instance = instance;
+    this.afterhours = +Timer.newDate() > +this.scheduledEnd;
   }
 
   get id() {
@@ -49,29 +51,49 @@ export class Timer {
   }
 
   set start(d: Date) {
-    this.instance.start = d;
-    this.persist();
+    const { gapless } = get(settings) || {};
+
+    if (gapless && this.previousTimer) {
+      this.previousTimer.setEndAndBail(d).then(() => {
+        this.instance.start = d;
+        this.persist();
+      });
+    } else {
+      this.instance.start = d;
+      this.persist();
+    }
   }
 
   get end() {
     if (this.instance.end) return this.instance.end;
-
-    if (+this.scheduledEnd < +new Date()) {
-      this.instance.end = this.scheduledEnd;
-      this.persist();
-      return this.instance.end;
-    }
-
-    return new Date();
+    return Timer.newDate();
   }
 
   set end(d: Date) {
+    const { gapless } = get(settings) || {};
+
+    if (gapless && this.nextTimer) {
+      this.nextTimer.setStartAndBail(d).then(() => {
+        this.instance.end = d;
+        this.persist();
+      });
+    } else {
+      this.setEndAndBail(d);
+    }
+  }
+
+  setEndAndBail(d: Date) {
     this.instance.end = d;
-    this.persist();
+    return this.persist();
+  }
+
+  setStartAndBail(d: Date) {
+    this.instance.start = d;
+    return this.persist();
   }
 
   get duration() {
-    return new Date(+this.end - +this.start);
+    return Timer.newDate(new Date(+this.end - +this.start));
   }
 
   get hours() {
@@ -90,11 +112,7 @@ export class Timer {
         ? this.startCol + diff
         : this.startCol + 15;
 
-    const scheduledEndCol =
-      Math.ceil((+this.scheduledEnd - +this.start) / (1000 * 60)) +
-      this.startCol;
-
-    return Math.min(endCol, scheduledEndCol, 1440);
+    return Math.min(endCol, 1440);
   }
 
   get project() {
@@ -103,7 +121,11 @@ export class Timer {
 
   get scheduledEnd() {
     const { endofday } = get(settings) || {};
-    const scheduledEnd = new Date(this.start);
+    const scheduledEnd = Timer.newDate(this.start);
+
+    scheduledEnd.setSeconds(0);
+    scheduledEnd.setMilliseconds(0);
+
     if (endofday) {
       const [hh, mm] = endofday?.split(":");
       scheduledEnd.setHours(+hh);
@@ -120,13 +142,31 @@ export class Timer {
     return scheduledEnd;
   }
 
-  stop(d: Date = new Date()) {
+  get eod() {
+    const eod = Timer.newDate(this.start);
+    eod.setHours(24);
+    eod.setMinutes(0);
+    return eod;
+  }
+
+  get nextTimer() {
+    return get(timers).find((t) => t.start > this.start);
+  }
+
+  get previousTimer() {
+    const sort = get(timers).sort((a, b) => +a.start - +b.start);
+    const idx = sort.indexOf(this);
+    return sort[idx - 1];
+  }
+
+  stop(d: Date = Timer.newDate()) {
     this.instance.end = d;
     this.persist();
   }
 
   unstop() {
     this.instance.end = null;
+    if (+Timer.newDate() > +this.scheduledEnd) this.afterhours = true;
     this.persist();
   }
 
@@ -158,6 +198,13 @@ export class Timer {
   static async getByProject(pid: string) {
     return await persistence.getByProject(pid);
   }
+
+  static newDate(indate: Date = null) {
+    const d = indate ? new Date(indate) : new Date();
+    d.setSeconds(0);
+    d.setMilliseconds(0);
+    return d;
+  }
 }
 
 viewDate.subscribe(async (d) => {
@@ -169,8 +216,18 @@ viewDate.subscribe(async (d) => {
   console.log("Rendering Timers:", get(timers));
 
   if (isToday(d)) {
-    pollUnsubscribe = now.subscribe(() => {
+    pollUnsubscribe = now.subscribe((n) => {
       if (!get(paused)) timers.update((t) => t);
+
+      if (get(settings)?.autoStop) {
+        get(timers).forEach((t) => {
+          if (
+            (t.scheduledEnd === t.eod && +n > +t.eod) ||
+            (+n >= +t.scheduledEnd && !t.afterhours)
+          )
+            t.stop();
+        });
+      }
     });
   }
 });
@@ -182,11 +239,38 @@ async function load() {
   timers.set(existing);
 }
 
-async function add(projectId?: string, date: Date = new Date()) {
-  const now = new Date();
-  date.setHours(now.getHours());
-  date.setMinutes(now.getMinutes());
-  date.setSeconds(now.getSeconds());
+async function add(projectId?: string, indate: Date = new Date()) {
+  const date = Timer.newDate(indate);
+  const now = Timer.newDate();
+
+  if (!get(settings).multipleRunning && get(timers).some((t) => t.running)) {
+    const running = get(timers).filter((t) => t.running);
+    running.forEach((t) => t.stop());
+  }
+
+  const latestTimer = get(timers).reduce(
+    (a, b) => (a?.end > b?.end ? a : b),
+    null
+  );
+
+  if (get(settings).gapless) {
+    if (latestTimer) {
+      date.setHours(latestTimer.end.getHours());
+      date.setMinutes(latestTimer.end.getMinutes());
+      date.setSeconds(latestTimer.end.getSeconds());
+    } else if (get(settings).startofday) {
+      const [hh, mm] = get(settings).startofday.split(":");
+      date.setHours(+hh);
+      date.setMinutes(+mm);
+    } else {
+      date.setHours(9);
+      date.setMinutes(0);
+    }
+  } else {
+    date.setHours(now.getHours());
+    date.setMinutes(now.getMinutes());
+    date.setSeconds(now.getSeconds());
+  }
 
   const timer: ITimer = {
     projectId,

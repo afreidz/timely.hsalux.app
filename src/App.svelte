@@ -14,9 +14,12 @@
   import Subview from "./lib/components/Subview.svelte";
   import Masthead from "./lib/components/Masthead.svelte";
   import Timeline from "./lib/components/Timeline.svelte";
+  import { useRegisterSW } from "virtual:pwa-register/svelte";
 
   let title;
   let classes;
+
+  const { needRefresh } = useRegisterSW();
 
   $: if (!!$auth && !$viewDate) $viewDate = new Date();
   $: title = !$subview ? $viewDate?.toLocaleDateString("en") || "" : null;
@@ -69,6 +72,8 @@
       shadow-2xl
      `,
   };
+
+  $: if ($needRefresh) $subview = "update";
 
   onMount(navigate);
 

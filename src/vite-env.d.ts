@@ -1,4 +1,3 @@
 /// <reference types="svelte" />
 /// <reference types="vite/client" />
-
-declare module "virtual:pwa-register";
+/// <reference types="vite-plugin-pwa/client" />
