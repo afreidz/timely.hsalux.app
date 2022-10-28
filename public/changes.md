@@ -8,4 +8,6 @@
 #### Odds and ends
 
 - changes service worker logic to leverage vite-plugin-pwa's svelte virtual modules/stores
+- allow timers to be restarted "after hours" if auto-stop is enabled
+- normalizes dates to be XX:YY:00.0000 (0 seconds and 0 miliseconds) to prevent edge cases
 - added the date navigation action header to the daily report
