@@ -8,3 +8,4 @@
 #### Odds and ends
 
 - changes service worker logic to leverage vite-plugin-pwa's svelte virtual modules/stores
+- added the date navigation action header to the daily report
