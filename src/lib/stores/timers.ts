@@ -26,10 +26,17 @@ export class Timer {
 
   constructor(instance: ITimer) {
     this.instance = instance;
+    if (
+      this.running &&
+      this.scheduledEnd &&
+      !this.instance.afterhours &&
+      +this.start >= +this.scheduledEnd
+    )
+      this.afterhours = true;
   }
 
   get afterhours() {
-    return this.instance.afterhours;
+    return this.instance.afterhours || false;
   }
 
   set afterhours(b: boolean) {
