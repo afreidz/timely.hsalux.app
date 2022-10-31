@@ -254,7 +254,7 @@ async function add(projectId?: string, indate: Date = new Date()) {
 
   let afterhours: boolean = false;
   if (get(settings).endofday) {
-    const scheduledEnd = Timer.newDate(this.start);
+    const scheduledEnd = Timer.newDate(indate);
     const [hh, mm] = get(settings).endofday?.split(":");
     scheduledEnd.setHours(+hh);
     scheduledEnd.setMinutes(+mm);
