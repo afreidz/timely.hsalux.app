@@ -15,6 +15,7 @@ export interface ITimer {
   task: string;
   owner?: string;
   projectId?: string;
+  afterhours?: boolean;
 }
 
 let pollUnsubscribe: Unsubscriber;
@@ -22,11 +23,18 @@ const timers: Writable<Timer[]> = writable([]);
 
 export class Timer {
   private instance: ITimer;
-  public afterhours: boolean;
 
   constructor(instance: ITimer) {
     this.instance = instance;
-    this.afterhours = +Timer.newDate() > +this.scheduledEnd;
+  }
+
+  get afterhours() {
+    return this.instance.afterhours;
+  }
+
+  set afterhours(b: boolean) {
+    this.instance.afterhours = b;
+    this.persist();
   }
 
   get id() {
@@ -121,24 +129,14 @@ export class Timer {
 
   get scheduledEnd() {
     const { endofday } = get(settings) || {};
+
+    if (!endofday) return null;
+
     const scheduledEnd = Timer.newDate(this.start);
+    const [hh, mm] = endofday?.split(":");
+    scheduledEnd.setHours(+hh);
+    scheduledEnd.setMinutes(+mm);
 
-    scheduledEnd.setSeconds(0);
-    scheduledEnd.setMilliseconds(0);
-
-    if (endofday) {
-      const [hh, mm] = endofday?.split(":");
-      scheduledEnd.setHours(+hh);
-      scheduledEnd.setMinutes(+mm);
-
-      if (+this.start > +scheduledEnd) {
-        scheduledEnd.setHours(24);
-        scheduledEnd.setMinutes(0);
-      }
-    } else {
-      scheduledEnd.setHours(24);
-      scheduledEnd.setMinutes(0);
-    }
     return scheduledEnd;
   }
 
@@ -166,8 +164,12 @@ export class Timer {
 
   unstop() {
     this.instance.end = null;
-    if (+Timer.newDate() > +this.scheduledEnd) this.afterhours = true;
-    this.persist();
+
+    if (this.scheduledEnd && +new Date() > +this.scheduledEnd) {
+      this.afterhours = true;
+    } else {
+      this.persist();
+    }
   }
 
   serialize() {
@@ -222,8 +224,8 @@ viewDate.subscribe(async (d) => {
       if (get(settings)?.autoStop) {
         get(timers).forEach((t) => {
           if (
-            (t.scheduledEnd === t.eod && +n > +t.eod) ||
-            (+n >= +t.scheduledEnd && !t.afterhours)
+            +n >= +t.eod ||
+            (+n >= +t.scheduledEnd && !t.afterhours && t.running)
           )
             t.stop();
         });
@@ -242,6 +244,15 @@ async function load() {
 async function add(projectId?: string, indate: Date = new Date()) {
   const date = Timer.newDate(indate);
   const now = Timer.newDate();
+
+  let afterhours: boolean = false;
+  if (get(settings).endofday) {
+    const scheduledEnd = Timer.newDate(this.start);
+    const [hh, mm] = get(settings).endofday?.split(":");
+    scheduledEnd.setHours(+hh);
+    scheduledEnd.setMinutes(+mm);
+    afterhours = +date > +scheduledEnd;
+  }
 
   if (!get(settings).multipleRunning && get(timers).some((t) => t.running)) {
     const running = get(timers).filter((t) => t.running);
