@@ -1,6 +1,5 @@
 <script lang="ts">
   import { group } from "radash";
-  import Icon from "@iconify/svelte";
   import viewDate from "../../stores/viewDate";
   import Timer from "../../components/Timer.svelte";
   import Heading from "../../components/Heading.svelte";

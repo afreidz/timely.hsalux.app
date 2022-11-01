@@ -66,15 +66,16 @@ export class Timer {
   }
 
   set start(d: Date) {
+    const date = Timer.newDate(d);
     const { gapless } = get(settings) || {};
 
     if (gapless && this.previousTimer) {
-      this.previousTimer.setEndAndBail(d).then(() => {
-        this.instance.start = d;
+      this.previousTimer.setEndAndBail(date).then(() => {
+        this.instance.start = date;
         this.persist();
       });
     } else {
-      this.instance.start = d;
+      this.instance.start = date;
       this.persist();
     }
   }
@@ -85,25 +86,28 @@ export class Timer {
   }
 
   set end(d: Date) {
+    const date = Timer.newDate(d);
     const { gapless } = get(settings) || {};
 
     if (gapless && this.nextTimer) {
-      this.nextTimer.setStartAndBail(d).then(() => {
-        this.instance.end = d;
+      this.nextTimer.setStartAndBail(date).then(() => {
+        this.instance.end = date;
         this.persist();
       });
     } else {
-      this.setEndAndBail(d);
+      this.setEndAndBail(date);
     }
   }
 
   setEndAndBail(d: Date) {
-    this.instance.end = d;
+    const date = Timer.newDate(d);
+    this.instance.end = date;
     return this.persist();
   }
 
   setStartAndBail(d: Date) {
-    this.instance.start = d;
+    const date = Timer.newDate(d);
+    this.instance.start = date;
     return this.persist();
   }
 
@@ -164,8 +168,9 @@ export class Timer {
     return sort[idx - 1];
   }
 
-  stop(d: Date = Timer.newDate()) {
-    this.instance.end = d;
+  stop(d?: Date) {
+    const date = Timer.newDate(d);
+    this.instance.end = date;
     this.persist();
   }
 
@@ -248,7 +253,7 @@ async function load() {
   timers.set(existing);
 }
 
-async function add(projectId?: string, indate: Date = new Date()) {
+async function add(projectId?: string, indate?: Date) {
   const date = Timer.newDate(indate);
   const now = Timer.newDate();
 
