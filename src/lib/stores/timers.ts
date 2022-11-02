@@ -233,7 +233,7 @@ viewDate.subscribe(async (d) => {
     pollUnsubscribe = now.subscribe((n) => {
       if (!get(paused)) timers.update((t) => t);
 
-      if (get(settings)?.autoStop) {
+      if (get(settings)?.autoStop && isToday(n)) {
         get(timers).forEach((t) => {
           if (
             +n >= +t.eod ||
@@ -257,13 +257,11 @@ async function add(projectId?: string, indate?: Date) {
   const date = Timer.newDate(indate);
   const now = Timer.newDate();
 
-  let afterhours: boolean = false;
   if (get(settings).endofday) {
     const scheduledEnd = Timer.newDate(indate);
     const [hh, mm] = get(settings).endofday?.split(":");
     scheduledEnd.setHours(+hh);
     scheduledEnd.setMinutes(+mm);
-    afterhours = +date > +scheduledEnd;
   }
 
   if (!get(settings).multipleRunning && get(timers).some((t) => t.running)) {
