@@ -1,10 +1,10 @@
 import { get } from "svelte/store";
+import * as api from "../helpers/api";
 import timers, { Timer } from "./timers";
 import { writable, type Writable } from "svelte/store";
-import { projects as persistence } from "../helpers/firebase/db";
 
 export interface IProject {
-  id?: string;
+  _id?: string;
   name: string;
   color: string;
   owner?: string;
@@ -22,7 +22,7 @@ export class Project {
   }
 
   get id() {
-    return this.instance.id;
+    return this.instance._id;
   }
 
   get name() {
@@ -84,12 +84,12 @@ export class Project {
   }
 
   async delete() {
-    await persistence.delete(this.instance);
+    await api.call(`/projects/${this.id}`, "delete");
     Project.update();
   }
 
   async persist() {
-    await persistence.update(this.instance);
+    await api.call(`/projects/${this.id}`, "put", this.instance);
     await Project.update();
   }
 
@@ -99,6 +99,10 @@ export class Project {
 
   static async update() {
     return load();
+  }
+
+  static async getAll() {
+    return (await api.call("/projects")).map((p) => new Project(p));
   }
 }
 
@@ -110,17 +114,17 @@ async function add(name: string, color: string) {
     archived: false,
   };
 
-  await persistence.add(project);
+  await api.call("/projects", "post", project);
   await load();
 }
 
 async function load() {
-  const existing = await persistence.get();
-  projects.update(() => existing);
+  const existing = await api.call("/projects");
+  projects.update(() => existing.map((p: IProject) => new Project(p)));
 }
 
 async function deleteAllProjects() {
-  await persistence.deleteAll();
+  await api.call("/projects", "delete");
   await Project.update();
 }
 

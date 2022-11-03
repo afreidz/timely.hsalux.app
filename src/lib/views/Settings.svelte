@@ -3,13 +3,15 @@
   import auth from "../stores/auth";
   import theme from "../stores/theme";
   import Field from "../components/Field.svelte";
+  import { signout } from "../helpers/azure/auth";
   import Button from "../components/Button.svelte";
   import Switch from "../components/Switch.svelte";
   import Heading from "../components/Heading.svelte";
   import { deleteAllTimers } from "../stores/timers";
-  import { signout } from "../helpers/firebase/auth";
   import settings, { load } from "../stores/settings";
   import { deleteAllProjects } from "../stores/projects";
+  import Dropdown from "../components/Dropdown.svelte";
+  import { logEvent } from "firebase/analytics";
 
   let endofday;
   let startofday;
@@ -43,13 +45,51 @@
           })}
       />
     </Field>
+    <Field
+      val={startofday}
+      name="startofday"
+      label="Start of Workday"
+      on:change={(e) => ($settings = { ...$settings, startofday: e.detail })}
+    >
+      <Icon
+        slot="icon"
+        icon="heroicons:clock"
+        class="h-6 w-6 opacity-50 mr-2"
+      />
+    </Field>
+    <Field
+      val={endofday}
+      name="endofday"
+      label="End of Workday"
+      on:change={(e) => ($settings = { ...$settings, endofday: e.detail })}
+    >
+      <Icon
+        slot="icon"
+        icon="heroicons:clock"
+        class="h-6 w-6 opacity-50 mr-2"
+      />
+    </Field>
+    <Dropdown
+      label="Reporting Rounding"
+      val={$settings.rounding}
+      on:change={(e) => ($settings = { ...$settings, rounding: e.detail })}
+    >
+      <option default value="none">None</option>
+      <option value="0.25">15m</option>
+      <option value="0.5">30m</option>
+      <option value="1">1hr</option>
+      <p slot="lower" class="pb-4 text-xs opacity-30">
+        Time calculations will be rounded to the value set here.
+      </p>
+    </Dropdown>
+    <Heading as="h4" variant="section" class="mt-12">Timers</Heading>
     <Field>
       <Switch
         slot="custom"
         name="autoStop"
         enabled={$settings?.autoStop}
         class="flex-1 justify-between"
-        label="Enable Auto Stop of Timers"
+        label="Enable Auto Stop Timers"
         on:change={(e) => ($settings = { ...$settings, autoStop: e.detail })}
       />
       <div slot="lower" class="py-4 text-xs opacity-30">
@@ -63,90 +103,55 @@
         </p>
       </div>
     </Field>
-    <Field
-      type="time"
-      val={startofday}
-      name="startofday"
-      label="Start of Workday"
-      on:change={(e) => ($settings = { ...$settings, startofday: e.detail })}
-    >
-      <Icon
-        slot="icon"
-        icon="heroicons:clock"
-        class="h-6 w-6 opacity-50 mr-2"
+    <Field>
+      <Switch
+        slot="custom"
+        name="autoSnapTimers"
+        label="Enable Auto Snap timers"
+        enabled={$settings?.autoSnap}
+        class="flex-1 justify-between"
+        on:change={(e) => {
+          console.log(e, $settings);
+          $settings = {
+            ...$settings,
+            autoSnap: e.detail,
+          };
+        }}
       />
-    </Field>
-    <Field
-      type="time"
-      val={endofday}
-      name="endofday"
-      label="End of Workday"
-      on:change={(e) => ($settings = { ...$settings, endofday: e.detail })}
-    >
-      <Icon
-        slot="icon"
-        icon="heroicons:clock"
-        class="h-6 w-6 opacity-50 mr-2"
-      />
+      <div slot="lower" class="py-4 text-xs opacity-30">
+        <p>
+          When enabled, new timers will start snapped to the end of the previous
+          timer. If there is no previous timer, it will snap to the Start of
+          Workday.
+        </p>
+      </div>
     </Field>
     <Field>
       <Switch
         slot="custom"
         name="multipleRunning"
         class="flex-1 justify-between"
+        enabled={$settings?.multipleRunning}
         label="Allow multiple running timers at once"
-        enabled={!$settings?.gapless && $settings?.multipleRunning}
         on:change={(e) =>
           ($settings = {
             ...$settings,
             multipleRunning: e.detail,
-            gapless: $settings.gapless === true ? false : $settings.gapless,
           })}
       />
-      <div slot="lower" class="py-4 text-xs opacity-30">
-        <p class="mb-4">
-          When enabled, you may have multiple running timers at once. If this
-          option is enabled, gapless timers cannot be. It will be ambiguous as
-          to which timer(s) should be adjusted when the surrounding timers
-          change.
-        </p>
-        <p>
-          <strong>Note:</strong> If this setting is disabled, new timers will automatically
-          stop the previous running timer!
-        </p>
-      </div>
-    </Field>
-    <Field>
-      <Switch
-        slot="custom"
-        name="gaplessTimers"
-        label="Gapless timers"
-        class="flex-1 justify-between"
-        enabled={!$settings?.multipleRunning && $settings?.gapless}
-        on:change={(e) =>
-          ($settings = {
-            ...$settings,
-            gapless: e.detail,
-            multipleRunning:
-              $settings.multipleRunning === true
-                ? false
-                : $settings.multipleRunning,
-          })}
-      />
-      <div slot="lower" class="py-4 text-xs opacity-30">
-        <p>
-          When enabled, new timers will start snapped to the end of the previous
-          timer. If the start/end times are adjusted, the surrounding timers
-          will also auto-adjust to provide a gapless timeline.
-        </p>
-      </div>
+      <p slot="lower" class="py-4 text-xs opacity-30">
+        If this setting is enabled, you can have multiple running timers, if
+        disabled, new timers will stop the currently running timer.
+      </p>
     </Field>
     <div class="mt-12">
       <Heading as="h4" variant="section">Account Settings</Heading>
       <Field readonly name="account" label="Signed in as" val={$auth.email}>
         <Icon icon="logos:microsoft-icon" slot="icon" class="h-6 w-6 mr-4" />
-        <Button slot="lower" class="py-2 flex-1" on:click={() => signout()}
-          >Sign Out</Button
+        <Button
+          slot="lower"
+          class="py-2 flex-1"
+          on:click={() => signout($auth.email)}>Sign Out</Button
         >
       </Field>
     </div>

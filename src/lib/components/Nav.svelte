@@ -102,6 +102,12 @@
             >By Day</a
           >
         </li>
+        <li class="pl-12 flex items-center">
+          <Icon icon="heroicons:calendar" class="mr-1 w-4 h-4" />
+          <a href={`#report/weekly`} class="flex-1 ml-2 line-clamp-1 py-2"
+            >By Week</a
+          >
+        </li>
       </ul>
     </li>
   </ul>

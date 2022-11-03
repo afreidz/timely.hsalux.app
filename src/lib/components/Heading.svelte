@@ -28,6 +28,10 @@
   export { as, variant };
 </script>
 
-<svelte:element this={as} {...props} class={"flex items-center " + classlist}>
+<svelte:element
+  this={as}
+  {...props}
+  class={`flex items-center ${classlist} ${$$props.class}`}
+>
   <slot />
 </svelte:element>

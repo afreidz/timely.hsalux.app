@@ -44,24 +44,24 @@ const timerConverter = {
 const projects = {
   async get() {
     console.log("db call: get projects");
-    const uid = get(auth)?.uid;
-    if (!uid) throw new Error("no authorized user");
+    // const uid = get(auth)?.uid;
+    // if (!uid) throw new Error("no authorized user");
 
     const existing = [];
-    const projectRef = collection(db, "projects").withConverter(
-      projectConverter
-    );
-    const q = query(projectRef, where("owner", "==", uid));
-    (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
+    // const projectRef = collection(db, "projects").withConverter(
+    //   projectConverter
+    // );
+    // const q = query(projectRef, where("owner", "==", uid));
+    // (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
     return existing;
   },
   async add(project: IProject) {
     console.log("db call: add project");
-    const uid = get(auth)?.uid;
-    if (!uid) throw new Error("no authorized user");
+    // const uid = get(auth)?.uid;
+    // if (!uid) throw new Error("no authorized user");
 
-    project.owner = uid;
-    await addDoc(collection(db, "projects"), project);
+    // project.owner = uid;
+    // await addDoc(collection(db, "projects"), project);
   },
   async update(project: IProject) {
     console.log("db call: update project");
@@ -73,16 +73,16 @@ const projects = {
   },
   async deleteAll() {
     console.log("db call: delete all projects");
-    const uid = get(auth)?.uid;
-    const c = collection(db, "projects");
-    const q = query(c, where("owner", "==", uid));
+    // const uid = get(auth)?.uid;
+    // const c = collection(db, "projects");
+    // const q = query(c, where("owner", "==", uid));
 
-    const snap = await getDocs(q);
-    const batch = writeBatch(db);
+    // const snap = await getDocs(q);
+    // const batch = writeBatch(db);
 
-    snap.forEach((doc) => batch.delete(doc.ref));
+    // snap.forEach((doc) => batch.delete(doc.ref));
 
-    await batch.commit();
+    // await batch.commit();
   },
 };
 
@@ -90,8 +90,8 @@ const timers = {
   async get(date: Date) {
     console.log("db call: get timers");
     if (!date) return [];
-    const uid = get(auth)?.uid;
-    if (!uid) throw new Error("no authorized user");
+    // const uid = get(auth)?.uid;
+    // if (!uid) throw new Error("no authorized user");
 
     date.setHours(0);
     date.setMinutes(0);
@@ -99,56 +99,56 @@ const timers = {
     date.setMilliseconds(0);
 
     const existing = [];
-    const timerRef = collection(db, "timers").withConverter(timerConverter);
+    // const timerRef = collection(db, "timers").withConverter(timerConverter);
 
-    const q = query(
-      timerRef,
-      where("owner", "==", uid),
-      where("start", ">", date),
-      where("start", "<", new Date(+date + 1000 * 60 * 60 * 24))
-    );
-    (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
+    // const q = query(
+    //   timerRef,
+    //   where("owner", "==", uid),
+    //   where("start", ">", date),
+    //   where("start", "<", new Date(+date + 1000 * 60 * 60 * 24))
+    // );
+    // (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
 
     return existing;
   },
   async getByProject(pid: string) {
     console.log("db call: get timers by project", pid);
-    const uid = get(auth)?.uid;
-    if (!uid) throw new Error("no authorized user");
+    // const uid = get(auth)?.uid;
+    // if (!uid) throw new Error("no authorized user");
 
     const existing = [];
-    const timerRef = collection(db, "timers").withConverter(timerConverter);
-    const q = query(
-      timerRef,
-      where("owner", "==", uid),
-      where("projectId", "==", pid)
-    );
-    (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
+    // const timerRef = collection(db, "timers").withConverter(timerConverter);
+    // const q = query(
+    //   timerRef,
+    //   where("owner", "==", uid),
+    //   where("projectId", "==", pid)
+    // );
+    // (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
     return existing;
   },
   async getAll() {
     console.log("db call: get all timers");
-    const uid = get(auth)?.uid;
-    if (!uid) throw new Error("no authorized user");
+    // const uid = get(auth)?.uid;
+    // if (!uid) throw new Error("no authorized user");
 
     const existing = [];
-    const timerRef = collection(db, "timers").withConverter(timerConverter);
-    const q = query(timerRef, where("owner", "==", uid));
-    (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
+    // const timerRef = collection(db, "timers").withConverter(timerConverter);
+    // const q = query(timerRef, where("owner", "==", uid));
+    // (await getDocs(q)).forEach((doc) => existing.push(doc.data()));
     return existing;
   },
   async add(timer: ITimer) {
     console.log("db call: add timer");
-    const uid = get(auth)?.uid;
-    if (!uid) throw new Error("no authorized user");
+    // const uid = get(auth)?.uid;
+    // if (!uid) throw new Error("no authorized user");
 
-    timer.owner = uid;
-    const result = await addDoc(collection(db, "timers"), timer);
-    const nt = await getDoc(
-      doc(db, "timers", result.id).withConverter(timerConverter)
-    );
+    // timer.owner = uid;
+    // const result = await addDoc(collection(db, "timers"), timer);
+    // const nt = await getDoc(
+    //   doc(db, "timers", result.id).withConverter(timerConverter)
+    // );
 
-    if (nt.exists) return nt.data();
+    // if (nt.exists) return nt.data();
 
     return null;
   },
@@ -162,33 +162,34 @@ const timers = {
   },
   async deleteAll() {
     console.log("db call: delete all timers");
-    const uid = get(auth)?.uid;
-    const c = collection(db, "timers");
-    const q = query(c, where("owner", "==", uid));
+    // const uid = get(auth)?.uid;
+    // const c = collection(db, "timers");
+    // const q = query(c, where("owner", "==", uid));
 
-    const snap = await getDocs(q);
-    const batch = writeBatch(db);
+    // const snap = await getDocs(q);
+    // const batch = writeBatch(db);
 
-    snap.forEach((doc) => batch.delete(doc.ref));
+    // snap.forEach((doc) => batch.delete(doc.ref));
 
-    await batch.commit();
+    // await batch.commit();
   },
 };
 
 const settings = {
   async get() {
     console.log("db call: get settings");
-    const uid = get(auth)?.uid;
-    if (!uid) throw new Error("no authorized user");
+    // const uid = get(auth)?.uid;
+    // if (!uid) throw new Error("no authorized user");
 
-    const settings = await getDoc(doc(db, "settings", uid));
-    return settings.data();
+    // const settings = await getDoc(doc(db, "settings", uid));
+    // return settings.data();
+    return {};
   },
   async update(settings: ISettings): Promise<void> {
     console.log("db call: update settings");
-    const uid = get(auth)?.uid;
-    if (!uid) throw new Error("no authorized user");
-    await setDoc(doc(db, "settings", uid), settings);
+    // const uid = get(auth)?.uid;
+    // if (!uid) throw new Error("no authorized user");
+    // await setDoc(doc(db, "settings", uid), settings);
   },
 };
 

@@ -1,15 +1,16 @@
 import now from "./now";
 import paused from "./paused";
 import viewDate from "./viewDate";
+import * as api from "../helpers/api";
 import { isToday } from "../helpers/date";
+import type { Project } from "./projects";
 import type { Writable } from "svelte/store";
 import settings, { load as loadSettings } from "./settings";
 import projects, { load as loadProjects } from "./projects";
-import { timers as persistence } from "../helpers/firebase/db";
 import { writable, get, type Unsubscriber } from "svelte/store";
 
 export interface ITimer {
-  id?: string;
+  _id?: string;
   end?: Date;
   start: Date;
   task: string;
@@ -45,7 +46,7 @@ export class Timer {
   }
 
   get id() {
-    return this.instance.id;
+    return this.instance._id;
   }
 
   get task() {
@@ -58,57 +59,28 @@ export class Timer {
   }
 
   get running() {
-    return isToday(this.instance.start) ? !this.instance.end : false;
+    return isToday(this.start) ? !this.instance.end : false;
   }
 
   get start() {
-    return this.instance.start;
+    return Timer.newDate(this.instance.start);
   }
 
   set start(d: Date) {
     const date = Timer.newDate(d);
-    const { gapless } = get(settings) || {};
-
-    if (gapless && this.previousTimer) {
-      this.previousTimer.setEndAndBail(date).then(() => {
-        this.instance.start = date;
-        this.persist();
-      });
-    } else {
-      this.instance.start = date;
-      this.persist();
-    }
+    this.instance.start = date;
+    this.persist();
   }
 
   get end() {
-    if (this.instance.end) return this.instance.end;
+    if (this.instance.end) return Timer.newDate(this.instance.end);
     return Timer.newDate();
   }
 
   set end(d: Date) {
     const date = Timer.newDate(d);
-    const { gapless } = get(settings) || {};
-
-    if (gapless && this.nextTimer) {
-      this.nextTimer.setStartAndBail(date).then(() => {
-        this.instance.end = date;
-        this.persist();
-      });
-    } else {
-      this.setEndAndBail(date);
-    }
-  }
-
-  setEndAndBail(d: Date) {
-    const date = Timer.newDate(d);
     this.instance.end = date;
-    return this.persist();
-  }
-
-  setStartAndBail(d: Date) {
-    const date = Timer.newDate(d);
-    this.instance.start = date;
-    return this.persist();
+    this.persist();
   }
 
   get duration() {
@@ -116,8 +88,15 @@ export class Timer {
   }
 
   get hours() {
+    const { rounding } = get(settings) || {};
     const hours = +this.duration / 1000 / 60 / 60;
-    return hours.toFixed(1);
+
+    if (!rounding || rounding === "none" || isNaN(Number(rounding))) {
+      return hours.toFixed(1);
+    }
+
+    const x = Number(rounding);
+    return Math.ceil(hours / x) * x;
   }
 
   get startCol() {
@@ -138,6 +117,11 @@ export class Timer {
     return get(projects).find((p) => p.id === this.instance.projectId);
   }
 
+  set project(p: Project) {
+    this.instance.projectId = p.id;
+    this.persist();
+  }
+
   get scheduledEnd() {
     const { endofday } = get(settings) || {};
 
@@ -151,11 +135,35 @@ export class Timer {
     return scheduledEnd;
   }
 
+  get eobd() {
+    return this.scheduledEnd;
+  }
+
   get eod() {
     const eod = Timer.newDate(this.start);
     eod.setHours(24);
     eod.setMinutes(0);
     return eod;
+  }
+
+  get sod() {
+    const sod = Timer.newDate(this.start);
+    sod.setHours(24);
+    sod.setMinutes(0);
+    return sod;
+  }
+
+  get sobd() {
+    const { startofday } = get(settings) || {};
+
+    if (!startofday) return null;
+
+    const sobd = Timer.newDate(this.start);
+    const [hh, mm] = startofday?.split(":");
+    sobd.setHours(+hh);
+    sobd.setMinutes(+mm);
+
+    return sobd;
   }
 
   get nextTimer() {
@@ -191,26 +199,32 @@ export class Timer {
   async persist() {
     if (!this.instance.end) delete this.instance.end;
 
-    await persistence.update(this.instance);
+    await api.call(`/timers/${this.id}`, "put", this.instance);
     await Timer.update();
   }
 
   async delete() {
-    await persistence.delete(this.instance);
+    await api.call(`/timers/${this.id}`, "delete");
     Timer.update();
   }
 
   static async update() {
-    let existing: Timer[] = await persistence.get(get(viewDate));
-    timers.update(() => existing);
+    let existing: Timer[] = await api.call(
+      `/timers/date/${+Timer.newDate(get(viewDate))}`
+    );
+    timers.update(() => existing.map((t) => new Timer(t)));
   }
 
   static async getAll() {
-    return await persistence.getAll();
+    return (await api.call("/timers")).map((t) => new Timer(t));
+  }
+
+  static getById(id: string) {
+    return get(timers).find((t) => t.id === id);
   }
 
   static async getByProject(pid: string) {
-    return await persistence.getByProject(pid);
+    return (await api.call(`/timers/project/${pid}`)).map((t) => new Timer(t));
   }
 
   static newDate(indate: Date = null) {
@@ -225,8 +239,8 @@ viewDate.subscribe(async (d) => {
   if (!d) return;
   pollUnsubscribe?.();
 
-  let existing: Timer[] = await persistence.get(d);
-  timers.set(existing);
+  let existing: Timer[] = await api.call(`/timers/date/${+Timer.newDate(d)}`);
+  timers.update(() => existing.map((t) => new Timer(t)));
   console.log("Rendering Timers:", get(timers));
 
   if (isToday(d)) {
@@ -249,48 +263,18 @@ viewDate.subscribe(async (d) => {
 async function load() {
   await loadSettings();
   await loadProjects();
-  let existing: Timer[] = await persistence.get(get(viewDate));
-  timers.set(existing);
+  let existing: Timer[] = await api.call(
+    `/timers/date/${+Timer.newDate(get(viewDate))}`
+  );
+  timers.update(() => existing.map((t) => new Timer(t)));
 }
 
 async function add(projectId?: string, indate?: Date) {
   const date = Timer.newDate(indate);
-  const now = Timer.newDate();
-
-  if (get(settings).endofday) {
-    const scheduledEnd = Timer.newDate(indate);
-    const [hh, mm] = get(settings).endofday?.split(":");
-    scheduledEnd.setHours(+hh);
-    scheduledEnd.setMinutes(+mm);
-  }
 
   if (!get(settings).multipleRunning && get(timers).some((t) => t.running)) {
     const running = get(timers).filter((t) => t.running);
     running.forEach((t) => t.stop());
-  }
-
-  const latestTimer = get(timers).reduce(
-    (a, b) => (a?.end > b?.end ? a : b),
-    null
-  );
-
-  if (get(settings).gapless) {
-    if (latestTimer) {
-      date.setHours(latestTimer.end.getHours());
-      date.setMinutes(latestTimer.end.getMinutes());
-      date.setSeconds(latestTimer.end.getSeconds());
-    } else if (get(settings).startofday) {
-      const [hh, mm] = get(settings).startofday.split(":");
-      date.setHours(+hh);
-      date.setMinutes(+mm);
-    } else {
-      date.setHours(9);
-      date.setMinutes(0);
-    }
-  } else {
-    date.setHours(now.getHours());
-    date.setMinutes(now.getMinutes());
-    date.setSeconds(now.getSeconds());
   }
 
   const timer: ITimer = {
@@ -299,17 +283,24 @@ async function add(projectId?: string, indate?: Date) {
     task: "Timer",
   };
 
-  const nt = await persistence.add(timer);
+  const { insertedId: ntid } = await api.call("/timers", "post", timer);
+  await Timer.update();
 
-  if (!isToday(date)) {
-    nt?.stop();
+  const nt = Timer.getById(ntid);
+
+  if (get(settings).autoSnap) {
+    nt.start = nt.previousTimer ? nt.previousTimer.end : nt.sobd || nt.sod;
+    await Timer.update();
   }
 
-  await Timer.update();
+  if (!isToday(date)) {
+    nt?.stop(nt.start);
+    await Timer.update();
+  }
 }
 
 async function deleteAllTimers() {
-  await persistence.deleteAll();
+  await api.call("/timers", "delete");
   await Timer.update();
 }
 

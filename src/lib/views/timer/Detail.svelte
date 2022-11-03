@@ -4,15 +4,17 @@
   import subview from "../../stores/subview";
   import settings from "../../stores/settings";
   import { isToday } from "../../helpers/date";
+  import projects from "../../stores/projects";
   import Hours from "../../components/Hours.svelte";
   import Timer from "../../components/Timer.svelte";
   import Field from "../../components/Field.svelte";
   import Button from "../../components/Button.svelte";
   import Heading from "../../components/Heading.svelte";
-  import timers, { type Timer } from "../../stores/timers";
+  import Dropdown from "../../components/Dropdown.svelte";
+  import timers, { type Timer as TTimer } from "../../stores/timers";
 
   export let id: string;
-  let timer: Timer;
+  let timer: TTimer;
 
   $: timer = $timers.find((t) => t.id === id);
   $: if (!timer) {
@@ -46,6 +48,22 @@
     )}`;
   }
 
+  function linkStart() {
+    if (!timer.previousTimer) {
+      timer.start = timer.sobd || timer.sod;
+    } else {
+      timer.start = timer.previousTimer.end;
+    }
+  }
+
+  function linkEnd() {
+    if (!timer.nextTimer) {
+      timer.end = timer.eobd || timer.eod;
+    } else {
+      timer.end = timer.nextTimer.start;
+    }
+  }
+
   function shiftStart(min = 5) {
     const shiftAmount = Math.abs(min);
     const shiftDirection = min > 0 ? 1 : -1;
@@ -71,10 +89,7 @@
 </script>
 
 <svelte:head>
-  <title
-    >Details for: {timer?.project?.name || ""} - {timer?.project?.task ||
-      ""}</title
-  >
+  <title>Details for: {timer?.project?.name || ""} - {timer?.task || ""}</title>
 </svelte:head>
 
 <header class="view-heading">
@@ -88,11 +103,16 @@
       label="Task Name"
       on:change={(e) => (timer.task = e.detail)}
     />
-    <Field label="Project">
-      <span slot="readonly">
-        {timer.project.name}
-      </span>
-    </Field>
+    <Dropdown
+      label="Project"
+      val={timer.project.id}
+      on:change={(e) =>
+        (timer.project = $projects.find((p) => p.id === e.detail))}
+    >
+      {#each $projects as project}
+        <option value={project.id}>{project.name}</option>
+      {/each}
+    </Dropdown>
     <div
       class={cl`
         my-6
@@ -100,7 +120,7 @@
         items-center
         grid-cols-[auto_auto]
         grid-rows-[auto_auto]
-        
+
         sm:grid-rows-[auto]
         sm:grid-cols-[9rem_auto_9rem]
         `}
@@ -120,12 +140,17 @@
           color={timer.project.color}
           project={timer.project.name}
         >
-          <div class="flex-1 grid grid-cols-[2rem_2rem_auto_2rem_2rem]">
+          <div
+            class="flex-1 grid grid-cols-[2rem_2rem_2rem_auto_2rem_2rem_2rem]"
+          >
             <button on:click={() => shiftStart(-5)}>
               <Icon
                 icon="heroicons:chevron-double-left-20-solid"
                 class="h-8 w-8"
               />
+            </button>
+            <button on:click={() => linkStart()}>
+              <Icon icon="heroicons:link" class="p-1 h-8 w-8" />
             </button>
             <button on:click={() => shiftStart(5)}>
               <Icon
@@ -142,6 +167,9 @@
                   icon="heroicons:chevron-double-left-20-solid"
                   class="h-8 w-8"
                 />
+              </button>
+              <button on:click={() => linkEnd()}>
+                <Icon icon="heroicons:link" class="p-1 h-8 w-8" />
               </button>
               <button on:click={() => shiftEnd(5)}>
                 <Icon
@@ -176,7 +204,7 @@
             <span class="ml-1">Stop Timer</span>
           </span>
         </Button>
-      {:else if isToday(timer.start)}
+      {:else if isToday(timer.start) && !timer.nextTimer}
         <Button on:click={() => timer.unstop()} class="justify-self-center">
           <span class="flex items-center">
             <Icon icon="heroicons:play-20-solid" class="h-4 w-4" />

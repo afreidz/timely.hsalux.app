@@ -14,7 +14,7 @@
 
   export let id: string;
   let project: Project;
-  let hours;
+  let hours: Promise<number>;
 
   $: project = $projects.find((p) => p.id === id);
   $: if (!project) {
@@ -40,8 +40,9 @@
       <Field
         required
         name="projectName"
+        val={project.name}
         label="Project Name"
-        bind:val={project.name}
+        on:change={(e) => (project.name = e.detail)}
       />
       <Field readonly label="Project Color">
         <RadioGroup
@@ -60,7 +61,7 @@
         <Switch
           slot="custom"
           name="showHours"
-          enabled={$settings?.showHours.includes(project.id)}
+          enabled={$settings?.showHours?.includes(project.id)}
           label="Show Hours/Budgets for this project?"
           class="flex-1 justify-between"
           on:change={(e) => {

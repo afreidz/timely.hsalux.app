@@ -1,11 +1,11 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import Field from "./Field.svelte";
-  import { type Project } from "../stores/projects";
+  import type { Project } from "../stores/projects";
 
   let project: Project;
   let readonly = false;
-  let hours: Promise<number>;
+  let hours: Promise<any>;
 
   $: if (project) {
     hours = project.calculateHours();
@@ -26,9 +26,11 @@
       step="1"
       type="number"
       label="Budgeted"
+      changeType="commit"
       name="projectBudget"
-      bind:val={project.budget}
+      val={project.budget}
       class="text-2xl text-center"
+      on:change={(e) => (project.budget = e.detail)}
     />
   {/if}
 </div>

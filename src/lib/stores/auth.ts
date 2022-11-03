@@ -1,8 +1,7 @@
-import type { User } from "firebase/auth";
 import { writable, type Writable } from "svelte/store";
-import { onAuthChange } from "../helpers/firebase/auth";
+import { onAuthChange, type IUser } from "../helpers/azure/auth";
 
-const auth: Writable<User> = writable(null);
+const auth: Writable<IUser> = writable(null);
 onAuthChange((user) => auth.update(() => user));
 
 export default auth;

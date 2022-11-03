@@ -1,16 +1,19 @@
 <script lang="ts">
+  import Icon from "@iconify/svelte";
   import cl from "../helpers/classlist";
   import { createEventDispatcher } from "svelte";
 
   let classes;
   let props: any;
-  let val: string = "";
   let readonly: boolean;
-  let required: boolean;
   let bg: boolean = true;
   let name: string = null;
   let label: string = null;
+  let dirty: boolean = false;
+  let input: HTMLInputElement;
+  let val: string | number = "";
   let dispatch = createEventDispatcher();
+  let changeType: "commit" | "input" = "input";
 
   $: classes = {
     container: cl`
@@ -23,13 +26,13 @@
       grid-rows-[auto_auto]
 
       ${$$slots.icon ? "grid-cols-[2.5rem_auto]" : "grid-cols-[auto]"}
-      
+
       ${bg ? "px-4" : ""}
       ${bg ? "border" : ""}
       ${bg ? "bg-neutral-50" : ""}
       ${bg ? "dark:border-black" : ""}
       ${bg ? "dark:bg-neutral-700" : ""}
-      
+
       focus-within:ring-2
       focus-within:ring-blue-500
     `,
@@ -52,7 +55,7 @@
       -translate-y-4
       transition-all
       whitespace-nowrap
-      
+
       peer-focus:scale-75
       peer-focus:opacity-100
       peer-focus:text-blue-500
@@ -71,18 +74,8 @@
       justify-center
       dark:text-white
     `,
-    input: cl`
-      peer
-      flex-1 
-      text-black
-      self-stretch
-      outline-none
-      leading-[2.5]
-      bg-transparent
-      dark:text-white
-    `,
     switch: cl`
-      flex  
+      flex
       flex-1
       items-stretch
     `,
@@ -95,7 +88,7 @@
     delete props.label;
   }
 
-  export { label, name, val, bg };
+  export { label, name, val, bg, changeType };
 </script>
 
 <label class={classes.container}>
@@ -112,10 +105,11 @@
         {...props}
         {name}
         id={name}
+        readonly
         value={val}
         placeholder=" "
-        class={`${props.class} ${classes.input}`}
-        on:change={(e) => dispatch("change", e.target.value)}
+        bind:this={input}
+        class={`peer ${props.class ?? ""}`}
       />
     {:else}
       <input
@@ -124,11 +118,28 @@
         id={name}
         bind:value={val}
         placeholder=" "
-        class={`${props.class} ${classes.input}`}
-        on:change={(e) => dispatch("change", e.target.value)}
+        bind:this={input}
+        class={`peer ${props.class ?? ""}`}
+        on:input={(e) => (dirty = e.currentTarget.value === val)}
+        on:change={(e) => {
+          if (changeType === "input") {
+            dispatch("change", e.currentTarget.value);
+          }
+        }}
       />
     {/if}
     {#if label}<span class={classes.label}>{label}</span>{/if}
+    {#if dirty && changeType === "commit"}
+      <button
+        class="ml-3 bg-black/10 rounded-md px-3 hover:bg-emerald-500 transition-colors"
+        on:click={() => {
+          dispatch("change", input?.value);
+          dirty = false;
+        }}
+      >
+        <Icon icon="heroicons:check" />
+      </button>
+    {/if}
   </div>
   {#if $$slots.lower}
     <footer class="col-span-full flex">
@@ -140,5 +151,30 @@
 <style lang="postcss">
   input[type="time"]::-webkit-calendar-picker-indicator {
     opacity: 0;
+  }
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 100px rgb(250, 250, 250) inset !important;
+    -webkit-text-fill-color: black !important;
+  }
+
+  :global(.dark) input:-webkit-autofill,
+  :global(.dark) input:-webkit-autofill:hover,
+  :global(.dark) input:-webkit-autofill:focus,
+  :global(.dark) input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 100px rgb(64, 64, 64) inset !important;
+    -webkit-text-fill-color: white !important;
+  }
+
+  label :global(input),
+  label :global(select) {
+    @apply flex-1 text-black self-stretch outline-none leading-[2.5] bg-transparent;
+  }
+
+  :global(.dark) label :global(input),
+  :global(.dark) label :global(select) {
+    @apply text-white;
   }
 </style>

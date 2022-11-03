@@ -1,26 +1,27 @@
+import * as api from "../helpers/api";
 import { writable, type Writable } from "svelte/store";
-import { settings as persistence } from "../helpers/firebase/db";
 
 export interface ISettings {
-  gapless?: boolean;
   endofday?: string;
+  autoSnap?: boolean;
   autoStop?: boolean;
   startofday?: string;
   showHours?: string[];
   theme?: "dark" | "light";
   multipleRunning?: boolean;
+  rounding?: "none" | "0.25" | "0.5" | "1";
 }
 
 const settings: Writable<ISettings> = writable(null);
 
 async function load() {
-  const existing: ISettings = await persistence.get();
+  const existing: ISettings = await api.call("/settings");
   if (existing) settings.update(() => existing);
 }
 
-settings.subscribe((settings) => {
+settings.subscribe(async (settings) => {
   if (!settings) return;
-  persistence.update(settings);
+  await api.call("/settings", "put", settings);
 });
 
 export default settings;

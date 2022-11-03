@@ -9,6 +9,7 @@
   import NewProject from "../views/project/New.svelte";
   import TimerDetail from "../views/timer/Detail.svelte";
   import DailyReport from "../views/report/Daily.svelte";
+  import WeeklyReport from "../views/report/Weekly.svelte";
   import ProjectDetail from "../views/project/Detail.svelte";
 
   interface IComponentProps {
@@ -31,8 +32,8 @@
       bg-white/5
       inline-flex
       items-center
-      justify-center 
-      hover:bg-red-500 
+      justify-center
+      hover:bg-red-500
       transition-colors
     `,
     overlay: cl`
@@ -45,7 +46,7 @@
       bottom-0
       opacity-0
       invisible
-      bg-white/5 
+      bg-white/5
       ease-in-out
       duration-300
       dark:bg-black/10
@@ -56,7 +57,7 @@
       target:opacity-100
   `,
     window: cl`
-      z-50   
+      z-50
       flex
       fixed
       top-0
@@ -74,7 +75,7 @@
       border-neutral-200
       transition-transform
       group-target:translate-x-0
-      
+
       sm:w-[50%]
       sm:min-w-[600px]
       sm:max-w-[1200px]
@@ -106,6 +107,9 @@
       case id?.startsWith("report/daily"):
         component = DailyReport;
         break;
+      case id?.startsWith("report/weekly"):
+        component = WeeklyReport;
+        break;
       case id?.startsWith("update"):
         component = Update;
         break;
@@ -132,9 +136,9 @@
   class:open={!!component}
 >
   <article class={classes.window}>
-    <a href="#" class={classes.close}>
+    <button on:click={close} class={classes.close}>
       <Icon icon="mi:close" alt="close" />
-    </a>
+    </button>
     <svelte:component this={component} {...componentProps} />
   </article>
 </main>
