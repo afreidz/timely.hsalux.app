@@ -33,6 +33,10 @@ export class Timer {
       +this.start >= +this.scheduledEnd
     )
       this.afterhours = true;
+
+    if (!this.afterhours && !isToday(this.start) && this.running) {
+      this.stop(this.scheduledEnd);
+    }
   }
 
   get afterhours() {
@@ -302,7 +306,7 @@ async function add(projectId?: string, indate?: Date) {
   const nt = await persistence.add(timer);
 
   if (!isToday(date)) {
-    nt?.stop();
+    nt.stop(nt.start);
   }
 
   await Timer.update();
