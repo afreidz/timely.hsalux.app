@@ -32,8 +32,13 @@ export class Timer {
       this.scheduledEnd &&
       !this.instance.afterhours &&
       +this.start >= +this.scheduledEnd
-    )
+    ) {
       this.afterhours = true;
+    }
+
+    if (!this.afterhours && !isToday(this.start) && this.running) {
+      this.stop(this.scheduledEnd);
+    }
   }
 
   get afterhours() {

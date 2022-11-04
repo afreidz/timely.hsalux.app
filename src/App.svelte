@@ -4,6 +4,7 @@
   import { onMount } from "svelte";
   import nav from "./lib/stores/nav";
   import auth from "./lib/stores/auth";
+  import error from "./lib/stores/error";
   import theme from "./lib/stores/theme";
   import cl from "./lib/helpers/classlist";
   import subview from "./lib/stores/subview";
@@ -15,6 +16,8 @@
   import Masthead from "./lib/components/Masthead.svelte";
   import Timeline from "./lib/components/Timeline.svelte";
   import { useRegisterSW } from "virtual:pwa-register/svelte";
+  import Icon from "@iconify/svelte";
+  import Error from "./lib/components/Error.svelte";
 
   let title;
   let classes;
@@ -50,12 +53,12 @@
       duration-300
       top-[7.75rem]
       transition-transform
-      
+
       ${$nav ? "translate-x-0" : "-translate-x-full"}
-      
+
       dark:border-black
       dark:bg-neutral-900
-      
+
       sm:static
       sm:w-[20rem]
       sm:right-auto
@@ -111,5 +114,8 @@
       <Timeline class="col-span-full sm:col-span-1" />
     </main>
     <Subview />
+  {/if}
+  {#if $error}
+    <Error message={$error.message} />
   {/if}
 </div>

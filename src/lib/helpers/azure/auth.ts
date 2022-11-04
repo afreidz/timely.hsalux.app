@@ -1,5 +1,5 @@
 import * as msal from "@azure/msal-browser";
-import type { AccountInfo, AuthenticationResult } from "@azure/msal-browser";
+import type { AccountInfo } from "@azure/msal-browser";
 const scopes = ["api://e3e6d70e-ff2b-4c9a-b773-1bd7d9919593/access_as_user"];
 
 export interface IUser {
@@ -22,6 +22,11 @@ function signin() {
 }
 
 async function onAuthChange(callback: (user: IUser) => void) {
+  const auth: IUser | null = await getAuth();
+  callback?.(auth);
+}
+
+async function getAuth() {
   const response = await auth.handleRedirectPromise();
   let account: AccountInfo;
 
@@ -34,7 +39,7 @@ async function onAuthChange(callback: (user: IUser) => void) {
 
   account = accounts[0];
 
-  const tokenResponse: AuthenticationResult | null = await auth
+  const tokenResponse = await auth
     .acquireTokenSilent({
       account,
       scopes,
@@ -50,11 +55,13 @@ async function onAuthChange(callback: (user: IUser) => void) {
       }
     });
 
-  callback?.({
+  if (!tokenResponse.accessToken) return null;
+
+  return {
     email: account.username,
     uid: account.localAccountId,
     token: tokenResponse?.accessToken,
-  });
+  };
 }
 
 function signout(user: string) {
@@ -62,4 +69,4 @@ function signout(user: string) {
   auth.logoutRedirect(request);
 }
 
-export { signin, onAuthChange, signout };
+export { signin, onAuthChange, signout, getAuth };
