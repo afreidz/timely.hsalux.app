@@ -36,6 +36,10 @@
     return nd;
   }
 
+  function sumTimers(timers: Timer[]) {
+    return timers.reduce((p, c) => +p + +c.hours, 0);
+  }
+
   let timers: Promise<Timer[]>;
   $: timers = api
     .call(`/timers/range/${+startDate}/${+endDate}`)
@@ -60,6 +64,15 @@
         <Field label={dow[day]}>
           <div class="mt-4" slot="custom">
             <ProjectTimers {timers} />
+            <footer
+              class="mx-12 p-6 flex border-t text-3xl border-black dark:border-white"
+            >
+              <strong class="flex-1 font-light">Total:</strong>
+              <small class="flex-none font-semibold">
+                {sumTimers(timers)}
+                <span class="font-normal opacity-50">hr</span>
+              </small>
+            </footer>
           </div>
         </Field>
       </div>
