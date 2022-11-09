@@ -2,7 +2,7 @@ import auth from "../../stores/auth";
 import error from "../../stores/error";
 
 const headers = new Headers();
-const apibase = "http://localhost:3000";
+const apibase = import.meta.env.AC_API_URL;
 headers.set("Content-Type", "application/json");
 
 auth.subscribe((auth) => {

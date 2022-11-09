@@ -1,6 +1,5 @@
 import * as msal from "@azure/msal-browser";
 import type { AccountInfo } from "@azure/msal-browser";
-const scopes = ["api://e3e6d70e-ff2b-4c9a-b773-1bd7d9919593/access_as_user"];
 
 export interface IUser {
   uid: string;
@@ -8,12 +7,17 @@ export interface IUser {
   token?: string;
 }
 
+console.log(import.meta.env);
+const redirectUri = window.location.href;
+const clientId = import.meta.env.AC_AUTH_CLIENT_ID;
+const scopes = [import.meta.env.AC_AUTH_SCOPE_URL];
+const authority = import.meta.env.AC_AUTH_AUTHORITY_URL;
+
 const auth = new msal.PublicClientApplication({
   auth: {
-    clientId: "cffe5dc2-3399-4c0b-b755-5907434dab58",
-    redirectUri: "http://localhost:5173",
-    authority:
-      "https://login.microsoftonline.com/e85feadf-11e7-47bb-a160-43b98dcc96f1",
+    clientId,
+    authority,
+    redirectUri,
   },
 });
 
