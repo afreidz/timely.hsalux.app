@@ -9,9 +9,8 @@
   import Heading from "../components/Heading.svelte";
   import { deleteAllTimers } from "../stores/timers";
   import settings, { load } from "../stores/settings";
-  import { deleteAllProjects } from "../stores/projects";
   import Dropdown from "../components/Dropdown.svelte";
-  import { logEvent } from "firebase/analytics";
+  import { deleteAllProjects } from "../stores/projects";
 
   let endofday;
   let rounding;
@@ -48,6 +47,7 @@
       />
     </Field>
     <Field
+      type="time"
       val={startofday}
       name="startofday"
       label="Start of Workday"
@@ -60,6 +60,7 @@
       />
     </Field>
     <Field
+      type="time"
       val={endofday}
       name="endofday"
       label="End of Workday"
