@@ -14,7 +14,9 @@
   import { logEvent } from "firebase/analytics";
 
   let endofday;
+  let rounding;
   let startofday;
+  $: rounding = $settings?.rounding;
   $: endofday = $settings?.endofday ?? null;
   $: startofday = $settings?.startofday ?? null;
 </script>
@@ -70,8 +72,8 @@
       />
     </Field>
     <Dropdown
+      val={rounding}
       label="Reporting Rounding"
-      val={$settings.rounding}
       on:change={(e) => ($settings = { ...$settings, rounding: e.detail })}
     >
       <option default value="none">None</option>
