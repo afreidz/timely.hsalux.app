@@ -27,22 +27,10 @@ export class Timer {
 
   constructor(instance: ITimer) {
     this.instance = instance;
-    if (
-      this.running &&
-      this.scheduledEnd &&
-      !this.instance.afterhours &&
-      +this.start >= +this.scheduledEnd
-    ) {
-      this.afterhours = true;
-    }
-
-    if (!this.afterhours && !isToday(this.start) && this.running) {
-      this.stop(this.scheduledEnd);
-    }
   }
 
   get afterhours() {
-    return this.instance.afterhours || false;
+    return this.instance.afterhours === true;
   }
 
   set afterhours(b: boolean) {
@@ -64,7 +52,7 @@ export class Timer {
   }
 
   get running() {
-    return isToday(this.start) ? !this.instance.end : false;
+    return !this.instance.end;
   }
 
   get start() {
@@ -74,7 +62,12 @@ export class Timer {
   set start(d: Date) {
     const date = Timer.newDate(d);
     this.instance.start = date;
-    this.persist();
+
+    if (date > this.scheduledEnd) {
+      this.afterhours = true;
+    } else {
+      this.persist();
+    }
   }
 
   get end() {
@@ -85,7 +78,12 @@ export class Timer {
   set end(d: Date) {
     const date = Timer.newDate(d);
     this.instance.end = date;
-    this.persist();
+
+    if (date > this.scheduledEnd) {
+      this.afterhours = true;
+    } else {
+      this.persist();
+    }
   }
 
   get duration() {
@@ -258,7 +256,7 @@ viewDate.subscribe(async (d) => {
             +n >= +t.eod ||
             (+n >= +t.scheduledEnd && !t.afterhours && t.running)
           )
-            t.stop();
+            t.stop(t.scheduledEnd);
         });
       }
     });
@@ -299,7 +297,12 @@ async function add(projectId?: string, indate?: Date) {
   }
 
   if (!isToday(date)) {
-    nt?.stop(nt.start);
+    nt.stop(nt.start);
+    await Timer.update();
+  }
+
+  if (+nt.start >= +nt.scheduledEnd || +nt.end >= +nt.scheduledEnd) {
+    nt.afterhours = true;
     await Timer.update();
   }
 }
