@@ -1,4 +1,5 @@
-import { writable, type Writable } from "svelte/store";
+import paused from "./paused";
+import { get, writable, type Writable } from "svelte/store";
 import { getAuth, type IUser } from "../helpers/azure/auth";
 
 const auth: Writable<IUser> = writable(null);
@@ -8,6 +9,7 @@ getAuth().then((user) => auth.set(user));
 
 if (!timer) {
   timer = setInterval(async () => {
+    if (get(paused)) return;
     const updatedAuth = await getAuth();
     auth.update(() => updatedAuth);
   }, 5 * 1000 * 60);

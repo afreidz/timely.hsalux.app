@@ -78,12 +78,7 @@ export class Timer {
   set end(d: Date) {
     const date = Timer.newDate(d);
     this.instance.end = date;
-
-    if (date > this.scheduledEnd) {
-      this.afterhours = true;
-    } else {
-      this.persist();
-    }
+    this.persist();
   }
 
   get duration() {
@@ -174,7 +169,7 @@ export class Timer {
   }
 
   get previousTimer() {
-    const sort = get(timers).sort((a, b) => +a.start - +b.start);
+    const sort = [...get(timers)].sort((a, b) => +a.start - +b.start);
     const idx = sort.indexOf(this);
     return sort[idx - 1];
   }
@@ -250,13 +245,18 @@ viewDate.subscribe(async (d) => {
     pollUnsubscribe = now.subscribe((n) => {
       if (!get(paused)) timers.update((t) => t);
 
-      if (get(settings)?.autoStop && isToday(n)) {
+      if (get(settings)?.autoStop) {
         get(timers).forEach((t) => {
+          // Stop the timer if its running and either
+          // 1. "now" has passed eod
+          // 2. "now" has passed the scheduled end
+          //    and its not an "afterhours" timer
           if (
-            +n >= +t.eod ||
+            (+n >= +t.eod && t.running) ||
             (+n >= +t.scheduledEnd && !t.afterhours && t.running)
-          )
+          ) {
             t.stop(t.scheduledEnd);
+          }
         });
       }
     });

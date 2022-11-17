@@ -1,6 +1,5 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import cl from "../../helpers/classlist";
   import subview from "../../stores/subview";
   import settings from "../../stores/settings";
   import { isToday } from "../../helpers/date";
@@ -22,7 +21,7 @@
     window.location.hash = "";
   }
 
-  function changeStart(e) {
+  function changeStart(e: { detail: string }) {
     const [hh, mm] = e.detail.split(":");
     const newStart = new Date(timer.start);
 
@@ -32,7 +31,7 @@
     timer.start = newStart;
   }
 
-  function changeEnd(e) {
+  function changeEnd(e: { detail: string }) {
     const [hh, mm] = e.detail.split(":");
     const newEnd = new Date(timer.start);
 
@@ -114,7 +113,7 @@
       {/each}
     </Dropdown>
     <div
-      class={cl`
+      class={`
         my-6
         grid
         items-center
@@ -123,7 +122,7 @@
 
         sm:grid-rows-[auto]
         sm:grid-cols-[9rem_auto_9rem]
-        `}
+      `}
     >
       <div class="order-2 place-self-center sm:order-1">
         <Field

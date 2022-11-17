@@ -1,7 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
   import paused from "../stores/paused";
-  import cl from "../helpers/classlist";
   import subview from "../stores/subview";
   import Update from "../views/Update.svelte";
   import type { SvelteComponent } from "svelte";
@@ -18,72 +17,9 @@
 
   let id: string;
   let overlay: HTMLElement;
+  let closeBtn: HTMLElement;
   let component: typeof SvelteComponent;
   let componentProps: IComponentProps = {};
-
-  const classes = {
-    close: cl`
-      m-1
-      top-0
-      right-0
-      w-8 h-8
-      absolute
-      rounded-sm
-      bg-white/5
-      inline-flex
-      items-center
-      justify-center
-      hover:bg-red-500
-      transition-colors
-    `,
-    overlay: cl`
-      z-50
-      fixed
-      top-0
-      group
-      left-0
-      right-0
-      bottom-0
-      opacity-0
-      invisible
-      bg-white/5
-      ease-in-out
-      duration-300
-      dark:bg-black/10
-      transition-opacity
-      backdrop-blur-[1px]
-
-      target:visible
-      target:opacity-100
-  `,
-    window: cl`
-      z-50
-      flex
-      fixed
-      top-0
-      w-full
-      right-0
-      flex-col
-      bottom-0
-      border-l
-      bg-white
-      ease-in-out
-      duration-300
-      overflow-auto
-      drop-shadow-2xl
-      translate-x-full
-      border-neutral-200
-      transition-transform
-      group-target:translate-x-0
-
-      sm:w-[50%]
-      sm:min-w-[600px]
-      sm:max-w-[1200px]
-
-      dark:border-black
-      dark:bg-neutral-800
-`,
-  };
 
   $: {
     id = $subview?.replace("#", "");
@@ -122,21 +58,87 @@
   }
 
   function close(e: MouseEvent) {
-    if (e.target !== overlay) return;
-    $subview = null;
-    window.location.hash = "";
+    if (e.target === overlay || e.currentTarget === closeBtn) {
+      $subview = null;
+      window.location.hash = "";
+    }
   }
 </script>
 
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <main
   {id}
   on:click={close}
   bind:this={overlay}
-  class={classes.overlay}
   class:open={!!component}
+  class={`
+    z-50
+    fixed
+    top-0
+    group
+    left-0
+    right-0
+    bottom-0
+    opacity-0
+    invisible
+    bg-white/5
+    ease-in-out
+    duration-300
+    dark:bg-black/10
+    transition-opacity
+    backdrop-blur-[1px]
+
+    target:visible
+    target:opacity-100
+  `}
 >
-  <article class={classes.window}>
-    <button on:click={close} class={classes.close}>
+  <article
+    class={`
+      z-50
+      flex
+      fixed
+      top-0
+      w-full
+      right-0
+      flex-col
+      bottom-0
+      border-l
+      bg-white
+      ease-in-out
+      duration-300
+      overflow-auto
+      drop-shadow-2xl
+      translate-x-full
+      border-neutral-200
+      transition-transform
+      group-target:translate-x-0
+
+      sm:w-[50%]
+      sm:min-w-[600px]
+      sm:max-w-[1200px]
+
+      dark:border-black
+      dark:bg-neutral-800
+  `}
+  >
+    <button
+      bind:this={closeBtn}
+      on:click={close}
+      class={`
+        m-1
+        top-0
+        right-0
+        w-8 h-8
+        absolute
+        rounded-sm
+        bg-white/5
+        inline-flex
+        items-center
+        justify-center
+        hover:bg-red-500
+        transition-colors
+    `}
+    >
       <Icon icon="mi:close" alt="close" />
     </button>
     <svelte:component this={component} {...componentProps} />

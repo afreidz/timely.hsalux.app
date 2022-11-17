@@ -1,13 +1,11 @@
 <script lang="ts">
-  import now from "../stores/now";
   import Icon from "@iconify/svelte";
-  import Heading from "./Heading.svelte";
   import { isToday } from "../helpers/date";
   import { viewDate } from "../stores/timers";
 
-  let viewIsToday;
-  let nextDay;
-  let prevDay;
+  let viewIsToday: boolean;
+  let nextDay: Date;
+  let prevDay: Date;
 
   $: viewIsToday = isToday($viewDate);
   $: prevDay = new Date(+$viewDate - 1000 * 60 * 60 * 24);
@@ -35,10 +33,10 @@
     inline-flex
     items-center
     leading-none
-    justify-center 
+    justify-center
     transition-colors
 
-    
+
     hover:bg-white/10
     disabled:opacity-30
     disabled:hover:bg-white/5
@@ -91,7 +89,7 @@
       <Icon icon="heroicons:calendar-days" class="w-5 h-5" />
       <input
         type="date"
-        on:change={(e) => setview(e.target.value)}
+        on:change={(e) => setview(e.currentTarget.value)}
         class="absolute top-0 bottom-0 left-0 right-0 opacity-0"
       />
     </label>

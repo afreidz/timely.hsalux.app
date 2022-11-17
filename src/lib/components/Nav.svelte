@@ -1,6 +1,5 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import cl from "../helpers/classlist";
   import { add } from "../stores/timers";
   import { isToday } from "../helpers/date";
   import viewDate from "../stores/viewDate";
@@ -9,21 +8,21 @@
 
   let showArchived = false;
 
-  const navclass = cl`
+  function handleProjectClick(projectId: string) {
+    add(projectId, $viewDate);
+  }
+</script>
+
+<nav
+  class={`
     grid
     pt-4
     flex-1
     items-center
     overflow-auto
     grid-rows-[auto_4rem]
-`;
-
-  function handleProjectClick(projectId: string) {
-    add(projectId, $viewDate);
-  }
-</script>
-
-<nav class={navclass}>
+`}
+>
   <ul class="self-start px-4">
     <li>
       <div class="flex items-center">
@@ -112,7 +111,7 @@
     </li>
   </ul>
   <footer
-    class={cl`
+    class={`
       flex
       h-full
       bg-white

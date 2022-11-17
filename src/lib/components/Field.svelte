@@ -1,9 +1,7 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import cl from "../helpers/classlist";
   import { createEventDispatcher } from "svelte";
 
-  let classes;
   let props: any;
   let readonly: boolean;
   let bg: boolean = true;
@@ -15,72 +13,6 @@
   let dispatch = createEventDispatcher();
   let changeType: "commit" | "input" = "input";
 
-  $: classes = {
-    container: cl`
-      my-1
-      grid
-      relative
-      rounded-lg
-      items-center
-      border-white
-      grid-rows-[auto_auto]
-
-      ${$$slots.icon ? "grid-cols-[2.5rem_auto]" : "grid-cols-[auto]"}
-
-      ${bg ? "px-4" : ""}
-      ${bg ? "border" : ""}
-      ${bg ? "bg-neutral-50" : ""}
-      ${bg ? "dark:border-black" : ""}
-      ${bg ? "dark:bg-neutral-700" : ""}
-
-      focus-within:ring-2
-      focus-within:ring-blue-500
-    `,
-    field: cl`
-      pb-2
-      flex
-      flex-1
-      relative
-      self-stretch
-      ${!!label ? "pt-6" : "pt-2"}
-    `,
-    label: cl`
-      flex
-      absolute
-      scale-75
-      opacity-50
-      origin-left
-      items-center
-      duration-200
-      -translate-y-4
-      transition-all
-      whitespace-nowrap
-
-      peer-focus:scale-75
-      peer-focus:opacity-100
-      peer-focus:text-blue-500
-      peer-focus:-translate-y-4
-      peer-placeholder-shown:scale-100
-      peer-placeholder-shown:opacity-100
-      peer-placeholder-shown:translate-y-0
-    `,
-    readonly: cl`
-      flex
-      my-2
-      flex-1
-      flex-col
-      self-end
-      text-black
-      justify-center
-      dark:text-white
-    `,
-    switch: cl`
-      flex
-      flex-1
-      items-stretch
-    `,
-  };
-
   $: {
     props = { ...$$props };
     delete props.val;
@@ -91,13 +23,54 @@
   export { label, name, val, bg, changeType };
 </script>
 
-<label class={classes.container}>
+<label
+  class={`
+    my-1
+    grid
+    relative
+    rounded-lg
+    items-center
+    border-white
+    grid-rows-[auto_auto]
+
+    ${$$slots.icon ? "grid-cols-[2.5rem_auto]" : "grid-cols-[auto]"}
+
+    ${bg ? "px-4" : ""}
+    ${bg ? "border" : ""}
+    ${bg ? "bg-neutral-50" : ""}
+    ${bg ? "dark:border-black" : ""}
+    ${bg ? "dark:bg-neutral-700" : ""}
+
+    focus-within:ring-2
+    focus-within:ring-blue-500
+`}
+>
   <slot name="icon" />
-  <div class={classes.field}>
+  <div
+    class={`
+      pb-2
+      flex
+      flex-1
+      relative
+      self-stretch
+      ${!!label ? "pt-6" : "pt-2"}
+  `}
+  >
     {#if $$slots.custom}
       <slot name="custom" />
     {:else if $$slots.readonly}
-      <div class={classes.readonly}>
+      <div
+        class={`
+          flex
+          my-2
+          flex-1
+          flex-col
+          self-end
+          text-black
+          justify-center
+          dark:text-white
+      `}
+      >
         <slot name="readonly" />
       </div>
     {:else if readonly}
@@ -128,7 +101,30 @@
         }}
       />
     {/if}
-    {#if label}<span class={classes.label}>{label}</span>{/if}
+    {#if label}
+      <span
+        class={`
+          flex
+          absolute
+          scale-75
+          opacity-50
+          origin-left
+          items-center
+          duration-200
+          -translate-y-4
+          transition-all
+          whitespace-nowrap
+
+          peer-focus:scale-75
+          peer-focus:opacity-100
+          peer-focus:text-blue-500
+          peer-focus:-translate-y-4
+          peer-placeholder-shown:scale-100
+          peer-placeholder-shown:opacity-100
+          peer-placeholder-shown:translate-y-0
+      `}>{label}</span
+      >
+    {/if}
     {#if dirty && changeType === "commit"}
       <button
         class="ml-3 bg-black/10 rounded-md px-3 hover:bg-emerald-500 transition-colors"

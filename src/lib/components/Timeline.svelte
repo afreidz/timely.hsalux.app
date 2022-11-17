@@ -2,18 +2,16 @@
   import now from "../stores/now";
   import Icon from "@iconify/svelte";
   import Timer from "./Timer.svelte";
-  import cl from "../helpers/classlist";
   import Actions from "./Actions.svelte";
   import { onMount, tick } from "svelte";
   import viewDate from "../stores/viewDate";
   import { isToday } from "../helpers/date";
   import timers, { load } from "../stores/timers";
 
-  let classes;
-  let viewIsToday;
   let offset: number;
   let timerNodes = [];
   let scrolled = false;
+  let viewIsToday: boolean;
   let nowtime: HTMLElement;
   let timeline: HTMLElement;
   let drag = {
@@ -54,42 +52,6 @@
     "11PM",
   ];
 
-  $: {
-    if ($timers) {
-      classes = {
-        now: cl`
-        border-l
-        relative
-        invisible
-        sm:visible
-        row-start-1
-        pt-[0.4rem]
-        row-span-full
-        border-red-300
-        dark:border-red-500
-
-        after:w-2
-        after:h-2
-        after:-top-1
-        after:-left-1
-        after:absolute
-        after:bg-red-500
-        after:rounded-full
-        after:content-[" "]
-  `,
-        nowtime: cl`
-        py-1
-        px-2
-        text-red-500
-        rounded-full
-        bg-red-500/20
-        whitespace-nowrap
-        ml-[calc(100%_+_2px)]
-  `,
-      };
-    }
-  }
-
   onMount(setview);
 
   async function setview() {
@@ -100,7 +62,7 @@
       node.scrollIntoView({ behavior: "smooth", inline });
   }
 
-  function startDrag(e) {
+  function startDrag(e: { pageX: number }) {
     if (!timeline) return;
     drag.active = true;
     drag.scroll = timeline.scrollLeft;
@@ -111,7 +73,7 @@
     drag.active = false;
   }
 
-  function handleDrag(e) {
+  function handleDrag(e: { pageX: number }) {
     if (!drag.active || !timeline) return;
     const x = e.pageX - timeline.offsetLeft;
     const scroll = x - drag.start;
@@ -121,9 +83,9 @@
 
 <section
   bind:this={timeline}
-  on:scroll={() => (scrolled = true)}
   on:mouseup={stopDrag}
   on:mousedown={startDrag}
+  on:scroll={() => (scrolled = true)}
   on:mousemove|preventDefault={handleDrag}
   class={`
     timeline

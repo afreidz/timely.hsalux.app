@@ -1,10 +1,10 @@
 <script lang="ts">
   import nav from "../stores/nav";
   import Icon from "@iconify/svelte";
-  import cl from "../helpers/classlist";
+</script>
 
-  let classlist;
-  $: classlist = cl`
+<h1
+  class={`
     flex
     text-3xl
     border-b
@@ -19,10 +19,8 @@
     dark:bg-neutral-900
 
     ${$$props.class}
-  `;
-</script>
-
-<h1 class={classlist}>
+`}
+>
   <button on:click={() => ($nav = !$nav)}>
     <Icon
       icon="heroicons:bolt-20-solid"
