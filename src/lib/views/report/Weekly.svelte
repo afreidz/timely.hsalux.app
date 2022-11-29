@@ -19,21 +19,21 @@
     "Saturday",
   ];
 
-  let startDate = getMonday($viewDate);
-  let endDate = getFriday($viewDate);
+  let startDate = getSunday($viewDate);
+  let endDate = getSaturday($viewDate);
 
-  function getMonday(d: Date) {
-    d = new Date(d);
+  function getSunday(id: Date) {
+    const d = new Date(id);
     d.setHours(0, 0, 0, 0);
-    const day = d.getDay() || 7;
-    if (day !== 1) d.setHours(-24 * (day - 1));
+    const day = d.getDay();
+    if (day !== 0) d.setHours(-24 * day);
     return d;
   }
 
-  function getFriday(d: Date) {
-    const nd = getMonday(d);
-    nd.setDate(nd.getDate() + 4);
-    nd.setHours(23, 59, 59, 0);
+  function getSaturday(d: Date) {
+    const nd = getSunday(d);
+    nd.setDate(nd.getDate() + 6);
+    nd.setHours(0, 0, 0, 0);
     return nd;
   }
 
@@ -55,13 +55,14 @@
 <header class="view-heading">
   <Heading as="h4">Weekly Report</Heading>
 </header>
-<main class="p-4 overflow-auto w-full flex flex-col">
+<main class="p-4 overflow-auto w-full flex flex-col items-baseline">
   {#await timers}
     <Icon icon="eos-icons:loading" class="h-6 w-6" />
   {:then t}
     {#each Object.entries(group(t, (t) => t.project.name)) as [project, timers]}
-      <section class={`mb-5`}>
+      <section class={`mb-5 flex flex-col`}>
         <TimerComponent
+          class={`w-full`}
           color={timers[0].project?.color}
           project={timers[0].project?.name}
         >
@@ -77,7 +78,7 @@
         </TimerComponent>
         <div class={`m-3 flex flex-1 justify-stretch gap-3`}>
           {#each dow as day}
-            <Field label={day} class="flex-1">
+            <Field label={day} class="flex-1 w-[100px] sm:w-[140px]">
               <span
                 slot="custom"
                 class={`my-4 flex flex-1 justify-center items-baseline text-xl font-semibold`}
@@ -101,7 +102,7 @@
     <hr />
     <div class={`m-3 flex flex-1 justify-stretch gap-3`}>
       {#each dow as day, index}
-        <Field label={day} class="flex-1">
+        <Field label={day} class="flex-1 w-[100px] sm:w-[140px]">
           <span
             slot="custom"
             class={`my-4 flex flex-1 justify-center items-baseline text-2xl font-semibold`}
@@ -109,6 +110,17 @@
             {sumTimers(t.filter((t) => t.start.getDay() === index))}
             <small class="ml-1 text-lg font-normal opacity-50">hr</small>
           </span>
+          <em
+            slot="lower"
+            class={`mb-4 flex flex-1 justify-center text-[11px] not-italic line-clamp-1`}
+          >
+            {#if sumTimers(t.filter((t) => t.start.getDay() === index)) > 0 && ![0, 7].includes(index)}
+              <span class="opacity-50">Unreported:</span>
+              <span>
+                {8 - sumTimers(t.filter((t) => t.start.getDay() === index))} hr
+              </span>
+            {/if}
+          </em>
         </Field>
       {/each}
     </div>

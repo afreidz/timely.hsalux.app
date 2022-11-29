@@ -104,7 +104,7 @@
     />
     <Dropdown
       label="Project"
-      val={timer.project.id}
+      val={timer.project?.id}
       on:change={(e) =>
         (timer.project = $projects.find((p) => p.id === e.detail))}
     >
@@ -136,8 +136,8 @@
       <div class="order-1 col-span-2 sm:order-2 sm:col-span-1">
         <Timer
           hideChip={true}
-          color={timer.project.color}
-          project={timer.project.name}
+          color={timer.project?.color}
+          project={timer.project?.name}
         >
           <div
             class="flex-1 grid grid-cols-[2rem_2rem_2rem_auto_2rem_2rem_2rem]"
@@ -191,7 +191,7 @@
       </div>
     </div>
     <div class="flex-1 flex flex-col items-center justify-center">
-      {#if $settings.showHours?.includes(timer.project.id)}
+      {#if $settings.showHours?.includes(timer.project?.id)}
         <Hours project={timer.project} readonly />
       {/if}
     </div>

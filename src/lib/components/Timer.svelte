@@ -16,6 +16,8 @@
     rounded-full
     justify-start
     bg-${color}
+
+    ${$$props.class}
   `}
 >
   {#if !hideChip}
@@ -29,7 +31,7 @@
         items-center
         justify-center
         text-${color}
-      `}>{project.charAt(0)}</span
+      `}>{project.charAt(0) || "?"}</span
     >
   {/if}
   <strong

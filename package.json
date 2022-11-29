@@ -29,6 +29,7 @@
     "radash": "^7.1.0",
     "svelte": "^3.49.0",
     "svelte-check": "^2.8.1",
+    "svelte-media": "^0.1.5",
     "svelte-preprocess": "^4.10.7",
     "tailwindcss": "^3.1.5",
     "tslib": "^2.4.0",

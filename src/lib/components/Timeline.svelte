@@ -2,6 +2,7 @@
   import now from "../stores/now";
   import Icon from "@iconify/svelte";
   import Timer from "./Timer.svelte";
+  import media from "../stores/media";
   import Actions from "./Actions.svelte";
   import { onMount, tick } from "svelte";
   import viewDate from "../stores/viewDate";
@@ -58,7 +59,7 @@
     await tick();
     const node = nowtime || timerNodes?.at(0);
     const inline = nowtime ? "center" : "start";
-    if (!!node && !scrolled)
+    if (!!node && !scrolled && $media.sm)
       node.scrollIntoView({ behavior: "smooth", inline });
   }
 
@@ -93,7 +94,8 @@
     flex-1
     flex-col
     bg-gray-100
-    overflow-auto
+    justify-start
+    sm:overflow-auto
     dark:bg-neutral-800
     ${$$props.class}
   `}
@@ -108,34 +110,38 @@
     </header>
     <div
       class={`
-        grid
+        pt-14
         flex-1
+        w-full
+        sm:pt-0
+        sm:grid
         gap-y-3
         gap-x-px
-        w-[4880px]
-        grid-cols-[repeat(1440,0.15rem)]
+        sm:w-[4880px]
+        sm:grid-cols-[repeat(1440,0.15rem)]
         grid-rows-[2.1rem_1.5rem_repeat(${$timers?.length || 1},2.5rem)_auto]
 
         ${!viewIsToday ? "-mt-[3.2rem]" : ""}
     `}
     >
-      {#each hours as hour, index}
-        <div
-          class={`
+      {#if $media.sm}
+        {#each hours as hour, index}
+          <div
+            class={`
+            hidden
             border-l
-            invisible
-            sm:visible
+            sm:block
             row-start-2
             row-span-full
             text-neutral-400
             border-l-neutral-200
             dark:text-neutral-700
             dark:border-l-neutral-700
-            col-start-[${index * 60 || 1}]
+            sm:col-start-[${index * 60 || 1}]
           `}
-        >
-          <span
-            class={`
+          >
+            <span
+              class={`
               z-10
               ml-3
               relative
@@ -143,28 +149,38 @@
               inline-block
               dark:bg-neutral-800
             `}>{hour}</span
-          >
-        </div>
-      {/each}
+            >
+          </div>
+        {/each}
+      {/if}
       {#each $timers as item, index (item.id)}
         <a
           href={`#timer/${item.id}`}
           bind:this={timerNodes[index]}
           class={`
+            mb-4
+            block
+            sm:mb-0
+            col-start-1
+            col-span-full
             row-start-[${index + 3}]
-            col-end-[${item.endCol}]
-            col-start-[${item.startCol}]
+            sm:col-end-[${item.endCol}]
+            sm:col-start-[${item.startCol}]
           `}
           title={`${item.project?.name} - ${item.task}`}
         >
           <Timer color={item.project?.color} project={item.project?.name}>
             <span class="ml-2">
-              {item.task}
+              {#if item.task === "Timer"}
+                {item.project?.name} Timer
+              {:else}
+                {item.task}
+              {/if}
             </span>
           </Timer>
         </a>
       {/each}
-      {#if viewIsToday}
+      {#if viewIsToday && $media.sm}
         <div
           class={`
             border-l
@@ -186,8 +202,8 @@
             after:rounded-full
             after:content-[" "]
 
-            col-start-[${offset}]
-            col-end-[${offset + 1}]
+            sm:col-start-[${offset}]
+            sm:col-end-[${offset + 1}]
           `}
         >
           <span
