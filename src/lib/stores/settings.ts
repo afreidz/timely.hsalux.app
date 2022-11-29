@@ -7,6 +7,7 @@ export interface ISettings {
   autoStop?: boolean;
   startofday?: string;
   showHours?: string[];
+  hideInReports: string[];
   theme?: "dark" | "light";
   multipleRunning?: boolean;
   rounding?: "none" | "0.25" | "0.5" | "1";

@@ -47,7 +47,6 @@
       <Field readonly label="Project Color">
         <RadioGroup
           slot="readonly"
-          name="projectColor"
           value={project.color}
           class="flex flex-wrap mt-2"
           on:change={(e) => (project.color = e.detail)}
@@ -76,6 +75,30 @@
                 showHours: ($settings.showHours || []).filter(
                   (p) => p !== project.id
                 ),
+              };
+            }
+          }}
+        />
+      </Field>
+      <Field>
+        <Switch
+          slot="custom"
+          name="hideInReport"
+          class={`flex-1 justify-between`}
+          label="Show this project in reports"
+          enabled={!$settings?.hideInReports?.includes(project.id)}
+          on:change={(e) => {
+            if (e.detail) {
+              $settings = {
+                ...$settings,
+                hideInReports: ($settings.hideInReports || []).filter(
+                  (p) => p !== project.id
+                ),
+              };
+            } else {
+              $settings = {
+                ...$settings,
+                hideInReports: [...($settings.hideInReports || []), project.id],
               };
             }
           }}

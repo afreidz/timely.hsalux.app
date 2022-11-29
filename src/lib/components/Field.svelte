@@ -43,6 +43,8 @@
 
     focus-within:ring-2
     focus-within:ring-blue-500
+
+    ${props.class ?? ""}
 `}
 >
   <slot name="icon" />
