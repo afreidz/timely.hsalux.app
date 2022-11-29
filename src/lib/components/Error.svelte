@@ -11,6 +11,7 @@
     class={`
         p-6
         flex
+        z-50
         gap-4
         border-2
         absolute

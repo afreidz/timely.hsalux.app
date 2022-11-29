@@ -1,7 +1,7 @@
 <script lang="ts">
   let project = "?";
   let hideChip = false;
-  let color = "neutral-800";
+  let color;
 
   export { project, color, hideChip };
 </script>
@@ -15,9 +15,9 @@
     items-center
     rounded-full
     justify-start
-    bg-${color}
+    bg-${color || "neutral-400"}
 
-    ${$$props.class}
+    ${$$props.class || ""}
   `}
 >
   {#if !hideChip}
@@ -30,8 +30,8 @@
         rounded-full
         items-center
         justify-center
-        text-${color}
-      `}>{project.charAt(0) || "?"}</span
+        text-${color || "neutral-400"}
+      `}>{project?.charAt(0) || "?"}</span
     >
   {/if}
   <strong

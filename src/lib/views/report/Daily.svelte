@@ -8,7 +8,7 @@
   import type { Timer as TTimer } from "../../stores/timers";
 
   $: reportTimers = $timers.filter(
-    (t) => !$settings?.hideInReports?.includes(t.project.id)
+    (t) => !$settings?.hideInReports?.includes(t.project?.id)
   );
 
   function sumTimers(timers: TTimer[]) {

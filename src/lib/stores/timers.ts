@@ -275,7 +275,7 @@ async function load() {
 async function add(projectId?: string, indate?: Date) {
   const date = Timer.newDate(indate);
 
-  if (!get(settings).multipleRunning && get(timers).some((t) => t.running)) {
+  if (!get(settings)?.multipleRunning && get(timers).some((t) => t.running)) {
     const running = get(timers).filter((t) => t.running);
     running.forEach((t) => t.stop());
   }
@@ -291,7 +291,7 @@ async function add(projectId?: string, indate?: Date) {
 
   const nt = Timer.getById(ntid);
 
-  if (get(settings).autoSnap) {
+  if (get(settings)?.autoSnap) {
     nt.start = nt.previousTimer ? nt.previousTimer.end : nt.sobd || nt.sod;
     await Timer.update();
   }

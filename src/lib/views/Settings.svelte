@@ -1,7 +1,9 @@
 <script lang="ts">
+  import { tick } from "svelte";
   import Icon from "@iconify/svelte";
   import auth from "../stores/auth";
   import theme from "../stores/theme";
+  import error from "../stores/error";
   import Field from "../components/Field.svelte";
   import { signout } from "../helpers/azure/auth";
   import Button from "../components/Button.svelte";
@@ -93,7 +95,16 @@
         enabled={$settings?.autoStop}
         class="flex-1 justify-between"
         label="Enable Auto Stop Timers"
-        on:change={(e) => ($settings = { ...$settings, autoStop: e.detail })}
+        on:change={(e) => {
+          if (e.detail && !$settings?.endofday) {
+            $error = {
+              message: `Please set "End of Workday" to enable "Auto Stop"`,
+            };
+            $settings = { ...$settings, autoStop: false };
+            return;
+          }
+          $settings = { ...$settings, autoStop: e.detail };
+        }}
       />
       <div slot="lower" class="py-4 text-xs opacity-30">
         <p>
@@ -114,7 +125,13 @@
         enabled={$settings?.autoSnap}
         class="flex-1 justify-between"
         on:change={(e) => {
-          console.log(e, $settings);
+          if (e.detail && !$settings?.startofday) {
+            $error = {
+              message: `Please set "Start of Workday" to enable "Auto Snap"`,
+            };
+            $settings = { ...$settings, autoSnap: false };
+            return;
+          }
           $settings = {
             ...$settings,
             autoSnap: e.detail,

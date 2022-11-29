@@ -22,7 +22,7 @@
     window.location.hash = "";
   }
 
-  $: if (project && $settings.showHours?.includes(project.id)) {
+  $: if (project && $settings?.showHours?.includes(project?.id)) {
     hours = project.calculateHours();
   }
 </script>
@@ -67,12 +67,12 @@
             if (e.detail) {
               $settings = {
                 ...$settings,
-                showHours: [...($settings.showHours || []), project.id],
+                showHours: [...($settings?.showHours || []), project.id],
               };
             } else {
               $settings = {
                 ...$settings,
-                showHours: ($settings.showHours || []).filter(
+                showHours: ($settings?.showHours || []).filter(
                   (p) => p !== project.id
                 ),
               };
@@ -91,14 +91,17 @@
             if (e.detail) {
               $settings = {
                 ...$settings,
-                hideInReports: ($settings.hideInReports || []).filter(
+                hideInReports: ($settings?.hideInReports || []).filter(
                   (p) => p !== project.id
                 ),
               };
             } else {
               $settings = {
                 ...$settings,
-                hideInReports: [...($settings.hideInReports || []), project.id],
+                hideInReports: [
+                  ...($settings?.hideInReports || []),
+                  project.id,
+                ],
               };
             }
           }}
@@ -106,7 +109,7 @@
       </Field>
     </div>
     <div class="flex-1 flex flex-col items-center justify-center">
-      {#if $settings.showHours?.includes(project.id)}
+      {#if $settings?.showHours?.includes(project.id)}
         <Hours {project} />
       {/if}
     </div>

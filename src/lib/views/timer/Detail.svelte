@@ -104,10 +104,13 @@
     />
     <Dropdown
       label="Project"
-      val={timer.project?.id}
+      val={timer.project?.id || "orphan"}
       on:change={(e) =>
         (timer.project = $projects.find((p) => p.id === e.detail))}
     >
+      {#if !timer.project}
+        <option value="orphan">Orphaned Timer!</option>
+      {/if}
       {#each $projects as project}
         <option value={project.id}>{project.name}</option>
       {/each}
@@ -191,7 +194,7 @@
       </div>
     </div>
     <div class="flex-1 flex flex-col items-center justify-center">
-      {#if $settings.showHours?.includes(timer.project?.id)}
+      {#if $settings?.showHours?.includes(timer.project?.id)}
         <Hours project={timer.project} readonly />
       {/if}
     </div>
