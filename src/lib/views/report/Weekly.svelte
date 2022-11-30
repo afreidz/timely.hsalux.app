@@ -121,10 +121,9 @@
         </div>
       {/if}
     {/each}
-    <h4 class={`pt-3 my-3 text-3xl text-center border-t dark:border-black`}>
-      Totals
-    </h4>
-    <div class={`m-3 flex flex-1 justify-stretch gap-3`}>
+    <div
+      class={`pt-3 m-3 flex flex-1 justify-stretch gap-3 border-t dark:border-black`}
+    >
       {#each dow as day, index}
         <Field
           label={`${day} ${new Date(
@@ -143,7 +142,7 @@
             slot="lower"
             class={`mb-4 flex flex-1 justify-center text-[11px] not-italic line-clamp-1`}
           >
-            {#if sumTimers(t.filter((t) => t.start.getDay() === index)) > 0 && ![0, 7].includes(index)}
+            {#if 8 - sumTimers(t.filter((t) => t.start.getDay() === index)) > 0 && ![0, 7].includes(index)}
               <span class="opacity-50">Unreported:</span>
               <span>
                 {8 - sumTimers(t.filter((t) => t.start.getDay() === index))} hr
@@ -153,5 +152,8 @@
         </Field>
       {/each}
     </div>
+    <h4 class={`pt-3 my-3 text-3xl text-center border-t dark:border-black`}>
+      Total Weekly Hours: {sumTimers(t)} <small class="opacity-50">hrs</small>
+    </h4>
   {/await}
 </main>
