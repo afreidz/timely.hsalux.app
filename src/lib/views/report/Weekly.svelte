@@ -57,7 +57,7 @@
   <Heading as="h4" class={`flex-1`}>Weekly Report</Heading>
 </header>
 <Actions hideCal={true} hideToday={true} unit="week">
-  <aside class="opacity-50 w-72 text-center">
+  <aside class="opacity-50 w-60 text-center">
     {startDate.toLocaleDateString("en-us", {
       year: "numeric",
       month: "short",
@@ -137,17 +137,17 @@
             {sumTimers(t.filter((t) => t.start.getDay() === index))}
             <small class="ml-1 text-lg font-normal opacity-50">hr</small>
           </span>
-          <em
+          <!-- <em
             slot="lower"
             class={`mb-4 flex flex-1 justify-center text-[11px] not-italic line-clamp-1`}
           >
-            {#if 8 - sumTimers(t.filter((t) => t.start.getDay() === index)) > 0 && ![0, 7].includes(index)}
+            {#if 8 - sumTimers(t.filter((t) => t.start.getDay() === index)) > 0 && ![0, 6].includes(index)}
               <span class="opacity-50">Unreported:</span>
               <span>
                 {8 - sumTimers(t.filter((t) => t.start.getDay() === index))} hr
               </span>
             {/if}
-          </em>
+          </em> -->
         </Field>
       {/each}
     </div>
