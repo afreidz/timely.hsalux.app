@@ -1,7 +1,6 @@
 /* Write your global styles here, in PostCSS syntax */
 
 @tailwind base;
-@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -21,17 +20,30 @@ html {
 
 .view-heading {
   @apply px-5
-    flex 
-    bg-white 
+    flex
+    bg-white
     border-b
     border-white
     min-h-[4rem]
-    justify-between 
+    justify-between
     dark:border-black
-    dark:bg-neutral-900  
+    dark:bg-neutral-900
     sm:min-h-[7.75rem];
 }
 
-@tailwind components;
+*::-webkit-scrollbar {
+  @apply w-2;
+}
 
-@tailwind utilities;
+*::-webkit-scrollbar-track {
+  @apply bg-white/0;
+}
+
+.dark::-webkit-scrollbar-thumb,
+.dark *::-webkit-scrollbar-thumb {
+  @apply bg-white/30;
+}
+
+*::-webkit-scrollbar-thumb {
+  @apply bg-black/30 rounded-xl;
+}
