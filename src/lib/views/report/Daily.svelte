@@ -2,6 +2,7 @@
   import timers from "../../stores/timers";
   import settings from "../../stores/settings";
   import viewDate from "../../stores/viewDate";
+  import Field from "../../components/Field.svelte";
   import ProjectTimers from "./ProjectTimers.svelte";
   import Heading from "../../components/Heading.svelte";
   import Actions from "../../components/Actions.svelte";
@@ -33,13 +34,18 @@
       <ProjectTimers timers={reportTimers} />
     </ul>
   </div>
-  <footer
-    class="mx-12 p-6 flex border-t text-3xl border-black dark:border-white"
-  >
-    <strong class="flex-1 font-light">Total:</strong>
-    <small class="flex-none font-semibold">
-      {sumTimers(reportTimers)}
-      <span class="font-normal opacity-50">hr</span>
-    </small>
+  <footer>
+    <h4 class={`pt-4 m-3 text-3xl border-t dark:border-black`}>Total:</h4>
+    <div class={`flex justify-center`}>
+      <Field label="Daily Hours" class={`flex-none w-[200px]`}>
+        <span
+          slot="custom"
+          class={`my-4 flex flex-1 justify-center items-baseline text-4xl font-semibold`}
+        >
+          {sumTimers(reportTimers)}
+          <small class="ml-1 text-sm font-normal opacity-50">hr</small>
+        </span>
+      </Field>
+    </div>
   </footer>
 </section>

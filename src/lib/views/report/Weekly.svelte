@@ -121,9 +121,8 @@
         </div>
       {/if}
     {/each}
-    <div
-      class={`pt-3 m-3 flex flex-1 justify-stretch gap-3 border-t dark:border-black`}
-    >
+    <h4 class={`pt-4 m-3 text-3xl border-t dark:border-black`}>Totals:</h4>
+    <div class={`m-3 flex flex-1 justify-stretch gap-3`}>
       {#each dow as day, index}
         <Field
           label={`${day} ${new Date(
@@ -152,8 +151,16 @@
         </Field>
       {/each}
     </div>
-    <h4 class={`pt-3 my-3 text-3xl text-center border-t dark:border-black`}>
-      Total Weekly Hours: {sumTimers(t)} <small class="opacity-50">hrs</small>
-    </h4>
+    <div class={`p-4 flex justify-center`}>
+      <Field label="Weekly Hours" class={`flex-none w-[200px]`}>
+        <span
+          slot="custom"
+          class={`my-4 flex flex-1 justify-center items-baseline text-4xl font-semibold`}
+        >
+          {sumTimers(t)}
+          <small class="ml-1 text-sm font-normal opacity-50">hr</small>
+        </span>
+      </Field>
+    </div>
   {/await}
 </main>
