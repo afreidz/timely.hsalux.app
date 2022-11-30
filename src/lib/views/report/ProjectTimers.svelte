@@ -1,5 +1,6 @@
 <script lang="ts">
   import { group } from "radash";
+  import Field from "../../components/Field.svelte";
   import Timer from "../../components/Timer.svelte";
   import type { Timer as TTimer } from "../../stores/timers";
 
@@ -29,14 +30,13 @@
           </small>
         </div>
       </Timer>
-      <div class="mx-6 p-4 bg-neutral-50 dark:bg-black/50 rounded-b-lg">
-        <strong class="block font-semibold mb-2">Tasks:</strong>
-        <ul>
+      <Field label="Tasks" class={`my-2 mx-8`}>
+        <ul slot="custom" class={`my-4`}>
           {#each [...new Set(timers.map((t) => t.task))] as task}
-            <li class="text-neutral-600 text-sm">- {task}</li>
+            <li class="text-sm">• {task}</li>
           {/each}
         </ul>
-      </div>
+      </Field>
     </li>
   {/each}
 </ul>
