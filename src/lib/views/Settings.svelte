@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { tick } from "svelte";
   import Icon from "@iconify/svelte";
   import auth from "../stores/auth";
   import theme from "../stores/theme";
