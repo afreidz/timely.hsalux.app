@@ -7,10 +7,10 @@ export interface IUser {
   token?: string;
 }
 
-const redirectUri = window.location.href;
 const clientId = import.meta.env.AC_AUTH_CLIENT_ID;
 const scopes = [import.meta.env.AC_AUTH_SCOPE_URL];
 const authority = import.meta.env.AC_AUTH_AUTHORITY_URL;
+const redirectUri = import.meta.env.AC_AUTH_REDIRECT || window.location.origin;
 
 const auth = new msal.PublicClientApplication({
   auth: {

@@ -52,8 +52,10 @@
       class={`
         grid
         flex-1
+        border-t
         shadow-2xl
         overflow-hidden
+        dark:border-black
         grid-cols-[6rem_auto]
         grid-rows-[7.75rem_auto]
         sm:grid-cols-[20rem_auto]

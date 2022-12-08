@@ -110,7 +110,7 @@
               <ul slot="lower" class={`mb-4 text-xs opacity-50`}>
                 {#each unique( timers.filter((t) => dow[t.start.getDay()] === day), (t) => t.task ) as timer}
                   {#if timer.task !== "Timer"}
-                    <li class="line-clamp-1">
+                    <li class="line-clamp-1" title={timer.task}>
                       • {timer.task}
                     </li>
                   {/if}
