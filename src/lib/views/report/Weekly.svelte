@@ -4,39 +4,16 @@
   import * as api from "../../helpers/api";
   import settings from "../../stores/settings";
   import { viewDate } from "../../stores/timers";
+  import forecasts from "../../stores/forecasts";
   import Field from "../../components/Field.svelte";
   import Actions from "../../components/Actions.svelte";
   import Heading from "../../components/Heading.svelte";
   import { Timer, type ITimer } from "../../stores/timers";
   import TimerComponent from "../../components/Timer.svelte";
-
-  const dow = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
+  import { getSunday, getSaturday, dow } from "../../helpers/date";
 
   $: startDate = getSunday($viewDate);
   $: endDate = getSaturday($viewDate);
-
-  function getSunday(id: Date) {
-    const d = new Date(id);
-    d.setHours(0, 0, 0, 0);
-    const day = d.getDay();
-    if (day !== 0) d.setHours(-24 * day);
-    return d;
-  }
-
-  function getSaturday(d: Date) {
-    const nd = getSunday(d);
-    nd.setDate(nd.getDate() + 6);
-    nd.setHours(0, 0, 0, 0);
-    return nd;
-  }
 
   function sumTimers(timers: Timer[]) {
     return timers.reduce((p, c) => +p + +c.hours, 0);
@@ -82,14 +59,26 @@
           color={timers[0].project?.color}
           project={timers[0].project?.name}
         >
-          <div class="grid grid-cols-[auto_8rem] items-center">
-            <span class="ml-2 text-base">
+          <div class="flex items-center">
+            <span class="ml-2 text-base flex-1">
               {project}
             </span>
-            <small class="font-semibold text-base justify-self-end">
-              {sumTimers(timers)}
-              <span class="text-sm font-normal opacity-50">hr</span>
-            </small>
+            <div class="justify-self-end flex flex-none items-center gap-3">
+              <small class="font-semibold text-base">
+                <span class="text-sm font-normal opacity-50">Worked:</span>
+                {sumTimers(timers)}
+                <span class="text-sm font-normal opacity-50">hr</span>
+              </small>
+              {#if $forecasts[timers[0].project?.id]}
+                |
+                <small class="font-semibold text-base">
+                  <span class="text-sm font-normal opacity-50">Forecasted:</span
+                  >
+                  {$forecasts[timers[0].project?.id]?.hours}
+                  <span class="text-sm font-normal opacity-50">hr</span>
+                </small>
+              {/if}
+            </div>
           </div>
         </TimerComponent>
         <div class={`m-3 mb-5 flex flex-1 justify-stretch gap-3`}>

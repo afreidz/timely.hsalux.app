@@ -1,6 +1,6 @@
 import paused from "./paused";
+import { getAuth, type IUser } from "../helpers/auth";
 import { get, writable, type Writable } from "svelte/store";
-import { getAuth, type IUser } from "../helpers/azure/auth";
 
 const auth: Writable<IUser> = writable(null);
 let timer: ReturnType<typeof setInterval>;

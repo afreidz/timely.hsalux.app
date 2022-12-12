@@ -5,6 +5,7 @@
   import Update from "../views/Update.svelte";
   import type { SvelteComponent } from "svelte";
   import Settings from "../views/Settings.svelte";
+  import Forecast from "../views/Forecast.svelte";
   import NewProject from "../views/project/New.svelte";
   import TimerDetail from "../views/timer/Detail.svelte";
   import DailyReport from "../views/report/Daily.svelte";
@@ -45,6 +46,9 @@
         break;
       case id?.startsWith("report/weekly"):
         component = WeeklyReport;
+        break;
+      case id?.startsWith("forecast"):
+        component = Forecast;
         break;
       case id?.startsWith("update"):
         component = Update;

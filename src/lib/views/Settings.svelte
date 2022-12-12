@@ -3,8 +3,9 @@
   import auth from "../stores/auth";
   import theme from "../stores/theme";
   import error from "../stores/error";
+  import { signout } from "../helpers/auth";
   import Field from "../components/Field.svelte";
-  import { signout } from "../helpers/azure/auth";
+  import { Forecast } from "../stores/forecasts";
   import Button from "../components/Button.svelte";
   import Switch from "../components/Switch.svelte";
   import Heading from "../components/Heading.svelte";
@@ -185,6 +186,9 @@
           >
           <Button on:click={() => deleteAllProjects()} class="bg-red-500 py-4"
             >Delete All Projects</Button
+          >
+          <Button on:click={() => Forecast.deleteAll()} class="bg-red-500 py-4"
+            >Delete All Forecasts</Button
           >
         </div>
       </Field>

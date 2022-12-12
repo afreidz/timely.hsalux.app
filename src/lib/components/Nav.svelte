@@ -88,8 +88,14 @@
     </li>
     <li>
       <div class="flex items-center">
+        <Icon icon="bx:spreadsheet" class="flex-none p-2 w-10 h-10" />
+        <a href="#forecast" class="flex-1 ml-2 py-2">Forecast</a>
+      </div>
+    </li>
+    <li>
+      <div class="flex items-center">
         <Icon
-          icon="heroicons:clipboard-document-list"
+          icon="ant-design:stock-outlined"
           class="flex-none p-2 w-10 h-10"
         />
         <span class="flex-1 ml-2">Reports</span>

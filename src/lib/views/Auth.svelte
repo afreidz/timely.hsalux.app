@@ -1,6 +1,6 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
-  import { signin } from "../helpers/azure/auth";
+  import { signin } from "../helpers/auth";
 </script>
 
 <svelte:head>

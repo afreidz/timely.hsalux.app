@@ -8,6 +8,7 @@
   let name: string = null;
   let label: string = null;
   let dirty: boolean = false;
+  let center: boolean = false;
   let input: HTMLInputElement;
   let val: string | number = "";
   let dispatch = createEventDispatcher();
@@ -18,9 +19,10 @@
     delete props.val;
     delete props.name;
     delete props.label;
+    delete props.center;
   }
 
-  export { label, name, val, bg, changeType };
+  export { label, name, val, bg, changeType, center };
 </script>
 
 <label
@@ -56,6 +58,7 @@
       relative
       self-stretch
       ${!!label ? "pt-6" : "pt-2"}
+      ${center ? "justify-center" : ""}
   `}
   >
     {#if $$slots.custom}
@@ -84,7 +87,7 @@
         value={val}
         placeholder=" "
         bind:this={input}
-        class={`peer ${props.class ?? ""}`}
+        class={`peer ${center ? "text-center" : ""} ${props.class ?? ""}`}
       />
     {:else}
       <input
@@ -94,7 +97,7 @@
         bind:value={val}
         placeholder=" "
         bind:this={input}
-        class={`peer ${props.class ?? ""}`}
+        class={`peer ${center ? "text-center" : ""} ${props.class ?? ""}`}
         on:input={(e) => (dirty = e.currentTarget.value === val)}
         on:change={(e) => {
           if (changeType === "input") {

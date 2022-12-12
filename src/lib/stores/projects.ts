@@ -102,7 +102,7 @@ export class Project {
   }
 
   static async getAll() {
-    return (await api.call("/projects")).map((p) => new Project(p));
+    return (await api.call("/projects")).map((p: IProject) => new Project(p));
   }
 }
 
