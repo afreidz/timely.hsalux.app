@@ -71,10 +71,8 @@
         {#await hours}
           <span>?</span>
         {:then hours}
-          <span
-            class={`${
-              Math.round(project.budget - hours) < 8 ? "text-red-500" : ""
-            }`}>{Math.round(project.budget - hours)}</span
+          <span class={`${project.budget - hours < 8 ? "text-red-500" : ""}`}
+            >{project.budget - hours}</span
           >
         {/await}
       {/if}

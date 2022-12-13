@@ -55,7 +55,7 @@
   {#await load()}
     <Icon icon="eos-icons:loading" class="w-6 h-6" />
   {:then}
-    {#each $projects as project}
+    {#each $projects.filter((p) => !p.archived) as project}
       <div class="flex items-center gap-4">
         <Timer
           color={project.color}

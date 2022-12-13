@@ -70,7 +70,7 @@ export class Project {
 
   async calculateHours() {
     const timers = await Timer.getByProject(this.id);
-    return timers.reduce((a, b) => a + Math.round(+b.hours), 0);
+    return timers.reduce((a, b) => a + b.hours, 0);
   }
 
   async archive() {

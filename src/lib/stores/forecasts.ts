@@ -73,8 +73,8 @@ export async function add(projectId: string, date: Date, hours: number) {
   await load();
 }
 
-viewDate.subscribe(async () => {
-  await load();
+viewDate.subscribe(async (d: Date) => {
+  if (+d) await load();
 });
 
 export async function load(d?: Date) {

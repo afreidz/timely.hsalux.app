@@ -65,18 +65,37 @@
             </span>
             <div class="justify-self-end flex flex-none items-center gap-3">
               <small class="font-semibold text-base">
-                <span class="text-sm font-normal opacity-50">Worked:</span>
+                <span class="text-sm font-normal opacity-50"
+                  >Weekly Worked:</span
+                >
                 {sumTimers(timers)}
                 <span class="text-sm font-normal opacity-50">hr</span>
               </small>
               {#if $forecasts[timers[0].project?.id]}
                 |
                 <small class="font-semibold text-base">
-                  <span class="text-sm font-normal opacity-50">Forecasted:</span
+                  <span class="text-sm font-normal opacity-50"
+                    >Weekly Forecast:</span
                   >
                   {$forecasts[timers[0].project?.id]?.hours}
                   <span class="text-sm font-normal opacity-50">hr</span>
                 </small>
+              {/if}
+              {#if timers[0].project?.budget}
+                {#await timers[0].project.calculateHours()}
+                  <Icon icon="eos-icons:loading" class="h-4 w-4" />
+                {:then hours}
+                  |
+                  <small class="font-semibold text-base">
+                    <span class="text-sm font-normal opacity-50"
+                      >Project Budget:</span
+                    >
+                    {timers[0].project.budget - hours}
+                    <span class="text-sm font-normal opacity-50">of</span>
+                    {timers[0].project.budget}
+                    <span class="text-sm font-normal opacity-50">hr</span>
+                  </small>
+                {/await}
               {/if}
             </div>
           </div>
