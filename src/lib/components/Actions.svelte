@@ -7,6 +7,7 @@
   let viewIsToday: boolean;
   let hideToday = false;
   let hideCal = false;
+  let future = false;
   let nextDate: Date;
   let prevDate: Date;
   let factor = 1;
@@ -15,7 +16,8 @@
   $: viewIsToday = isToday($viewDate);
   $: prevDate = new Date(+$viewDate - 1000 * 60 * 60 * 24 * factor);
   $: nextDate =
-    !isToday($viewDate) && new Date(+$viewDate + 1000 * 60 * 60 * 24 * factor);
+    (!isToday($viewDate) || future) &&
+    new Date(+$viewDate + 1000 * 60 * 60 * 24 * factor);
 
   function previous() {
     $viewDate = prevDate;
@@ -47,7 +49,7 @@
     disabled:hover:bg-white/5
   `;
 
-  export { unit, hideCal, hideToday };
+  export { unit, hideCal, hideToday, future };
 </script>
 
 <div
@@ -64,14 +66,18 @@
   `}
 >
   <div class="shrink">
-    {#if !hideToday}
+    {#if !hideToday && !viewIsToday}
       <button
         title="go to today"
-        disabled={viewIsToday}
         class={buttonClass}
         on:click={() => ($viewDate = new Date())}
       >
-        <Icon icon="heroicons:clock" class="w-5 h-5" />
+        {#if unit === "day"}
+          Today
+        {:else}
+          This week
+        {/if}
+        <!-- <Icon icon="heroicons:clock" class="w-5 h-5" /> -->
       </button>
     {/if}
   </div>

@@ -87,33 +87,19 @@
       </ul>
     </li>
     <li>
-      <div class="flex items-center">
+      <a href="#forecast" class="flex items-center">
         <Icon icon="bx:spreadsheet" class="flex-none p-2 w-10 h-10" />
-        <a href="#forecast" class="flex-1 ml-2 py-2">Forecast</a>
-      </div>
+        <span class="flex-1 ml-2 py-2">Forecast</span>
+      </a>
     </li>
     <li>
-      <div class="flex items-center">
+      <a href="#report/weekly" class="flex items-center">
         <Icon
           icon="ant-design:stock-outlined"
           class="flex-none p-2 w-10 h-10"
         />
-        <span class="flex-1 ml-2">Reports</span>
-      </div>
-      <ul>
-        <li class="pl-12 flex items-center">
-          <Icon icon="heroicons:clock" class="mr-1 w-4 h-4" />
-          <a href={`#report/daily`} class="flex-1 ml-2 line-clamp-1 py-2"
-            >By Day</a
-          >
-        </li>
-        <li class="pl-12 flex items-center">
-          <Icon icon="heroicons:calendar" class="mr-1 w-4 h-4" />
-          <a href={`#report/weekly`} class="flex-1 ml-2 line-clamp-1 py-2"
-            >By Week</a
-          >
-        </li>
-      </ul>
+        <span class="flex-1 ml-2">Weekly Report</span>
+      </a>
     </li>
   </ul>
   <footer

@@ -145,17 +145,6 @@
             {sumTimers(t.filter((t) => t.start.getDay() === index))}
             <small class="ml-1 text-lg font-normal opacity-50">hr</small>
           </span>
-          <!-- <em
-            slot="lower"
-            class={`mb-4 flex flex-1 justify-center text-[11px] not-italic line-clamp-1`}
-          >
-            {#if 8 - sumTimers(t.filter((t) => t.start.getDay() === index)) > 0 && ![0, 6].includes(index)}
-              <span class="opacity-50">Unreported:</span>
-              <span>
-                {8 - sumTimers(t.filter((t) => t.start.getDay() === index))} hr
-              </span>
-            {/if}
-          </em> -->
         </Field>
       {/each}
     </div>

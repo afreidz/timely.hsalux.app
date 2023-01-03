@@ -36,7 +36,7 @@
 <header class="view-heading">
   <Heading as="h4">Weekly Forecasts</Heading>
 </header>
-<Actions hideCal={true} hideToday={true} unit="week">
+<Actions hideCal={true} unit="week" future={true}>
   <aside class="opacity-50 w-60 text-center">
     {startDate.toLocaleDateString("en-us", {
       year: "numeric",

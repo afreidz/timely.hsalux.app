@@ -169,9 +169,9 @@ export class Timer {
   }
 
   get previousTimer() {
-    const sort = [...get(timers)].sort((a, b) => +a.start - +b.start);
-    const idx = sort.indexOf(this);
-    return sort[idx - 1];
+    const currentTimers = get(timers);
+    const idx = currentTimers.indexOf(this);
+    return currentTimers[idx - 1];
   }
 
   stop(d?: Date) {
